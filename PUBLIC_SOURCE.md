@@ -12,3 +12,5 @@ See [safeguards](SECURITY.md) and [operator tools](docs/RIMS_OPERATOR_TOOLS.md).
 Full private-workspace checks can depend on excluded operational inputs; the CI
 workflow explicitly names the public operator/privacy checks it runs. No private
 native acceptance is inferred from these source checks.
+
+Completed local flow tooling: [diagnostics, guarded recovery and compatibility](docs/FLOW_MATURATION_TOOLS.md).

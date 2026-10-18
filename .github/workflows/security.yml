@@ -41,3 +41,7 @@ jobs:
           python3 -m unittest discover -s tests -p test_rims_operator.py -v
           python3 -m unittest discover -s tests -p test_prepare_register_export_monitoring.py -v
           python3 -m unittest discover -s tests -p test_public_source_guard.py -v
+          python3 -m unittest discover -s tests -p test_powerplatform_tooling.py -v
+          python3 -m unittest discover -s tests -p test_prepare_archive_definition_recovery.py -v
+          python3 -m unittest discover -s tests -p test_read_qgip_committed_source.py -v
+          python3 -m unittest discover -s tests -p test_grants_qld_qgip_api.py -v
