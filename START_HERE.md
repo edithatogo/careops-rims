@@ -1,35 +1,37 @@
-# CHHHS publications: web-first implementation package
+# Start with the public source
 
-**This is a Conductor implementation/handoff release, not a newly compiled PBIX or a verified live dashboard.**
+Use Python 3.11 or newer. The public checks use the standard library; no Microsoft
+sign-in, tenant, downloaded audit snapshots or private configuration is required.
 
-Use your existing report in Power BI. Start in the chat that exposes your Power BI plugin: attach the package and paste the opening prompt in `handoff/POWERBI_PLUGIN_START_HERE.md`. Ordinary Power BI web authoring is the first route; no Fabric Git integration or new capacity is required by this plan.
-
-Read `conductor/tracks.md` for the ten new tracks and `docs/WEB_FIRST_FINDINGS.md` for defects in the existing source baseline. The source has three pages and two sources, but native M/DAX and live-source acceptance still need to be performed.
-
-## Files to use
-
-- `handoff/POWERBI_PLUGIN_START_HERE.md`: plugin session's first read-only task.
-- `conductor/tracks/`: specifications, plans, metadata, per-track prompts and reviews.
-- `contracts/web-first-execution.contract.json`: routing, safe-write and evidence gates.
-- `contracts/publication-export.contract.json`: full bibliography requirements.
-- `scripts/webfirst_contracts.py`: local policy/structure checks.
-- `scripts/export_publication_register.py`: complete CSV/print-ready HTML renderer, with synthetic/live labels.
-- `handoff/UTM_FALLBACK.md`: gated existing-VM fallback, not the primary route.
-
-## Local verification
-
-```
-python -m unittest discover -s tests -v
-python scripts/validate_project.py
-python scripts/webfirst_contracts.py validate
+```sh
+git clone https://github.com/edithatogo/careops-rims.git
+cd careops-rims
+python3 -m venv .venv
+. .venv/bin/activate
+python3 scripts/check_public_source.py
+python3 scripts/check_public_docs.py
+python3 scripts/run_public_tests.py
+python3 scripts/rims_operator.py --help
 ```
 
-Do not call these native Power BI tests. They do not run Power Query, DAX, browser rendering, live refresh or flow execution.
+Install Gitleaks and enable the clone-local commit hook using [SECURITY.md](SECURITY.md).
+Gitleaks is a separate executable required for commits; Python tests do not install it.
 
-## Current boundaries
+## Which commands need private inputs?
 
-The Power BI editor is not exposed in the originating chat, and Remote Desktop Commander returned no connected devices. No live report or VM was changed. This does not establish that the user's separate plugin-enabled session cannot edit.
+| Command | Inputs and effects |
+| --- | --- |
+| `run_public_tests.py`, `check_public_docs.py`, `check_public_source.py` | Offline source checks; no tenant credentials. |
+| `rims_operator.py compare`, `summary`, `recover`, `monitor` | Local files or recorded evidence; no native monitoring runtime. Use `--help` for exact arguments. |
+| `prepare_archive_definition_recovery.py` | Private native preimage, exact workflow/environment/ETag; prepares packets without applying them. |
+| Acquisition commands with `--fetch`, deployment scripts and native CLI instructions | Qualified real targets and existing authorised authentication; example IDs cannot be deployed unchanged. |
+| Private harness `--task all`, `validate_project.py`, full test discovery | Historical private-workspace checks requiring excluded evidence/configuration; use the public runner here. |
 
-The original employment-derived PBIX must not become the research release through cosmetic relabelling. Protect the original, prove model isolation, then replace the actual model/bindings in a development target. Do not reimport the supplied historical DORA rows.
+Keep real inputs and receipts in ignored `private/` paths. Never replace examples
+with tenant identities in committed source. No setup command deploys, enables a
+schedule, changes access or sends notifications.
 
-Conductor upstream remains a pinned but unpopulated gitlink. Context, tracks, local gates and prompts are included and usable independently. No new remote repository or tenant resource was created.
+The public runner prints every excluded private-workspace module and its reason,
+then runs the remaining suite with outbound socket connections blocked. It exits
+nonzero on failures. Passing source tests do not prove Power Query/DAX execution,
+flow runtime behaviour, output fidelity or production acceptance.

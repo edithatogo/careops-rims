@@ -4,184 +4,38 @@ import json
 import tempfile
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
 from scripts.grants_ingestion import ingest_batches, parse_feed
-from scripts.grants_sources import load_catalogue
-
+from scripts.grants_sources import load_catalogue, require_enabled_source
 
 class GrantsSourceTests(unittest.TestCase):
-    def test_catalogue_has_required_sources_and_explicit_health(self):
-        rows = load_catalogue(Path(__file__).parents[1] / "config/grants-sources.json")
-        self.assertGreaterEqual(len(rows), 13)
-        self.assertTrue(all(row["last_verified"] for row in rows))
-        ids = {row["source_id"] for row in rows}
-        self.assertTrue({
-            "qh-health-practitioner-research", "metro-south-research-support",
-            "metro-north-research-grants", "torres-cape-research-support",
-        } <= ids)
+    def catalogue(self):
+        return json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
 
-    def test_catalogue_rejects_invalid_urls_and_dates(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["authority_url"] = "not-a-url"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "valid authority_url"):
-                load_catalogue(handle.name)
+    def test_current_catalogue_separates_awards_metadata_and_candidates(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'catalogue.json'
+            p.write_text(json.dumps(self.catalogue()))
+            rows = {r['source_id']: r for r in load_catalogue(p)}
+        self.assertEqual(rows['arc-awards-api']['reconciliation']['admission'], 'context_only')
+        self.assertEqual(rows['queensland-grants-finder-catalogue-api']['reconciliation']['admission'], 'metadata_only')
+        self.assertEqual(rows['queensland-health-qgip-review-candidates-api']['reconciliation']['admission'], 'candidate_only')
 
-        rows[0]["authority_url"] = "https://example.org"
-        rows[0]["last_verified"] = "not-a-date"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "invalid last_verified date"):
-                load_catalogue(handle.name)
+    def test_catalogue_rejects_unsafe_endpoints_and_identity_drift(self):
+        for field, value in [('source_id', True), ('source_id', ' padded '),
+                             ('authority_url', 'http://example.org'),
+                             ('api_url', 'https://official.example@attacker.test/path'),
+                             ('enabled', 'true'), ('health_status', 'unverified')]:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as d:
+                rows = self.catalogue(); rows[0][field] = value
+                p = Path(d) / 'catalogue.json'; p.write_text(json.dumps(rows))
+                with self.assertRaises(ValueError): load_catalogue(p)
 
-        rows[0]["last_verified"] = "2999-12-31"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "future last_verified date"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_non_string_source_id(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["source_id"] = True
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "source_id must be a non-empty string"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_surrounding_source_id_whitespace(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["source_id"] = " nhmrc"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "surrounding whitespace"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_non_string_urls(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["authority_url"] = True
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "valid authority_url"):
-                load_catalogue(handle.name)
-
-        rows[0]["authority_url"] = "https://example.org/authority"
-        arc = next(row for row in rows if row["source_id"] == "arc")
-        arc["authority_url"] = "https://example.org/authority"
-        arc["api_url"] = 7
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "api_url must be a string or null"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_surrounding_url_whitespace(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["authority_url"] = " https://example.org/authority"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "authority_url must not have surrounding whitespace"):
-                load_catalogue(handle.name)
-
-        rows[0]["authority_url"] = "https://example.org/authority"
-        arc = next(row for row in rows if row["source_id"] == "arc")
-        arc["api_url"] = "https://example.org/api "
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "api_url must not have surrounding whitespace"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_freshness_uses_brisbane_date(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        today = datetime.now(ZoneInfo("Australia/Brisbane")).date().isoformat()
-        self.assertTrue(all(row["last_verified"] <= today for row in rows))
-        self.assertTrue(load_catalogue(Path(__file__).parents[1] / "config/grants-sources.json"))
-
-    def test_api_catalogue_requires_valid_api_url(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        arc = next(row for row in rows if row["source_id"] == "arc")
-        arc["api_url"] = "not-a-url"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "valid api_url"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_malformed_optional_metadata(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["record_kind"] = True
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "record_kind must be a non-empty string or null"):
-                load_catalogue(handle.name)
-
-        rows[0].pop("record_kind")
-        rows[0]["sample_fixture"] = 7
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "sample_fixture must be a non-empty string or null"):
-                load_catalogue(handle.name)
-
-        rows[0].pop("sample_fixture")
-        rows[0]["api_url"] = False
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "api_url must be a string or null"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_surrounding_api_url_whitespace_for_non_api_rows(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["api_url"] = " https://example.org/api"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "api_url must not have surrounding whitespace"):
-                load_catalogue(handle.name)
-
-    def test_catalogue_rejects_surrounding_optional_metadata_whitespace(self):
-        rows = json.loads((Path(__file__).parents[1] / "config/grants-sources.json").read_text())
-        rows[0]["record_kind"] = " awards_only"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "record_kind must be a non-empty string or null"):
-                load_catalogue(handle.name)
-
-        rows[0].pop("record_kind")
-        rows[0]["sample_fixture"] = "fixture.json "
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as handle:
-            json.dump(rows, handle)
-            handle.flush()
-            with self.assertRaisesRegex(ValueError, "sample_fixture must be a non-empty string or null"):
-                load_catalogue(handle.name)
-
-    def test_arc_public_api_is_verified_as_awards_only(self):
-        rows = load_catalogue(Path(__file__).parents[1] / "config/grants-sources.json")
-        arc = next(row for row in rows if row["source_id"] == "arc")
-        self.assertEqual(arc["intake"], "api")
-        self.assertEqual(arc["health_status"], "verified_sample")
-        self.assertTrue(arc["api_url"].startswith("https://dataportal.arc.gov.au/NCGP/API/grants"))
-        self.assertEqual(arc["record_kind"], "awards_only")
-        self.assertIn("not an open-opportunity calendar", arc["coverage"])
-
-    def test_queensland_grants_finder_api_is_metadata_only(self):
-        rows = load_catalogue(Path(__file__).parents[1] / "config/grants-sources.json")
-        finder = next(row for row in rows if row["source_id"] == "queensland-grants-finder")
-        self.assertEqual(finder["intake"], "api")
-        self.assertEqual(finder["health_status"], "verified_sample")
-        self.assertEqual(finder["record_kind"], "metadata_only")
-        self.assertIn("does not expose opportunity rows", finder["coverage"])
+    def test_disabled_source_is_rejected_before_acquisition(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = self.catalogue(); rows[0]['enabled'] = False
+            p = Path(d) / 'catalogue.json'; p.write_text(json.dumps(rows))
+            with self.assertRaisesRegex(ValueError, 'source_disabled'):
+                require_enabled_source(p, rows[0]['source_id'])
 
     def test_atom_and_rss_shapes_are_preserved_as_canonical_records(self):
         rss = """<rss><channel><item><guid>r1</guid><title>Call</title><link>https://example.org/call/</link><description>Summary</description><deadline>2027-04</deadline></item></channel></rss>"""

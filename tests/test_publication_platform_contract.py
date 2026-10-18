@@ -111,7 +111,7 @@ class PublicationPlatformContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             target = Path(folder) / "target.json"
             payload = {
-                "site_url": "https://example.sharepoint.com/sites/dev",
+                "site_url": "http://example.sharepoint.com/sites/dev",
                 "list_id": str(uuid.uuid4()),
                 "model_id": str(uuid.uuid4()),
                 "unique_fields": ["source_key"],

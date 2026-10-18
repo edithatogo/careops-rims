@@ -3,7 +3,7 @@
 - [Specification](spec.md)
 - [Implementation Plan](plan.md)
 - [Prompt](prompt.md)
-- [Review](review.md)
+- Review (excluded from public source)
 
 Status: **In progress**
 Scope: `cloud_automation`
