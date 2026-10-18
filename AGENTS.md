@@ -1,5 +1,14 @@
 # Agent instructions
 
+## Public source CI
+
+For this public edition, use START_HERE.md and its tenant-free public runner.
+The private CURRENT_STATE and full private harness inputs are intentionally absent;
+that does not block isolated source CI. Preserve the five named private-suite
+exclusions, outbound-network denial, strict secret/privacy flags and native
+ownership. CI packaging and canaries never activate a native route or qualify
+production acceptance. Keep receipts and tool caches in ignored .local paths.
+
 ## Current route precedence — 13 October 2026
 
 Follow the [shared-data delivery contract](docs/PLATFORM_COMPLETION_PLAN.md#shared-data-delivery-contract--13-october-2026): CLI/API-first on qualified exact targets, existing archive bootstrap, complete raw payload/schema retention before vertical filtering, and one writer per file/object. Historical browser-first/no-CLI statements and dated completion claims do not override this direction. Preserve current source scope, permissions, isolation, rollback and explicit activation/delivery gates. The publications chat retains its current objects and checkpoint; shared-data work requires disjoint scope or explicit handoff.

@@ -1,4 +1,7 @@
 import importlib.util
+import os
+import runpy
+from unittest.mock import patch
 from pathlib import Path
 import subprocess
 import tempfile
@@ -11,11 +14,17 @@ spec.loader.exec_module(guard)
 
 class PublicSourceGuardTests(unittest.TestCase):
     def test_private_files_binary_and_symlinks_are_rejected(self):
-        for name in ['private/receipt.json', 'nested/private/receipt.json', 'reports/output.txt', '.env', 'keys.pem', 'bundle.zip']:
+        for name in ['.local/candidate.json', 'nested/.local/candidate.json', 'private/receipt.json', 'nested/private/receipt.json', 'reports/output.txt', '.env', 'keys.pem', 'bundle.zip']:
             self.assertTrue(guard.inspect(name, b'example'))
         self.assertTrue(guard.inspect('source.txt', b'\x00example'))
         self.assertTrue(guard.inspect('source.txt', b'example', '120000'))
         self.assertFalse(guard.inspect('.env.example', b'KEY=configure-locally'))
+
+    def test_native_helpers_refuse_missing_target_before_any_cli_call(self):
+        for name in ['create_sharepoint_columns.py', 'retry_failed.py', 'sync_sharepoint_seed.py']:
+            with self.subTest(script=name), patch.dict(os.environ, {'SHAREPOINT_WEB_URL': ''}), patch('subprocess.run', side_effect=AssertionError('No native CLI calls permitted')):
+                with self.assertRaisesRegex(RuntimeError, 'Set SHAREPOINT_WEB_URL'):
+                    runpy.run_path(str(GUARD.parent / name), run_name='__main__')
 
     def test_real_identity_shapes_fail_while_examples_pass(self):
         samples = [b'person@' + b'organization.org', b'https://' + b'actual-tenant.sharepoint.com/site',

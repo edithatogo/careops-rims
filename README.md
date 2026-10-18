@@ -14,3 +14,27 @@ identities, not working tenant configuration or native acceptance evidence.
 
 Historical plans describe the original private workspace. Private evidence,
 generated outputs, native packages and live configuration are intentionally absent.
+
+## Source CI and package qualification
+
+CI preserves the strict RIMS full-history/current-source secret scans, privacy
+guard and tenant-free public test runner, including its named private-workspace
+exclusions and outbound-network denial. Shared immutable CareOps policy
+`1373e971013724dfaa268e215a45505bb89300cd` adds workflow checks; it does not
+replace RIMS' stricter scanner flags. Canonical source tests use Python3.15.0
+with an additional minimum Python3.11 compatibility lane. Renovate remains the
+sole updater and never automatically promotes a candidate.
+
+Weekly/manual development candidates use separate integrity locks and verified
+wheels in an isolated Python3.14.8 tool environment. Actual RIMS tests still use
+Python3.15.0; a frozen official manifest selects a newer published preview only
+when available. Terminal outcomes and digests remain separate from promotion.
+There are no third-party application Python dependencies to lock.
+
+The package workflow archives the clean, privacy-checked public source once,
+then exercises its approved offline tests and operator help after unpacking.
+The actual ZIP receives an SPDX file inventory. Main-only OIDC jobs download
+the same bytes, verify all file/archive hashes and attest exact source/workflow
+identity. Existing output revisions are preserved. The workflow grants no licence,
+no release is published, and no native package or tenant acceptance is claimed.
+Private configuration, source evidence and active native owners remain separate.

@@ -1,0 +1,186 @@
+name: Development compatibility canary
+on:
+  schedule:
+    - cron: '43 18 * * 2'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/development-canary.yml
+permissions:
+  contents: read
+concurrency:
+  group: development-canary-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tools:
+    name: Preview tools and RIMS compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - id: source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Read qualified shared candidate resolver
+        id: policy
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: edithatogo/careops
+          ref: 2b5eccbb1e41a0becee48a98124f19e07e946f29
+          path: .careops-ci-tools
+          persist-credentials: false
+          submodules: false
+      - id: python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.15.0'
+      - id: bootstrap
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: '0.13.1'
+          enable-cache: false
+      - name: Resolve a separate exact hash-locked CI tool candidate
+        id: resolve
+        run: |
+          mkdir -p .local/tool-canary
+          python .careops-ci-tools/portfolio-scripts/ci_delivery.py lock --root .careops-ci-tools --preview --output .careops-ci-tools/.local/canary/requirements.lock --receipt .local/tool-canary/candidate.json
+          cp .careops-ci-tools/.local/canary/requirements.lock .local/tool-canary/requirements.lock
+          uv venv --python 3.14.8 "$RUNNER_TEMP/rims-tool-canary"
+          uv pip install --python "$RUNNER_TEMP/rims-tool-canary/bin/python" --require-hashes --only-binary=:all: -r .local/tool-canary/requirements.lock
+          "$RUNNER_TEMP/rims-tool-canary/bin/python" -VV > .local/tool-canary/tool-python-version.txt
+          python -VV > .local/tool-canary/python-version.txt
+      - name: Exercise RIMS behaviour and candidate tooling
+        id: qualification
+        run: |
+          python scripts/check_public_source.py
+          python scripts/check_public_docs.py
+          python scripts/run_public_tests.py
+          "$RUNNER_TEMP/rims-tool-canary/bin/ruff" check --select E9,F63,F7,F82 scripts tests
+          "$RUNNER_TEMP/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r .local/tool-canary/requirements.lock
+          "$RUNNER_TEMP/rims-tool-canary/bin/zizmor" --offline --persona pedantic --format plain .github/workflows
+      - name: Record actual tool qualification outcomes
+        if: always()
+        env:
+          SOURCE_OUTCOME: ${{ steps.source.outcome }}
+          POLICY_OUTCOME: ${{ steps.policy.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          BOOTSTRAP_OUTCOME: ${{ steps.bootstrap.outcome }}
+          RESOLVE_OUTCOME: ${{ steps.resolve.outcome }}
+          QUALIFICATION_OUTCOME: ${{ steps.qualification.outcome }}
+        run: |
+          python3 - <<'PYCODE'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path('.local/tool-canary')
+          root.mkdir(parents=True, exist_ok=True)
+          lock = root / 'requirements.lock'
+          digest = hashlib.sha256(lock.read_bytes()).hexdigest() if lock.exists() else None
+          stages = {name: os.environ[name.upper() + '_OUTCOME'] for name in ['source', 'policy', 'python', 'bootstrap', 'resolve', 'qualification']}
+          failed = next((name for name, outcome in stages.items() if outcome == 'failure'), None)
+          if failed in ['source', 'policy', 'python', 'bootstrap']:
+              state = 'setup-blocked'
+          elif failed:
+              state = 'executed-failure'
+          elif 'cancelled' in stages.values():
+              state = 'cancelled'
+          elif all(outcome == 'success' for outcome in stages.values()):
+              state = 'qualified-tool-candidate'
+          else:
+              state = 'not-executed'
+          runtimes = {}
+          try:
+              candidate = json.loads((root / 'candidate.json').read_text()) if (root / 'candidate.json').exists() else {}
+              for name in ['python-version', 'tool-python-version']:
+                  path = root / (name + '.txt')
+                  runtimes[name] = path.read_text().strip() if path.exists() else ''
+              if state == 'qualified-tool-candidate' and (not digest or candidate.get('lockSha256') != digest):
+                  state = 'evidence-mismatch'
+              if state == 'qualified-tool-candidate' and not (runtimes['python-version'].startswith('Python 3.15.0 ') and runtimes['tool-python-version'].startswith('Python 3.14.8 ')):
+                  state = 'runtime-mismatch'
+          except (OSError, ValueError, TypeError):
+              state = 'evidence-invalid'
+          receipt = {'sourceCommit': os.environ['GITHUB_SHA'], 'stages': stages, 'failedStage': failed, 'runtimes': runtimes, 'lockSha256': digest, 'state': state, 'promoted': False, 'nativeWrites': False}
+          (root / 'qualification.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PYCODE
+      - name: Retain candidate versions and lock without promotion
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: rims-tool-candidate
+          path: .local/tool-canary/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+  runtime:
+    name: Python preview discovery and RIMS compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Read qualified shared runtime discovery helper
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: edithatogo/careops
+          ref: 2b5eccbb1e41a0becee48a98124f19e07e946f29
+          path: .careops-ci-tools
+          persist-credentials: false
+          submodules: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.15.0'
+      - name: Verify failed discovery retains a terminal receipt
+        run: |
+          probe_receipt=".local/runtime-contract-probe/discovery.json"
+          python .careops-ci-tools/portfolio-scripts/ci_delivery.py runtime-finalize --receipt "$probe_receipt" --discovery-outcome failure --outcome skipped
+          python - "$probe_receipt" <<'PYTHON'
+          import json
+          import sys
+          from pathlib import Path
+          receipt = json.loads(Path(sys.argv[1]).read_text())
+          assert receipt['state'] == 'discovery-failed'
+          assert receipt['discoveryOutcome'] == 'failure'
+          assert receipt['runtimeTestOutcome'] == 'skipped'
+          assert receipt['runtimeTestsExecuted'] is False
+          assert receipt['promoted'] is False
+          PYTHON
+      - name: Freeze manifest and discover a runnable newer preview
+        id: discover
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .local/runtime-canary
+          runtime_manifest_revision="$(gh api repos/actions/python-versions/commits/main --jq .sha)"
+          [[ "$runtime_manifest_revision" =~ ^[a-f0-9]{40}$ ]]
+          curl --fail --silent --show-error --location "https://raw.githubusercontent.com/actions/python-versions/$runtime_manifest_revision/versions-manifest.json" -o .local/runtime-canary/manifest.json
+          runtime_platform="$(python -c 'import platform; print(platform.freedesktop_os_release()["VERSION_ID"])')"
+          python .careops-ci-tools/portfolio-scripts/ci_delivery.py runtime --platform-version "$runtime_platform" --manifest .local/runtime-canary/manifest.json --manifest-revision "$runtime_manifest_revision" --output .local/runtime-canary/discovery.json --github-output "$GITHUB_OUTPUT"
+      - name: Set up only the exact available preview
+        if: steps.discover.outputs.available == 'true'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ steps.discover.outputs.version }}
+          allow-prereleases: true
+      - name: Exercise RIMS on the resolved Python preview
+        id: runtime_tests
+        if: steps.discover.outputs.available == 'true'
+        run: |
+          python -VV > .local/runtime-canary/python-version.txt
+          python scripts/run_public_tests.py
+          python scripts/rims_operator.py --help
+      - name: Record actual qualification or explicit unavailability
+        if: always()
+        env:
+          DISCOVERY_OUTCOME: ${{ steps.discover.outcome }}
+          RUNTIME_TEST_OUTCOME: ${{ steps.runtime_tests.outcome }}
+        run: python .careops-ci-tools/portfolio-scripts/ci_delivery.py runtime-finalize --receipt .local/runtime-canary/discovery.json --outcome "$RUNTIME_TEST_OUTCOME" --discovery-outcome "$DISCOVERY_OUTCOME"
+      - name: Retain frozen manifest and actual outcome
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: rims-runtime-candidate
+          path: .local/runtime-canary/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
