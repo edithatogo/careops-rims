@@ -1,0 +1,16 @@
+{
+  "id": "E03_open_access_trials",
+  "title": "Open Access Mandate Compliance and Clinical Trial Linkage",
+  "status": "complete",
+  "scope": "data_enrichment",
+  "created_at_utc": "2026-09-20T03:39:20.000000+00:00",
+  "depends_on": [
+    "E01_flow_automation"
+  ],
+  "requires_live_evidence": false,
+  "completion_evidence": [
+    "docs/OPEN_ACCESS_TRIALS_SPEC.md",
+    "scripts/open_access_trials.py",
+    "tests/test_open_access_trials.py"
+  ]
+}

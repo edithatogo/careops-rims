@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "monthly-source",
+  "position": {
+    "x": 1256,
+    "y": 224,
+    "z": 7,
+    "width": 632,
+    "height": 328,
+    "tabOrder": 7
+  },
+  "visual": {
+    "visualType": "donutChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "SourceSet"
+                }
+              },
+              "queryRef": "Publication.SourceSet",
+              "nativeQueryRef": "SourceSet",
+              "displayName": "Source"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "Selected Month Publications"
+                }
+              },
+              "queryRef": "Publication.Selected Month Publications",
+              "nativeQueryRef": "Selected Month Publications",
+              "displayName": "Publications"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Source provenance'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

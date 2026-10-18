@@ -1,0 +1,12 @@
+{
+  "id": "T03_research_report",
+  "title": "Rebuild four report pages",
+  "status": "completed",
+  "created": "2026-09-11",
+  "scope": "local_implementation",
+  "evidence": [
+    "audit/report-build.json",
+    "audit/validation-results.json"
+  ],
+  "reviewed": "2026-09-11"
+}

@@ -1,0 +1,216 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "grant-register",
+  "position": {
+    "x": 32,
+    "y": 328,
+    "z": 9,
+    "width": 1856,
+    "height": 560,
+    "tabOrder": 9
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "Title"
+                }
+              },
+              "queryRef": "GrantsRegistry.Title",
+              "nativeQueryRef": "Title",
+              "displayName": "Opportunity"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "Funder"
+                }
+              },
+              "queryRef": "GrantsRegistry.Funder",
+              "nativeQueryRef": "Funder",
+              "displayName": "Funder"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "Source"
+                }
+              },
+              "queryRef": "GrantsRegistry.Source",
+              "nativeQueryRef": "Source",
+              "displayName": "Source"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "Deadline"
+                }
+              },
+              "queryRef": "GrantsRegistry.Deadline",
+              "nativeQueryRef": "Deadline",
+              "displayName": "Deadline"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "DeadlinePrecision"
+                }
+              },
+              "queryRef": "GrantsRegistry.DeadlinePrecision",
+              "nativeQueryRef": "DeadlinePrecision",
+              "displayName": "Deadline precision"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "Status"
+                }
+              },
+              "queryRef": "GrantsRegistry.Status",
+              "nativeQueryRef": "Status",
+              "displayName": "Status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "CHHHSRelevance"
+                }
+              },
+              "queryRef": "GrantsRegistry.CHHHSRelevance",
+              "nativeQueryRef": "CHHHSRelevance",
+              "displayName": "CHHHS relevance"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "ReviewStatus"
+                }
+              },
+              "queryRef": "GrantsRegistry.ReviewStatus",
+              "nativeQueryRef": "ReviewStatus",
+              "displayName": "Review status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GrantsRegistry"
+                    }
+                  },
+                  "Property": "URL"
+                }
+              },
+              "queryRef": "GrantsRegistry.URL",
+              "nativeQueryRef": "URL",
+              "displayName": "Source link"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Opportunity register'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

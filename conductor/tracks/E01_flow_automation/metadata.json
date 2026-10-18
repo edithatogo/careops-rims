@@ -1,0 +1,20 @@
+{
+  "id": "E01_flow_automation",
+  "title": "Power Automate Ingestion Canonicalization and Recurrence Scheduling",
+  "status": "in_progress",
+  "scope": "cloud_automation",
+  "created_at_utc": "2026-09-20T03:38:00.000000+00:00",
+  "depends_on": [
+    "S01_publication_stabilisation",
+    "T11_sources_and_reconciliation"
+  ],
+  "requires_live_evidence": true,
+  "completion_evidence": [
+    "config/flows/publication-registry-upsert.definition.json",
+    "config/flows/manifest.template.json",
+    "scripts/build_sharepoint_upsert_package.py",
+    "private/ops/flow-packages/sharepoint-upsert.zip"
+  ],
+  "updated_at": "2026-09-21T15:00:00Z",
+  "acceptance_note": "Live 2026-09-21 DEV retest proves the corrected publication rows query, serial loop and SharePoint lookup. Replay/update, duplicate, failed-batch, reconciliation, organisation-wide target and unattended schedule acceptance remain open."
+}

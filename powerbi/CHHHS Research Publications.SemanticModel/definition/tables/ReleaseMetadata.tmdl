@@ -1,0 +1,32 @@
+table ReleaseMetadata
+	description: "One-row source release identity surface. NativeAcceptance remains false until isolated tenant/report readback proves it."
+	lineageTag: 00000000-0000-4000-8000-368a4a352b13
+
+	column SoftwareVersion
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-33a11ad07e78
+		summarizeBy: none
+		sourceColumn: SoftwareVersion
+
+	column SchemaVersion
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-425af9dbc46e
+		summarizeBy: none
+		sourceColumn: SchemaVersion
+
+	column AcceptedBatchID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-50877d0d064e
+		summarizeBy: none
+		sourceColumn: AcceptedBatchID
+
+	column NativeAcceptance
+		dataType: boolean
+		lineageTag: 00000000-0000-4000-8000-a9eadd69b47b
+		summarizeBy: none
+		sourceColumn: NativeAcceptance
+
+	partition ReleaseMetadata = m
+		mode: import
+		source =
+			#table(type table [SoftwareVersion=text, SchemaVersion=text, AcceptedBatchID=text, NativeAcceptance=logical], {{"0.3.0-rc1", "publication-platform-v1", "local-source", false}})

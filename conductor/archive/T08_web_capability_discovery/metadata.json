@@ -1,0 +1,19 @@
+{
+  "id": "T08_web_capability_discovery",
+  "title": "Prove the plugin and web UI capabilities",
+  "status": "complete",
+  "scope": "live_web",
+  "created_at_utc": "2026-09-12T03:38:54.708930+00:00",
+  "depends_on": [],
+  "requires_live_evidence": true,
+  "baseline_commit": "92c1d0e0ddfe5ee3400b054d50ad3abeb11a8665",
+  "completion_evidence": [
+    "private/ops/2026-09-12-discovery.json",
+    "private/ops/capabilities.json",
+    "private/ops/isolated-baseline-observation.json",
+    "private/ops/2026-09-13-native-cloud-repair.json",
+    "private/ops/2026-09-14-native-refresh.json",
+    "private/ops/2026-09-14-powerautomate-query-proof.json"
+  ],
+  "updated_at": "2026-09-14T13:40:00.000000+00:00"
+}

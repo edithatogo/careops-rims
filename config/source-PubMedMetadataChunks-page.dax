@@ -1,0 +1,18 @@
+// Run only against a verified frozen staging refresh. Include nulls in the response.
+// Replace After variables with the last accepted tuple; double quotes in text cursors.
+// Reject all response errors and duplicate tuples; do not advance on partial results.
+EVALUATE
+VAR After0 = ""
+VAR After1 = -1
+VAR PageSize = 100
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(PubMedMetadataChunks, (PubMedMetadataChunks[PMID] > After0) || (PubMedMetadataChunks[PMID] = After0 && PubMedMetadataChunks[ChunkIndex] > After1)), PubMedMetadataChunks[PMID], ASC, PubMedMetadataChunks[ChunkIndex], ASC),
+    "PMID", PubMedMetadataChunks[PMID],
+    "ChunkIndex", PubMedMetadataChunks[ChunkIndex],
+    "ChunkCount", PubMedMetadataChunks[ChunkCount],
+    "MetadataChunk", PubMedMetadataChunks[MetadataChunk],
+    "MetadataCharacters", PubMedMetadataChunks[MetadataCharacters],
+    "Encoding", PubMedMetadataChunks[Encoding]
+)
+ORDER BY [PMID], [ChunkIndex]

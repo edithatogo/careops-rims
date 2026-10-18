@@ -1,0 +1,15 @@
+{
+  "schema_version": "funding-calendar-v1",
+  "list_name": "Funding Calendar",
+  "identity_field": "DeadlineKey",
+  "source_observation_archive": "approved_private_archive",
+  "fields": [
+    {"display_name":"DeadlineKey","type":"text","required":true,"unique":true},
+    {"display_name":"OpportunityKey","type":"text","required":true},
+    {"display_name":"CalculatedDate","type":"datetime"},
+    {"display_name":"SourceURL","type":"url"},
+    {"display_name":"Cancelled","type":"boolean","default":false},
+    {"display_name":"PolicyKey","type":"text"},
+    {"display_name":"ReviewStatus","type":"text","default":"Needs Review"}
+  ]
+}

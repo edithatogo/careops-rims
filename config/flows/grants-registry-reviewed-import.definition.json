@@ -1,0 +1,181 @@
+{
+  "name": "{{FLOW_ID}}",
+  "id": "/providers/Microsoft.Flow/flows/{{FLOW_ID}}",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "CHHHS Research Grants - Reviewed Import Upsert",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {"defaultValue": {}, "type": "SecureObject"},
+        "$connections": {"defaultValue": {}, "type": "Object"}
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "required": ["ReviewedRowsJson"],
+              "properties": {
+                "ReviewedRowsJson": {"type": "string", "description": "JSON array admitted by the local reviewed-import contract."}
+              }
+            }
+          }
+        }
+      },
+      "actions": {
+        "Parse_Reviewed_Rows": {
+          "runAfter": {},
+          "type": "Compose",
+          "inputs": "@json(triggerBody()?['ReviewedRowsJson'])"
+        },
+        "Apply_to_each_Reviewed_Row": {
+          "runAfter": {"Parse_Reviewed_Rows": ["Succeeded"]},
+          "type": "Foreach",
+          "foreach": "@coalesce(outputs('Parse_Reviewed_Rows'), createArray())",
+          "runtimeConfiguration": {"concurrency": {"repetitions": 1}},
+          "actions": {
+            "SharePoint_Get_items": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "GetItems"
+                },
+                "parameters": {
+                  "dataset": "{{SHAREPOINT_SITE_URL}}",
+                  "table": "{{SHAREPOINT_LIST_ID}}",
+                  "$filter": "OpportunityKey eq '@{replace(string(item()?['OpportunityKey']),'''','''''')}'",
+                  "$top": 2
+                },
+                "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+              }
+            },
+            "Condition_Duplicate_OpportunityKey": {
+              "runAfter": {"SharePoint_Get_items": ["Succeeded"]},
+              "type": "If",
+              "expression": {"greater": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+              "actions": {
+                "Compose_Duplicate_OpportunityKey_Failure": {
+                  "type": "Compose",
+                  "inputs": "@concat('DUPLICATE_OPPORTUNITY_KEY: ', string(item()?['OpportunityKey']))"
+                }
+              },
+              "else": {"actions": {}}
+            },
+            "Condition_Is_New_Opportunity": {
+              "runAfter": {"Condition_Duplicate_OpportunityKey": ["Succeeded"]},
+              "type": "If",
+              "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 0]},
+              "actions": {
+                "SharePoint_Create_item": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PostItem"
+                    },
+                    "parameters": {
+                      "dataset": "{{SHAREPOINT_SITE_URL}}",
+                      "table": "{{SHAREPOINT_LIST_ID}}",
+                      "item/Title": "@{item()?['Title']}",
+                      "item/OpportunityKey": "@{item()?['OpportunityKey']}",
+                      "item/Funder": "@{item()?['Funder']}",
+                      "item/Source": "@{item()?['Source']}",
+                      "item/SourceID": "@{item()?['SourceID']}",
+                      "item/RoundID": "@{item()?['RoundID']}",
+                      "item/URL": "@{item()?['URL']}",
+                      "item/SourceRowURL": "@{item()?['SourceRowURL']}",
+                      "item/Description": "@{item()?['Description']}",
+                      "item/Eligibility": "@{item()?['Eligibility']}",
+                      "item/Geography": "@{item()?['Geography']}",
+                      "item/Amount": "@{item()?['Amount']}",
+                      "item/Deadline": "@{item()?['Deadline']}",
+                      "item/DeadlineRaw": "@{item()?['DeadlineRaw']}",
+                      "item/DeadlinePrecision": {"Value": "@{item()?['DeadlinePrecision']}"},
+                      "item/Status": {"Value": "@{item()?['Status']}"},
+                      "item/Contact": "@{item()?['Contact']}",
+                      "item/CHHHSRelevance": {"Value": "@{item()?['CHHHSRelevance']}"},
+                      "item/ReviewStatus": {"Value": "Needs Review"},
+                      "item/ReviewNotes": "",
+                      "item/RetrievedUTC": "@{item()?['RetrievedUTC']}",
+                      "item/RetrievedTimestampStatus": {"Value": "@{item()?['RetrievedTimestampStatus']}"},
+                      "item/EvidenceHash": "@{item()?['EvidenceHash']}"
+                    },
+                    "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Condition_Exactly_One_Opportunity": {
+                    "type": "If",
+                    "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+                    "actions": {
+                      "SharePoint_Update_item": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PatchItem"
+                          },
+                          "parameters": {
+                            "dataset": "{{SHAREPOINT_SITE_URL}}",
+                            "table": "{{SHAREPOINT_LIST_ID}}",
+                            "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']",
+                            "item/Title": "@{item()?['Title']}",
+                            "item/OpportunityKey": "@{item()?['OpportunityKey']}",
+                            "item/Funder": "@{item()?['Funder']}",
+                            "item/Source": "@{item()?['Source']}",
+                            "item/SourceID": "@{item()?['SourceID']}",
+                            "item/RoundID": "@{item()?['RoundID']}",
+                            "item/URL": "@{item()?['URL']}",
+                            "item/SourceRowURL": "@{item()?['SourceRowURL']}",
+                            "item/Description": "@{item()?['Description']}",
+                            "item/Eligibility": "@{item()?['Eligibility']}",
+                            "item/Geography": "@{item()?['Geography']}",
+                            "item/Amount": "@{item()?['Amount']}",
+                            "item/Deadline": "@{item()?['Deadline']}",
+                            "item/DeadlineRaw": "@{item()?['DeadlineRaw']}",
+                            "item/DeadlinePrecision": {"Value": "@{item()?['DeadlinePrecision']}"},
+                            "item/Status": {"Value": "@{item()?['Status']}"},
+                            "item/Contact": "@{item()?['Contact']}",
+                            "item/CHHHSRelevance": {"Value": "@{item()?['CHHHSRelevance']}"},
+                            "item/RetrievedUTC": "@{item()?['RetrievedUTC']}",
+                            "item/RetrievedTimestampStatus": {"Value": "@{item()?['RetrievedTimestampStatus']}"},
+                            "item/EvidenceHash": "@{item()?['EvidenceHash']}"
+                          },
+                          "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+                        }
+                      }
+                    },
+                    "else": {"actions": {}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "connectionName": "shared-sharepointonline",
+        "source": "Invoker",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+        "tier": "NotSpecified",
+        "apiName": "sharepointonline"
+      }
+    },
+    "flowFailureAlertSubscribed": false,
+    "isManaged": false
+  }
+}

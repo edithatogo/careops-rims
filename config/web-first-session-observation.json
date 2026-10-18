@@ -1,0 +1,15 @@
+{
+  "observed_at_utc": "2026-09-12T03:38:54.708930+00:00",
+  "powerbi_editor_exposed_here": false,
+  "plugin_directory_searches": [
+    "Power BI",
+    "PowerBI"
+  ],
+  "exact_user_plugin_name": null,
+  "exact_target_ids": null,
+  "remote_desktop_connected_devices": 0,
+  "interpretation": "Connection/capability unresolved in this chat, not a demonstrated web-product failure.",
+  "live_writes_performed": 0,
+  "vm_changes_performed": 0,
+  "fallback_activated": false
+}

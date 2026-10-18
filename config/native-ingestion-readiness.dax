@@ -1,0 +1,20 @@
+// Fail-closed source readiness gate. Does not replace metadata storage/key checks,
+// refresh correlation, attribution review or full export acceptance.
+EVALUATE
+VAR PubMedRows = COALESCE ( COUNTROWS ( PubMedPublications ), 0 )
+VAR DoraRows = COALESCE ( COUNTROWS ( DoraPublications ), 0 )
+VAR PubMedAudits = COALESCE ( COUNTROWS ( PubMedIngestionAudit ), 0 )
+VAR DoraAudits = COALESCE ( COUNTROWS ( DoraIngestionAudit ), 0 )
+VAR FailedAudits =
+    COALESCE ( COUNTROWS ( FILTER ( PubMedIngestionAudit, NOT ( PubMedIngestionAudit[Passed] == TRUE () ) ) ), 0 )
+    + COALESCE ( COUNTROWS ( FILTER ( DoraIngestionAudit, NOT ( DoraIngestionAudit[Passed] == TRUE () ) ) ), 0 )
+VAR Ready = PubMedRows > 0 && DoraRows > 0 && PubMedAudits = 9 && DoraAudits = 5 && FailedAudits = 0
+RETURN
+    ROW (
+        "SourceReadiness", IF ( Ready, "READY_FOR_STORAGE_VALIDATION", ERROR ( "INGESTION_NOT_READY: publication tables are empty or required source audits are absent/failing." ) ),
+        "PubMedPublications", PubMedRows,
+        "DoraPublications", DoraRows,
+        "PubMedAuditRows", PubMedAudits,
+        "DoraAuditRows", DoraAudits,
+        "FailedAudits", FailedAudits
+    )

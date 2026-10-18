@@ -1,0 +1,114 @@
+table FundingCalendarChanges
+	description: "Current-user source-preserving calendar revision ledger. It records explicit date/cancellation changes; persistence does not prove reminder or calendar delivery."
+	lineageTag: 00000000-0000-4000-8000-591f29dcd459
+
+	column ChangeKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-af5a3b402f52
+		summarizeBy: none
+		sourceColumn: ChangeKey
+
+	column DeadlineKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-1e1f48cc9668
+		summarizeBy: none
+		sourceColumn: DeadlineKey
+
+	column OpportunityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-a195a4d9499d
+		summarizeBy: none
+		sourceColumn: OpportunityKey
+
+	column ChangeType
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-6126c7fe0a7c
+		summarizeBy: none
+		sourceColumn: ChangeType
+
+	column PreviousRevision
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-6e871d9906b4
+		summarizeBy: none
+		sourceColumn: PreviousRevision
+
+	column Revision
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-0a59e9df7b91
+		summarizeBy: none
+		sourceColumn: Revision
+
+	column PreviousDate
+		dataType: date
+		lineageTag: 00000000-0000-4000-8000-bfe971f1897e
+		summarizeBy: none
+		sourceColumn: PreviousDate
+
+	column CalculatedDate
+		dataType: date
+		lineageTag: 00000000-0000-4000-8000-05d69f8033c2
+		summarizeBy: none
+		sourceColumn: CalculatedDate
+
+	column PreviousCancelled
+		dataType: boolean
+		lineageTag: 00000000-0000-4000-8000-1cc98e5b7046
+		summarizeBy: none
+		sourceColumn: PreviousCancelled
+
+	column Cancelled
+		dataType: boolean
+		lineageTag: 00000000-0000-4000-8000-9ae5df077551
+		summarizeBy: none
+		sourceColumn: Cancelled
+
+	column SourceURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-bb6346a4b94b
+		summarizeBy: none
+		sourceColumn: SourceURL
+
+	column ObservedUTC
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-6fcb6aafffe4
+		summarizeBy: none
+		sourceColumn: ObservedUTC
+
+	column ReviewStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-77c5aaf2d79f
+		summarizeBy: none
+		sourceColumn: ReviewStatus
+
+	partition FundingCalendarChanges = m
+		mode: import
+		source =
+			// Power Query M: read source-preserving current-user calendar changes.
+			let
+			    SiteUrl = try pSharePointSiteUrl otherwise error "pSharePointSiteUrl is required; no tenant default is embedded.",
+			    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ApiVersion = 15]),
+			    Changes = Source{[Title = "Funding Calendar Changes"]}[Items],
+			    Selected = Table.SelectColumns(Changes, {
+			        "ChangeKey", "DeadlineKey", "OpportunityKey", "ChangeType", "PreviousRevision",
+			        "Revision", "PreviousDate", "CalculatedDate", "PreviousCancelled", "Cancelled",
+			        "SourceURL", "ObservedUTC", "ReviewStatus"
+			    }, MissingField.UseNull),
+			    Typed = Table.TransformColumnTypes(Selected, {
+			        {"ChangeKey", type text}, {"DeadlineKey", type text}, {"OpportunityKey", type text},
+			        {"ChangeType", type text}, {"PreviousRevision", type text}, {"Revision", type text},
+			        {"PreviousDate", type date}, {"CalculatedDate", type date},
+			        {"PreviousCancelled", type logical}, {"Cancelled", type logical},
+			        {"SourceURL", type text}, {"ObservedUTC", type datetimezone}, {"ReviewStatus", type text}
+			    }),
+			    ValidRows = Table.SelectRows(Typed, each
+			        [ChangeKey] <> null and [ChangeKey] <> "" and
+			        [DeadlineKey] <> null and [DeadlineKey] <> "" and
+			        [OpportunityKey] <> null and [OpportunityKey] <> "" and
+			        [ChangeType] <> null and [ChangeType] <> "" and
+			        [Revision] <> null and [Revision] <> "" and
+			        [ObservedUTC] <> null and [ReviewStatus] <> null and [ReviewStatus] <> ""
+			    )
+			in
+			    ValidRows

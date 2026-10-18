@@ -1,0 +1,49 @@
+EVALUATE
+VAR PubMedSummary =
+    ADDCOLUMNS(VALUES(PubMedMetadataChunks[PMID]),
+      "ActualCharacters", CALCULATE(SUMX(PubMedMetadataChunks, LEN(PubMedMetadataChunks[MetadataChunk]))),
+      "ExpectedCharacters", CALCULATE(MAX(PubMedMetadataChunks[MetadataCharacters])),
+      "CharacterDeclarations", CALCULATE(DISTINCTCOUNT(PubMedMetadataChunks[MetadataCharacters])),
+      "ActualChunks", CALCULATE(COUNTROWS(PubMedMetadataChunks)),
+      "ExpectedChunks", CALCULATE(MAX(PubMedMetadataChunks[ChunkCount])),
+      "CountDeclarations", CALCULATE(DISTINCTCOUNT(PubMedMetadataChunks[ChunkCount])),
+      "DistinctIndices", CALCULATE(DISTINCTCOUNT(PubMedMetadataChunks[ChunkIndex])),
+      "FirstIndex", CALCULATE(MIN(PubMedMetadataChunks[ChunkIndex])),
+      "LastIndex", CALCULATE(MAX(PubMedMetadataChunks[ChunkIndex])))
+VAR PubMedChunkFailures = COALESCE(COUNTROWS(FILTER(PubMedSummary,
+    [ActualCharacters] <> [ExpectedCharacters] || [CharacterDeclarations] <> 1 ||
+    [ActualChunks] <> [ExpectedChunks] || [CountDeclarations] <> 1 ||
+    [DistinctIndices] <> [ActualChunks] || [FirstIndex] <> 0 || [LastIndex] <> [ActualChunks]-1)),0)
+VAR PubMedKeyFailures =
+    COALESCE(COUNTROWS(EXCEPT(VALUES(PubMedPublications[PMID]), VALUES(PubMedMetadataChunks[PMID]))),0) +
+    COALESCE(COUNTROWS(EXCEPT(VALUES(PubMedMetadataChunks[PMID]), VALUES(PubMedPublications[PMID]))),0)
+VAR PubMedEncodingFailures = COALESCE(COUNTROWS(FILTER(PubMedMetadataChunks,PubMedMetadataChunks[Encoding] <> "UTF8-HEX")),0)
+VAR DoraSummary =
+    ADDCOLUMNS(VALUES(DoraMetadataChunks[DORAKey]),
+      "ActualCharacters", CALCULATE(SUMX(DoraMetadataChunks, LEN(DoraMetadataChunks[MetadataChunk]))),
+      "ExpectedCharacters", CALCULATE(MAX(DoraMetadataChunks[MetadataCharacters])),
+      "CharacterDeclarations", CALCULATE(DISTINCTCOUNT(DoraMetadataChunks[MetadataCharacters])),
+      "ActualChunks", CALCULATE(COUNTROWS(DoraMetadataChunks)),
+      "ExpectedChunks", CALCULATE(MAX(DoraMetadataChunks[ChunkCount])),
+      "CountDeclarations", CALCULATE(DISTINCTCOUNT(DoraMetadataChunks[ChunkCount])),
+      "DistinctIndices", CALCULATE(DISTINCTCOUNT(DoraMetadataChunks[ChunkIndex])),
+      "FirstIndex", CALCULATE(MIN(DoraMetadataChunks[ChunkIndex])),
+      "LastIndex", CALCULATE(MAX(DoraMetadataChunks[ChunkIndex])))
+VAR DoraChunkFailures = COALESCE(COUNTROWS(FILTER(DoraSummary,
+    [ActualCharacters] <> [ExpectedCharacters] || [CharacterDeclarations] <> 1 ||
+    [ActualChunks] <> [ExpectedChunks] || [CountDeclarations] <> 1 ||
+    [DistinctIndices] <> [ActualChunks] || [FirstIndex] <> 0 || [LastIndex] <> [ActualChunks]-1)),0)
+VAR DoraKeyFailures =
+    COALESCE(COUNTROWS(EXCEPT(VALUES(DoraPublications[DORAKey]), VALUES(DoraMetadataChunks[DORAKey]))),0) +
+    COALESCE(COUNTROWS(EXCEPT(VALUES(DoraMetadataChunks[DORAKey]), VALUES(DoraPublications[DORAKey]))),0)
+VAR DoraEncodingFailures = COALESCE(COUNTROWS(FILTER(DoraMetadataChunks,DoraMetadataChunks[Encoding] <> "UTF8-HEX")),0)
+VAR Failures = PubMedChunkFailures + DoraChunkFailures + PubMedKeyFailures + DoraKeyFailures + PubMedEncodingFailures + DoraEncodingFailures
+RETURN ROW(
+    "MetadataReadiness", IF(Failures=0 && COUNTROWS(PubMedSummary)>0 && COUNTROWS(DoraSummary)>0,
+        "METADATA_STRUCTURE_VERIFIED", ERROR("METADATA_STRUCTURE_INVALID")),
+    "PubMedChunkFailures", PubMedChunkFailures,
+    "DoraChunkFailures", DoraChunkFailures,
+    "PubMedKeyFailures", PubMedKeyFailures,
+    "DoraKeyFailures", DoraKeyFailures,
+    "PubMedEncodingFailures", PubMedEncodingFailures,
+    "DoraEncodingFailures", DoraEncodingFailures)

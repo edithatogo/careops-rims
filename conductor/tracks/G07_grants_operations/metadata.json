@@ -1,0 +1,13 @@
+{
+  "id": "G07_grants_operations",
+  "title": "grants operations",
+  "status": "in_progress",
+  "scope": "rims_extension",
+  "depends_on": [
+    "G04_grants_ingestion",
+    "G08_rims_grants_experience"
+  ],
+  "requires_live_evidence": true,
+  "created_at": "2026-09-20T00:00:00Z",
+  "updated_at": "2026-09-20T13:00:00Z"
+}

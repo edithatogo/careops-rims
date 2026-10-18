@@ -1,0 +1,13 @@
+{
+  "id": "G04_grants_ingestion",
+  "title": "grants ingestion",
+  "status": "in_progress",
+  "scope": "rims_extension",
+  "depends_on": [
+    "G02_grants_sources",
+    "G03_grants_sharepoint"
+  ],
+  "requires_live_evidence": true,
+  "created_at": "2026-09-20T00:00:00Z",
+  "updated_at": "2026-09-20T12:30:00Z"
+}

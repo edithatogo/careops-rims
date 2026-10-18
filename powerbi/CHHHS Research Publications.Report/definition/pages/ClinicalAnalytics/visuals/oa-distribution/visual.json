@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "oa-distribution",
+  "position": {
+    "x": 32,
+    "y": 640,
+    "z": 12,
+    "width": 912,
+    "height": 304,
+    "tabOrder": 12
+  },
+  "visual": {
+    "visualType": "donutChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "OpenAccessStatus"
+                }
+              },
+              "queryRef": "Publication.OpenAccessStatus",
+              "nativeQueryRef": "OpenAccessStatus",
+              "displayName": "Open Access"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "Publications"
+                }
+              },
+              "queryRef": "Publication.Publications",
+              "nativeQueryRef": "Publications",
+              "displayName": "Publications"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Open access distribution (Gold / Green / Hybrid / Closed)'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

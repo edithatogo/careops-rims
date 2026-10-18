@@ -1,0 +1,14 @@
+{
+  "id": "E02_clinical_analytics",
+  "title": "Clinical Directorate Attribution and ANZSRC FoR Classification",
+  "status": "complete",
+  "scope": "semantic_analytics",
+  "created_at_utc": "2026-09-20T03:38:35.000000+00:00",
+  "depends_on": [
+    "E01_flow_automation"
+  ],
+  "requires_live_evidence": false,
+  "completion_evidence": [
+    "docs/ANALYTICS_ENRICHMENT_SPEC.md"
+  ]
+}

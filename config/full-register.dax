@@ -1,0 +1,24 @@
+// Full scope. Check API limits and reconcile independent keys before accepting any export.
+EVALUATE
+SELECTCOLUMNS(
+    Publication,
+        "CanonicalKey", Publication[CanonicalKey],
+        "Title", Publication[Title],
+        "Authors", Publication[Authors],
+        "Journal", Publication[Journal],
+        "PublicationDateRaw", Publication[PublicationDateRaw],
+        "PublicationDatePrecision", Publication[PublicationDatePrecision],
+        "PublicationYear", Publication[PublicationYear],
+        "PublicationMonth", Publication[PublicationMonth],
+        "CHHHSAffiliatedAuthors", Publication[CHHHSAffiliatedAuthors],
+        "AttributionStatus", Publication[AttributionStatus],
+        "AttributionEvidence", Publication[AttributionEvidence],
+        "DedupMethod", Publication[DedupMethod],
+        "SourceSet", Publication[SourceSet],
+        "PMID", Publication[PMID],
+        "DOI", Publication[DOI],
+        "PubMedURL", Publication[PubMedURL],
+        "DORAURL", Publication[DORAURL],
+        "MatchedFacilities", Publication[MatchedFacilities]
+)
+ORDER BY [CanonicalKey]

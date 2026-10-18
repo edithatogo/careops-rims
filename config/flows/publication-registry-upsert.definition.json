@@ -1,0 +1,276 @@
+{
+  "name": "{{FLOW_ID}}",
+  "id": "/providers/Microsoft.Flow/flows/{{FLOW_ID}}",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "CHHHS Research Publications - Daily Ingestion & Enrichment",
+    "definition": {
+      "metadata": {
+        "workflowEntityId": null,
+        "processAdvisorMetadata": null,
+        "flowChargedByPaygo": null,
+        "flowclientsuspensionreason": "None",
+        "flowclientsuspensiontime": null,
+        "flowclientsuspensionreasondetails": null,
+        "creator": {
+          "id": "{{CREATOR_ID}}",
+          "type": "User",
+          "tenantId": "{{TENANT_ID}}"
+        },
+        "provisioningMethod": "FromDefinition",
+        "failureAlertSubscription": true,
+        "clientLastModifiedTime": "2026-09-14T05:46:05.8685107Z",
+        "lastModifiedBy": "{{CREATOR_ID}}",
+        "connectionKeySavedTimeKey": "2026-09-14T05:46:05.8685107Z",
+        "creationSource": "Portal",
+        "modifiedSources": "Portal"
+      },
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "undefined",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "schedule": {
+              "hours": [
+                "20"
+              ],
+              "minutes": [
+                0
+              ]
+            },
+            "timeZone": "UTC"
+          }
+        }
+      },
+      "actions": {
+        "Run_a_query_against_a_dataset": {
+          "runAfter": {},
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "myworkspace",
+              "datasetid": "{{ISOLATED_MODEL_ID}}",
+              "specification/query": "EVALUATE\nVAR PubMedRows = COALESCE(COUNTROWS(PubMedPublications),0)\nVAR DoraRows = COALESCE(COUNTROWS(DoraPublications),0)\nVAR PubMedAudits = COALESCE(COUNTROWS(PubMedIngestionAudit),0)\nVAR DoraAudits = COALESCE(COUNTROWS(DoraIngestionAudit),0)\nVAR FailedAudits = COALESCE(COUNTROWS(FILTER(PubMedIngestionAudit,NOT(PubMedIngestionAudit[Passed] == TRUE()))),0) + COALESCE(COUNTROWS(FILTER(DoraIngestionAudit,NOT(DoraIngestionAudit[Passed] == TRUE()))),0)\nVAR Ready = PubMedRows > 0 && DoraRows > 0 && PubMedAudits = 9 && DoraAudits = 5 && FailedAudits = 0\nRETURN ROW(\"SourceReadiness\",IF(Ready,\"READY_FOR_STORAGE_VALIDATION\",ERROR(\"INGESTION_NOT_READY: publication tables are empty or required source audits are absent/failing.\")),\"PubMedPublications\",PubMedRows,\"DoraPublications\",DoraRows,\"PubMedAuditRows\",PubMedAudits,\"DoraAuditRows\",DoraAudits,\"FailedAudits\",FailedAudits)",
+              "specification/serializerSettings/includeNulls": true
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "connectionName": "shared_powerbi",
+              "operationId": "ExecuteDatasetQuery"
+            },
+            "authentication": {
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+              "type": "Raw"
+            }
+          }
+        },
+        "Run_publication_rows_query": {
+          "runAfter": {
+            "Run_a_query_against_a_dataset": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "myworkspace",
+              "datasetid": "{{ISOLATED_MODEL_ID}}",
+              "specification/query": "EVALUATE\nSELECTCOLUMNS(\n    TOPN(100, FILTER(Publication, NOT ISBLANK(Publication[CanonicalKey])), Publication[CanonicalKey], ASC),\n    \"SourceKey\", IF(NOT ISBLANK(Publication[PMID]), \"pubmed:\" & Publication[PMID], \"dora:\" & Publication[CanonicalKey]),\n    \"CanonicalKey\", Publication[CanonicalKey],\n    \"Title\", Publication[Title],\n    \"Authors\", Publication[Authors],\n    \"Journal\", Publication[Journal],\n    \"PublicationYear\", Publication[PublicationYear],\n    \"PublicationMonth\", Publication[PublicationMonth],\n    \"PublicationDateRaw\", Publication[PublicationDateRaw],\n    \"PublicationDatePrecision\", Publication[PublicationDatePrecision],\n    \"SourceSet\", Publication[SourceSet],\n    \"PMID\", Publication[PMID],\n    \"DOI\", Publication[DOI],\n    \"MatchedFacilities\", Publication[MatchedFacilities],\n    \"AttributionEvidence\", Publication[AttributionEvidence]\n)\n",
+              "specification/serializerSettings/includeNulls": true
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerBI/apis/shared_powerbi",
+              "connectionName": "shared_powerbi",
+              "operationId": "ExecuteDatasetQuery"
+            },
+            "authentication": {
+              "type": "Raw",
+              "value": "@parameters('$authentication')"
+            }
+          }
+        },
+        "Apply_to_each_Publication": {
+          "runAfter": {
+            "Run_publication_rows_query": [
+              "Succeeded"
+            ]
+          },
+          "type": "Foreach",
+          "foreach": "@coalesce(body('Run_publication_rows_query')?['results'][0]?['tables'][0]?['rows'], createArray())",
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "actions": {
+            "SharePoint_Get_items": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "GetItems"
+                },
+                "parameters": {
+                  "dataset": "{{SHAREPOINT_SITE_URL}}",
+                  "table": "{{SHAREPOINT_LIST_ID}}",
+                  "$filter": "field_1 eq '@{replace(string(item()?['SourceKey']),'''','''''')}'",
+                  "$top": 2
+                },
+                "authentication": {
+                  "type": "Raw",
+                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                }
+              }
+            },
+            "Condition_Duplicate_SourceKey": {
+              "runAfter": {
+                "SharePoint_Get_items": [
+                  "Succeeded"
+                ]
+              },
+              "type": "If",
+              "expression": {
+                "greater": [
+                  "@length(body('SharePoint_Get_items')?['value'])",
+                  1
+                ]
+              },
+              "actions": {
+                "Compose_Duplicate_SourceKey_Failure": {
+                  "type": "Compose",
+                  "inputs": "@int('DUPLICATE_SOURCE_KEY')"
+                }
+              },
+              "else": {
+                "actions": {}
+              }
+            },
+            "Condition_Is_New_Publication": {
+              "runAfter": {
+                "Condition_Duplicate_SourceKey": [
+                  "Succeeded"
+                ]
+              },
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('SharePoint_Get_items')?['value'])",
+                  0
+                ]
+              },
+              "actions": {
+                "SharePoint_Create_item": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PostItem"
+                    },
+                    "parameters": {
+                      "dataset": "{{SHAREPOINT_SITE_URL}}",
+                      "table": "{{SHAREPOINT_LIST_ID}}",
+                      "item/Title": "@{item()?['Title']}",
+                      "item/field_1": "@{item()?['SourceKey']}",
+                      "item/field_2": "@{item()?['CanonicalKey']}",
+                      "item/field_3": "@{item()?['Authors']}",
+                      "item/field_4": "@{item()?['Journal']}",
+                      "item/field_5": "@item()?['PublicationYear']",
+                      "item/field_6": "@{item()?['PublicationMonth']}",
+                      "item/field_7": "@{item()?['PublicationDateRaw']}",
+                      "item/field_8": "@{item()?['PublicationDatePrecision']}",
+                      "item/field_9": "@{item()?['SourceSet']}",
+                      "item/field_10": "@item()?['PMID']",
+                      "item/field_11": "@{item()?['DOI']}",
+                      "item/field_14": "@{item()?['MatchedFacilities']}",
+                      "item/field_16": "@{item()?['AttributionEvidence']}",
+                      "item/field_17": "Needs Review",
+                      "item/field_19": "@{utcNow()}",
+                      "item/field_20": "@{utcNow()}"
+                    },
+                    "authentication": {
+                      "type": "Raw",
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                    }
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Condition_Exactly_One_Publication": {
+                    "type": "If",
+                    "expression": {
+                      "equals": [
+                        "@length(body('SharePoint_Get_items')?['value'])",
+                        1
+                      ]
+                    },
+                    "actions": {
+                      "SharePoint_Update_item": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PatchItem"
+                          },
+                          "parameters": {
+                            "dataset": "{{SHAREPOINT_SITE_URL}}",
+                            "table": "{{SHAREPOINT_LIST_ID}}",
+                            "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']",
+                            "item/field_20": "@{utcNow()}"
+                          },
+                          "authentication": {
+                            "type": "Raw",
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                          }
+                        }
+                      }
+                    },
+                    "else": {"actions": {}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {
+      "shared_powerbi": {
+        "connectionName": "{{POWERBI_CONNECTION_NAME}}",
+        "source": "Invoker",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+        "tier": "NotSpecified",
+        "apiName": "powerbi",
+        "isProcessSimpleApiReferenceConversionAlreadyDone": false
+      },
+      "shared_sharepointonline": {
+        "connectionName": "shared-sharepointonline",
+        "source": "Invoker",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+        "tier": "NotSpecified",
+        "apiName": "sharepointonline",
+        "isProcessSimpleApiReferenceConversionAlreadyDone": false
+      }
+    },
+    "flowFailureAlertSubscribed": false,
+    "isManaged": false
+  }
+}

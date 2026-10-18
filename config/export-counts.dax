@@ -1,0 +1,16 @@
+// Capture before and after paginated extraction. Timestamp alone is not refresh correlation.
+EVALUATE
+VAR MonthStart = MAX(ReportingWindow[ReportMonthStart])
+VAR MonthEnd = MAX(ReportingWindow[ReportMonthEndExclusive])
+VAR Monthly = FILTER(Publication,
+    Publication[PublicationDatePrecision] IN {"day", "month"}
+    && NOT ISBLANK(Publication[PublicationDate])
+    && Publication[PublicationDate] >= MonthStart && Publication[PublicationDate] < MonthEnd)
+RETURN ROW(
+    "ModelTimestampUTC", MAX(ReportingWindow[RefreshedAtUTC]),
+    "MonthStart", MonthStart, "MonthEndExclusive", MonthEnd,
+    "FullRows", COUNTROWS(Publication),
+    "FullDistinctKeys", DISTINCTCOUNT(Publication[CanonicalKey]),
+    "MonthlyRows", COALESCE(COUNTROWS(Monthly), 0),
+    "MonthlyDistinctKeys", COALESCE(COUNTROWS(DISTINCT(SELECTCOLUMNS(Monthly,"Key",Publication[CanonicalKey]))), 0)
+)

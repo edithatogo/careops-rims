@@ -1,0 +1,8 @@
+// Define the retained-history connection parameters in the isolated model.
+// Values are intentionally empty here: tenant-specific SharePoint URLs belong
+// in the private model/connection configuration and must not be committed.
+createOrReplace
+
+  expression pRetainedSiteUrl = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+  expression pRetainedArchiveFolderUrl = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]

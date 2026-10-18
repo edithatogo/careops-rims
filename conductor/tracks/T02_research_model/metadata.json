@@ -1,0 +1,13 @@
+{
+  "id": "T02_research_model",
+  "title": "Replace semantic model and PubMed queries",
+  "status": "completed",
+  "created": "2026-09-11",
+  "scope": "local_implementation",
+  "evidence": [
+    "audit/model-build.json",
+    "audit/validation-results.json",
+    "audit/unittest-output.txt"
+  ],
+  "reviewed": "2026-09-11"
+}

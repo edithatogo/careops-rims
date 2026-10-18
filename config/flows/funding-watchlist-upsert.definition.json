@@ -1,0 +1,120 @@
+{
+  "name": "{{FLOW_ID}}",
+  "id": "/providers/Microsoft.Flow/flows/{{FLOW_ID}}",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "CHHHS RIMS - Funding Watchlist - Reviewed Upsert",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {"defaultValue": {}, "type": "SecureObject"},
+        "$connections": {"defaultValue": {}, "type": "Object"}
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "required": ["WatchlistRowsJson"],
+              "properties": {
+                "WatchlistRowsJson": {"type": "string", "description": "JSON array validated against funding-watchlist-v1."}
+              }
+            }
+          }
+        }
+      },
+      "actions": {
+        "Parse_Watchlist_Rows": {
+          "runAfter": {},
+          "type": "Compose",
+          "inputs": "@json(triggerBody()?['WatchlistRowsJson'])"
+        },
+        "Apply_to_each_Watchlist_Row": {
+          "runAfter": {"Parse_Watchlist_Rows": ["Succeeded"]},
+          "type": "Foreach",
+          "foreach": "@coalesce(outputs('Parse_Watchlist_Rows'), createArray())",
+          "runtimeConfiguration": {"concurrency": {"repetitions": 1}},
+          "actions": {
+            "SharePoint_Get_items": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "GetItems"},
+                "parameters": {
+                  "dataset": "{{SHAREPOINT_SITE_URL}}",
+                  "table": "{{SHAREPOINT_LIST_ID}}",
+                  "$filter": "OpportunityKey eq '@{replace(string(item()?['OpportunityKey']),'''','''''')}'",
+                  "$top": 2
+                },
+                "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+              }
+            },
+            "Condition_Duplicate_OpportunityKey": {
+              "runAfter": {"SharePoint_Get_items": ["Succeeded"]},
+              "type": "If",
+              "expression": {"greater": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+              "actions": {"Compose_Duplicate_OpportunityKey_Failure": {"type": "Compose", "inputs": "@concat('DUPLICATE_WATCHLIST_KEY: ', string(item()?['OpportunityKey']))"}},
+              "else": {"actions": {}}
+            },
+            "Condition_Is_New_Watchlist_Row": {
+              "runAfter": {"Condition_Duplicate_OpportunityKey": ["Succeeded"]},
+              "type": "If",
+              "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 0]},
+              "actions": {
+                "SharePoint_Create_item": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PostItem"},
+                    "parameters": {
+                      "dataset": "{{SHAREPOINT_SITE_URL}}",
+                      "table": "{{SHAREPOINT_LIST_ID}}",
+                      "item/OpportunityKey": "@{item()?['OpportunityKey']}",
+                      "item/Scope": {"Value": "@{item()?['Scope']}"},
+                      "item/TargetKey": "@{item()?['TargetKey']}",
+                      "item/Active": "@{item()?['Active']}"
+                    },
+                    "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Condition_Exactly_One_Watchlist_Row": {
+                    "type": "If",
+                    "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+                    "actions": {
+                      "SharePoint_Update_item": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PatchItem"},
+                          "parameters": {
+                            "dataset": "{{SHAREPOINT_SITE_URL}}",
+                            "table": "{{SHAREPOINT_LIST_ID}}",
+                            "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']",
+                            "item/OpportunityKey": "@{item()?['OpportunityKey']}",
+                            "item/Scope": {"Value": "@{item()?['Scope']}"},
+                            "item/TargetKey": "@{item()?['TargetKey']}",
+                            "item/Active": "@{item()?['Active']}"
+                          },
+                          "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+                        }
+                      }
+                    },
+                    "else": {"actions": {}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {"shared_sharepointonline": {"connectionName": "shared-sharepointonline", "source": "Invoker", "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "tier": "NotSpecified", "apiName": "sharepointonline"}},
+    "flowFailureAlertSubscribed": false,
+    "isManaged": false
+  }
+}

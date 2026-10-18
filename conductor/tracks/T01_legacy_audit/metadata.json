@@ -1,0 +1,11 @@
+{
+  "id": "T01_legacy_audit",
+  "title": "Audit original and adapted PBIX",
+  "status": "completed",
+  "created": "2026-09-11",
+  "scope": "local_implementation",
+  "evidence": [
+    "audit/source-audit.json",
+    "audit/AUDIT_REPORT.md"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "T04_regression_handover",
+  "title": "Regression tests and monthly handover",
+  "status": "completed",
+  "created": "2026-09-11",
+  "scope": "local_implementation",
+  "evidence": [
+    "audit/unittest-output.txt",
+    "audit/validation-results.json",
+    "audit/VALIDATION_REPORT.md",
+    "scripts/package_release.py",
+    "../CHHHS-Research-Publications-release-receipt.json"
+  ],
+  "reviewed": "2026-09-11"
+}

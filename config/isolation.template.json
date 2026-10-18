@@ -1,0 +1,13 @@
+{
+  "tenant_id": null,
+  "workspace_id": null,
+  "original_report_id": null,
+  "original_model_id": null,
+  "development_report_id": null,
+  "development_model_id": null,
+  "dependency_inventory_complete": false,
+  "recovery_verified": false,
+  "baseline_unchanged": false,
+  "canary_roundtrip_verified": false,
+  "note": "Template deliberately fails. Report copying alone is not model isolation. Canary occurs only on a verified distinct development model after recovery is established."
+}

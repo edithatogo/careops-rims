@@ -1,0 +1,18 @@
+{
+  "id": "E04_fluent_visual_polish",
+  "title": "Microsoft Fluent 2 Visual Polishing and IBCS Standards Alignment",
+  "status": "in_progress",
+  "scope": "visual_design",
+  "created_at_utc": "2026-09-20T03:40:00.000000+00:00",
+  "depends_on": [
+    "E01_flow_automation",
+    "E02_clinical_analytics",
+    "E03_open_access_trials"
+  ],
+  "requires_live_evidence": false,
+  "completion_evidence": [
+    "docs/VISUAL_STANDARDS_SPEC.md",
+    "scripts/validate_visual_standards.py",
+    "tests/test_visual_standards.py"
+  ]
+}

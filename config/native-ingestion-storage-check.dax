@@ -1,0 +1,47 @@
+EVALUATE
+VAR Stored =
+    ADDCOLUMNS (
+        VALUES ( PubMedMetadataChunks[PMID] ),
+        "ActualCharacters", CALCULATE ( SUMX ( PubMedMetadataChunks, LEN ( PubMedMetadataChunks[MetadataChunk] ) ) ),
+        "ExpectedCharacters", CALCULATE ( MAX ( PubMedMetadataChunks[MetadataCharacters] ) ),
+        "ActualChunks", CALCULATE ( COUNTROWS ( PubMedMetadataChunks ) ),
+        "DistinctIndices", CALCULATE ( DISTINCTCOUNT ( PubMedMetadataChunks[ChunkIndex] ) ),
+        "ExpectedChunks", CALCULATE ( MAX ( PubMedMetadataChunks[ChunkCount] ) )
+    )
+RETURN
+    ROW (
+        "PubMedPMIDs", COUNTROWS ( Stored ),
+        "MetadataChunks", COUNTROWS ( PubMedMetadataChunks ),
+        "StoredLengthOrIndexFailures", COUNTROWS ( FILTER ( Stored, [ActualCharacters] <> [ExpectedCharacters] || [ActualChunks] <> [ExpectedChunks] || [DistinctIndices] <> [ActualChunks] ) ),
+        "SourceAuditFailures", COUNTROWS ( FILTER ( PubMedIngestionAudit, PubMedIngestionAudit[Passed] = FALSE () ) )
+    )
+
+EVALUATE
+VAR Stored =
+    ADDCOLUMNS (
+        VALUES ( DoraMetadataChunks[DORAKey] ),
+        "ActualCharacters", CALCULATE ( SUMX ( DoraMetadataChunks, LEN ( DoraMetadataChunks[MetadataChunk] ) ) ),
+        "ExpectedCharacters", CALCULATE ( MAX ( DoraMetadataChunks[MetadataCharacters] ) ),
+        "ActualChunks", CALCULATE ( COUNTROWS ( DoraMetadataChunks ) ),
+        "DistinctIndices", CALCULATE ( DISTINCTCOUNT ( DoraMetadataChunks[ChunkIndex] ) ),
+        "ExpectedChunks", CALCULATE ( MAX ( DoraMetadataChunks[ChunkCount] ) )
+    )
+RETURN
+    ROW (
+        "DORAKeys", COUNTROWS ( Stored ),
+        "DORAPublications", COUNTROWS ( DoraPublications ),
+        "StoredLengthOrIndexFailures", COALESCE ( COUNTROWS ( FILTER ( Stored, [ActualCharacters] <> [ExpectedCharacters] || [ActualChunks] <> [ExpectedChunks] || [DistinctIndices] <> [ActualChunks] ) ), 0 ),
+        "SourceAuditFailures", COALESCE ( COUNTROWS ( FILTER ( DoraIngestionAudit, DoraIngestionAudit[Passed] = FALSE () ) ), 0 ),
+        "MissingPublicationMetadata", COALESCE ( COUNTROWS ( EXCEPT ( VALUES ( DoraPublications[DORAKey] ), VALUES ( DoraMetadataChunks[DORAKey] ) ) ), 0 ),
+        "UnexpectedMetadataKeys", COALESCE ( COUNTROWS ( EXCEPT ( VALUES ( DoraMetadataChunks[DORAKey] ), VALUES ( DoraPublications[DORAKey] ) ) ), 0 )
+    )
+
+EVALUATE
+ROW (
+    "PubMedPublications", COUNTROWS ( PubMedPublications ),
+    "PubMedAuthorEvidenceRows", COUNTROWS ( PubMedAuthorEvidence ),
+    "MissingPubMedMetadata", COALESCE ( COUNTROWS ( EXCEPT ( VALUES ( PubMedPublications[PMID] ), VALUES ( PubMedMetadataChunks[PMID] ) ) ), 0 ),
+    "UnexpectedPubMedMetadata", COALESCE ( COUNTROWS ( EXCEPT ( VALUES ( PubMedMetadataChunks[PMID] ), VALUES ( PubMedPublications[PMID] ) ) ), 0 ),
+    "PubMedEncodingFailures", COALESCE ( COUNTROWS ( FILTER ( PubMedMetadataChunks, PubMedMetadataChunks[Encoding] <> "UTF8-HEX" ) ), 0 ),
+    "DORAEncodingFailures", COALESCE ( COUNTROWS ( FILTER ( DoraMetadataChunks, DoraMetadataChunks[Encoding] <> "UTF8-HEX" ) ), 0 )
+)

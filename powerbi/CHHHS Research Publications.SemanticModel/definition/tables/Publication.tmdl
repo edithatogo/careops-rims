@@ -1,0 +1,412 @@
+table Publication
+	description: "One row per canonical publication across PubMed and DORA. Source provenance and reconciliation method are retained; attribution remains reviewable."
+	lineageTag: 00000000-0000-4000-8000-ba61d1927579
+
+	column CanonicalKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-ca2609baccf9
+		summarizeBy: none
+		sourceColumn: CanonicalKey
+
+	column PMID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-626224b32a58
+		summarizeBy: none
+		sourceColumn: PMID
+
+	column Title
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-382e15bb7d3f
+		summarizeBy: none
+		sourceColumn: Title
+
+	column Journal
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-34b91780d898
+		summarizeBy: none
+		sourceColumn: Journal
+
+	column Authors
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-9f59bdd5a5ba
+		summarizeBy: none
+		sourceColumn: Authors
+
+	column DOI
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-ba2f6343bd3e
+		summarizeBy: none
+		sourceColumn: DOI
+
+	column PubMedURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-33dab3a71183
+		summarizeBy: none
+		sourceColumn: PubMedURL
+
+	column DORAURL
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-5f33fc67b9ac
+		summarizeBy: none
+		sourceColumn: DORAURL
+
+	column CHHHSAffiliatedAuthors
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-a262d50bc547
+		summarizeBy: none
+		sourceColumn: CHHHSAffiliatedAuthors
+
+	column Abstract
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-8353f0d6b0aa
+		summarizeBy: none
+		sourceColumn: Abstract
+
+	column SourceSet
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-a961068b6dee
+		summarizeBy: none
+		sourceColumn: SourceSet
+
+	column DedupMethod
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-cbdd4fbd8185
+		summarizeBy: none
+		sourceColumn: DedupMethod
+
+	column PublicationDateRaw
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-907f5c599437
+		summarizeBy: none
+		sourceColumn: PublicationDateRaw
+
+	column PublicationDatePrecision
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-23f0119642ca
+		summarizeBy: none
+		sourceColumn: PublicationDatePrecision
+
+	column PublicationMonth
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-45760f101a1c
+		summarizeBy: none
+		sourceColumn: PublicationMonth
+
+	column OnlineDateRaw
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-1a58d9a457d2
+		summarizeBy: none
+		sourceColumn: OnlineDateRaw
+
+	column MatchedFacilities
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-e3d635c0ff0b
+		summarizeBy: none
+		sourceColumn: MatchedFacilities
+
+	column AttributionStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-1dfa0db28516
+		summarizeBy: none
+		sourceColumn: AttributionStatus
+
+	column AttributionEvidence
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-ecefa0aa7c02
+		summarizeBy: none
+		sourceColumn: AttributionEvidence
+
+	column PublicationNotice
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-c5ac2dbf5ecc
+		summarizeBy: none
+		sourceColumn: PublicationNotice
+
+	column PMCID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-02151a6b2c79
+		summarizeBy: none
+		sourceColumn: PMCID
+
+	column AuthorORCIDs
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-a556e7166908
+		summarizeBy: none
+		sourceColumn: AuthorORCIDs
+
+	column FundingType
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-5d9928aaa27b
+		summarizeBy: none
+		sourceColumn: FundingType
+
+	column IsInternalFunding
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-43fb39cc8b34
+		summarizeBy: none
+		sourceColumn: IsInternalFunding
+
+	column FunderNames
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-2c8b4ad7ef20
+		summarizeBy: none
+		sourceColumn: FunderNames
+
+	column GrantIDs
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-c9c3026d757c
+		summarizeBy: none
+		sourceColumn: GrantIDs
+
+	column ClinicalTrialID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d60cfbca96a0
+		summarizeBy: none
+		sourceColumn: ClinicalTrialID
+
+	column IndigenousHealthFocus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-cf0b8f798be2
+		summarizeBy: none
+		sourceColumn: IndigenousHealthFocus
+
+	column FieldOfResearch
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-1a52aeb55f39
+		summarizeBy: none
+		sourceColumn: FieldOfResearch
+
+	column StudyDesign
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-62e9127ca018
+		summarizeBy: none
+		sourceColumn: StudyDesign
+
+	column EuropePMC_OpenAccess
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-7be9842c8ac2
+		summarizeBy: none
+		sourceColumn: EuropePMC_OpenAccess
+
+	column EuropePMC_FullTextURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-bf6d50c151d3
+		summarizeBy: none
+		sourceColumn: EuropePMC_FullTextURL
+
+	column OpenAccessStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-47237f8907dd
+		summarizeBy: none
+		sourceColumn: OpenAccessStatus
+
+	column OAUrl
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-dc0356be70a5
+		summarizeBy: none
+		sourceColumn: OAUrl
+
+	column PDFDownloadStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-985cada224e6
+		summarizeBy: none
+		sourceColumn: PDFDownloadStatus
+
+	column LocalPDFPath
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-3055fde9196b
+		summarizeBy: none
+		sourceColumn: LocalPDFPath
+
+	column PDFDownloadedUTC
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-45f465853e5e
+		summarizeBy: none
+		sourceColumn: PDFDownloadedUTC
+
+	column PublicationDate
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-39414af8c818
+		summarizeBy: none
+		sourceColumn: PublicationDate
+
+	column OnlineDate
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-e7e45cc26e07
+		summarizeBy: none
+		sourceColumn: OnlineDate
+
+	column RefreshedAtUTC
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-e47aa579c982
+		summarizeBy: none
+		sourceColumn: RefreshedAtUTC
+
+	column PublicationYear
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-8212689c9049
+		summarizeBy: none
+		sourceColumn: PublicationYear
+
+	column AuthorCount
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-bf9f14a606d1
+		summarizeBy: none
+		sourceColumn: AuthorCount
+
+	column FacilityMatchCount
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-11e9763c856b
+		summarizeBy: none
+		sourceColumn: FacilityMatchCount
+
+	column EuropePMC_CitedByCount
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-c6f812086b91
+		summarizeBy: none
+		sourceColumn: EuropePMC_CitedByCount
+
+	column CitationCount_Crossref
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-fc3a13f04083
+		summarizeBy: none
+		sourceColumn: CitationCount_Crossref
+
+	column CitationCount_OpenAlex
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-70a9f182f4e7
+		summarizeBy: none
+		sourceColumn: CitationCount_OpenAlex
+
+	column PDFFileSize
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-6b6139708516
+		summarizeBy: none
+		sourceColumn: PDFFileSize
+
+	measure Publications =
+		VAR MatchedKeys = VALUES(PublicationFacility[CanonicalKey])
+		VAR FacilityFiltered = ISFILTERED(Facility) || ISFILTERED(PublicationFacility)
+		RETURN COALESCE(IF(FacilityFiltered, CALCULATE(DISTINCTCOUNT(Publication[CanonicalKey]), KEEPFILTERS(TREATAS(MatchedKeys, Publication[CanonicalKey]))), DISTINCTCOUNT(Publication[CanonicalKey])), 0)
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-c0cddec598d1
+
+	measure 'PubMed Publications' = CALCULATE([Publications], KEEPFILTERS(CONTAINSSTRING(Publication[SourceSet], "PubMed")))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-ec30b57adc7d
+
+	measure 'DORA Publications' = CALCULATE([Publications], KEEPFILTERS(CONTAINSSTRING(Publication[SourceSet], "DORA")))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-1c961636a55b
+
+	measure 'Cross-source Matches' = CALCULATE([Publications], KEEPFILTERS(Publication[SourceSet] = "PubMed; DORA"))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-639b5ea0c91b
+
+	measure 'DORA-only Publications' = CALCULATE([Publications], KEEPFILTERS(Publication[SourceSet] = "DORA"))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-ba7a02db8471
+
+	measure 'Reconciliation Needs Review' = CALCULATE([Publications], KEEPFILTERS(CONTAINSSTRING(Publication[AttributionStatus], "needs review")))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-bbbc056067b4
+
+	measure 'Open Access Publications' = CALCULATE([Publications], KEEPFILTERS(Publication[EuropePMC_OpenAccess] = "Y" || Publication[OpenAccessStatus] IN {"Gold", "Green"} || NOT(ISBLANK(Publication[PMCID]))))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-04674ca7a846
+
+	measure 'Open Access Rate' = DIVIDE([Open Access Publications], [Publications])
+		formatString: 0.0%
+		lineageTag: 00000000-0000-4000-8000-e5880d134ce2
+
+	measure 'Funded Publications' = CALCULATE([Publications], KEEPFILTERS(Publication[FundingType] <> "Unfunded / Departmental" && Publication[FundingType] <> "" && NOT(ISBLANK(Publication[FundingType]))))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-2024c59175e3
+
+	measure 'Internal CHHHS Funded Publications' = CALCULATE([Publications], KEEPFILTERS(Publication[IsInternalFunding] = "Yes"))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-00e8081b0cb0
+
+	measure 'First Nations Health Publications' = CALCULATE([Publications], KEEPFILTERS(Publication[IndigenousHealthFocus] = "Yes"))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-e185dd6baff6
+
+	measure 'Clinical Trials Count' = CALCULATE([Publications], KEEPFILTERS(Publication[ClinicalTrialID] <> "" && NOT(ISBLANK(Publication[ClinicalTrialID]))))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-0dbf405c72d8
+
+	measure 'Archived Full-Text Papers' = CALCULATE([Publications], KEEPFILTERS(Publication[PDFDownloadStatus] IN {"Downloaded", "Already Exists"}))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-d7f9cdb91910
+
+	measure 'Publications Last Complete Month' =
+		VAR StartDate = MAX(ReportingWindow[ReportMonthStart])
+		VAR EndDate = MAX(ReportingWindow[ReportMonthEndExclusive])
+		RETURN CALCULATE([Publications], REMOVEFILTERS('Date'), DATESBETWEEN('Date'[Date],StartDate,EndDate-1), KEEPFILTERS(Publication[PublicationDatePrecision] IN {"day", "month"}))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-512adf5982be
+
+	measure 'Publications Previous Year Month' =
+		VAR StartDate = EDATE(MAX(ReportingWindow[ReportMonthStart]),-12)
+		VAR EndDate = EDATE(MAX(ReportingWindow[ReportMonthEndExclusive]),-12)
+		RETURN CALCULATE([Publications], REMOVEFILTERS('Date'), DATESBETWEEN('Date'[Date],StartDate,EndDate-1), KEEPFILTERS(Publication[PublicationDatePrecision] IN {"day", "month"}))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-fb2c8ad447bc
+
+	measure 'Monthly Year-on-Year Change' = DIVIDE([Publications Last Complete Month]-[Publications Previous Year Month], [Publications Previous Year Month])
+		formatString: 0.0%;-0.0%
+		lineageTag: 00000000-0000-4000-8000-5ead8e56c246
+
+	measure 'Publications Last 24 Complete Months' =
+		VAR StartDate = EDATE(MAX(ReportingWindow[ReportMonthEndExclusive]),-24)
+		VAR EndDate = MAX(ReportingWindow[ReportMonthEndExclusive])
+		RETURN CALCULATE([Publications], KEEPFILTERS(DATESBETWEEN('Date'[Date],StartDate,EndDate-1)))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-5396811f44c0
+
+	measure 'Publications Without Usable Month' = CALCULATE([Publications], REMOVEFILTERS('Date'), KEEPFILTERS(NOT(Publication[PublicationDatePrecision] IN {"day", "month"})))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-994a74cf6b7a
+
+	measure 'Reporting Month' = IF(ISFILTERED('Date'[YearMonth]), IF(HASONEVALUE('Date'[YearMonth]), SELECTEDVALUE('Date'[YearMonth]), "Select one month"), FORMAT(MAX(ReportingWindow[ReportMonthStart]), "MMMM yyyy"))
+		lineageTag: 00000000-0000-4000-8000-eb9ce49335ad
+
+	measure 'Refresh Timestamp UTC' = MAX(ReportingWindow[RefreshedAtUTC])
+		formatString: dd MMM yyyy HH:mm "UTC"
+		lineageTag: 00000000-0000-4000-8000-3a4a776f6ea2
+
+	measure 'Query Warnings' = COUNTROWS(FILTER(SearchAudit, SearchAudit[Warnings] <> ""))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-f1f07188f404
+
+	measure 'Configured Facility Searches' = COUNTROWS(Facility)
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-5721bf7efbaf
+
+	measure 'Register Row Count' = VAR N = [Publications] RETURN IF(N > 0, N, BLANK())
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-5d699ef7c4d6
+
+	measure 'Selected Month Publications' =
+		VAR HasSelection = ISFILTERED('Date'[YearMonth])
+		VAR ValidSelection = NOT(HasSelection) || HASONEVALUE('Date'[YearMonth])
+		VAR StartDate = IF(HasSelection, DATE(YEAR(MIN('Date'[Date])), MONTH(MIN('Date'[Date])), 1), MAX(ReportingWindow[ReportMonthStart]))
+		VAR EndDate = EDATE(StartDate, 1)
+		RETURN IF(ValidSelection, CALCULATE([Publications], REMOVEFILTERS('Date'), DATESBETWEEN('Date'[Date], StartDate, EndDate-1), KEEPFILTERS(Publication[PublicationDatePrecision] IN {"day", "month"})), BLANK())
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-a1a3330fa259
+
+	measure 'Monthly Register Row Count' = VAR N = [Selected Month Publications] RETURN IF(N > 0, N, BLANK())
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-c4a772d80ce4
+
+	partition Publication = m
+		mode: import
+		source =
+			CanonicalPublications[Publications]

@@ -1,0 +1,14 @@
+{
+  "id": "T17_desktop_fallback_acceptance",
+  "title": "Author and save a native PBIX in the Windows VM",
+  "status": "gated",
+  "scope": "conditional_desktop",
+  "created_at_utc": "2026-09-12T03:38:54.708930+00:00",
+  "depends_on": [
+    "T16_utm_windows_fallback",
+    "T09_execution_contracts"
+  ],
+  "requires_live_evidence": true,
+  "baseline_commit": "92c1d0e0ddfe5ee3400b054d50ad3abeb11a8665",
+  "completion_evidence": []
+}

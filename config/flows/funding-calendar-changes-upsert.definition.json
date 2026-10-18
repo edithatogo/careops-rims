@@ -1,0 +1,44 @@
+{
+  "name": "{{FLOW_ID}}",
+  "id": "/providers/Microsoft.Flow/flows/{{FLOW_ID}}",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "CHHHS RIMS - Funding Calendar Changes - Reviewed Upsert",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {"$authentication": {"defaultValue": {}, "type": "SecureObject"}, "$connections": {"defaultValue": {}, "type": "Object"}},
+      "triggers": {"manual": {"type": "Request", "kind": "Button", "inputs": {"schema": {"type": "object", "required": ["ChangeRowsJson"], "properties": {"ChangeRowsJson": {"type": "string", "description": "JSON array validated against funding-calendar-changes-v1."}}}}}},
+      "actions": {
+        "Parse_Change_Rows": {"runAfter": {}, "type": "Compose", "inputs": "@json(triggerBody()?['ChangeRowsJson'])"},
+        "Apply_to_each_Calendar_Change": {
+          "runAfter": {"Parse_Change_Rows": ["Succeeded"]}, "type": "Foreach", "foreach": "@coalesce(outputs('Parse_Change_Rows'), createArray())", "runtimeConfiguration": {"concurrency": {"repetitions": 1}},
+          "actions": {
+            "SharePoint_Get_items": {"runAfter": {}, "type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "GetItems"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "$filter": "Title eq '@{replace(string(item()?['ChangeKey']),'''','''''')}'", "$top": 2}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}},
+            "Condition_Duplicate_ChangeKey": {"runAfter": {"SharePoint_Get_items": ["Succeeded"]}, "type": "If", "expression": {"greater": ["@length(body('SharePoint_Get_items')?['value'])", 1]}, "actions": {"Compose_Duplicate_ChangeKey_Failure": {"type": "Compose", "inputs": "@concat('DUPLICATE_CALENDAR_CHANGE_KEY: ', string(item()?['ChangeKey']))"}}, "else": {"actions": {}}},
+            "Condition_Is_New_Calendar_Change": {
+              "runAfter": {"Condition_Duplicate_ChangeKey": ["Succeeded"]}, "type": "If", "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 0]},
+              "actions": {"Condition_PreviousDate_Present_Create": {
+                "type": "If", "expression": {"not": {"equals": ["@item()?['PreviousDate']", null]}},
+                "actions": {"SharePoint_Create_item_With_PreviousDate": {"type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PostItem"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "item/Title": "@{item()?['ChangeKey']}", "item/ChangeKey": "@{item()?['ChangeKey']}", "item/DeadlineKey": "@{item()?['DeadlineKey']}", "item/OpportunityKey": "@{item()?['OpportunityKey']}", "item/ChangeType": "@{item()?['ChangeType']}", "item/PreviousRevision": "@{item()?['PreviousRevision']}", "item/Revision": "@{item()?['Revision']}", "item/PreviousDate": "@{item()?['PreviousDate']}", "item/CalculatedDate": "@{item()?['CalculatedDate']}", "item/PreviousCancelled": "@{item()?['PreviousCancelled']}", "item/Cancelled": "@{item()?['Cancelled']}", "item/SourceURL": "@{item()?['SourceURL']}", "item/ObservedUTC": "@{item()?['ObservedUTC']}", "item/ReviewStatus": "@{item()?['ReviewStatus']}"}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}}},
+                "else": {"actions": {"SharePoint_Create_item_Without_PreviousDate": {"type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PostItem"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "item/Title": "@{item()?['ChangeKey']}", "item/ChangeKey": "@{item()?['ChangeKey']}", "item/DeadlineKey": "@{item()?['DeadlineKey']}", "item/OpportunityKey": "@{item()?['OpportunityKey']}", "item/ChangeType": "@{item()?['ChangeType']}", "item/PreviousRevision": "@{item()?['PreviousRevision']}", "item/Revision": "@{item()?['Revision']}", "item/CalculatedDate": "@{item()?['CalculatedDate']}", "item/PreviousCancelled": "@{item()?['PreviousCancelled']}", "item/Cancelled": "@{item()?['Cancelled']}", "item/SourceURL": "@{item()?['SourceURL']}", "item/ObservedUTC": "@{item()?['ObservedUTC']}", "item/ReviewStatus": "@{item()?['ReviewStatus']}"}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}}}}
+              }},
+              "else": {"actions": {"Condition_Exactly_One_Calendar_Change": {
+                "type": "If", "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+                "actions": {"Condition_PreviousDate_Present_Update": {
+                  "type": "If", "expression": {"not": {"equals": ["@item()?['PreviousDate']", null]}},
+                  "actions": {"SharePoint_Update_item_With_PreviousDate": {"type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PatchItem"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']", "item/Title": "@{item()?['ChangeKey']}", "item/ChangeKey": "@{item()?['ChangeKey']}", "item/DeadlineKey": "@{item()?['DeadlineKey']}", "item/OpportunityKey": "@{item()?['OpportunityKey']}", "item/ChangeType": "@{item()?['ChangeType']}", "item/PreviousRevision": "@{item()?['PreviousRevision']}", "item/Revision": "@{item()?['Revision']}", "item/PreviousDate": "@{item()?['PreviousDate']}", "item/CalculatedDate": "@{item()?['CalculatedDate']}", "item/PreviousCancelled": "@{item()?['PreviousCancelled']}", "item/Cancelled": "@{item()?['Cancelled']}", "item/SourceURL": "@{item()?['SourceURL']}", "item/ObservedUTC": "@{item()?['ObservedUTC']}", "item/ReviewStatus": "@{item()?['ReviewStatus']}"}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}}},
+                  "else": {"actions": {"SharePoint_Update_item_Without_PreviousDate": {"type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PatchItem"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']", "item/Title": "@{item()?['ChangeKey']}", "item/ChangeKey": "@{item()?['ChangeKey']}", "item/DeadlineKey": "@{item()?['DeadlineKey']}", "item/OpportunityKey": "@{item()?['OpportunityKey']}", "item/ChangeType": "@{item()?['ChangeType']}", "item/PreviousRevision": "@{item()?['PreviousRevision']}", "item/Revision": "@{item()?['Revision']}", "item/CalculatedDate": "@{item()?['CalculatedDate']}", "item/PreviousCancelled": "@{item()?['PreviousCancelled']}", "item/Cancelled": "@{item()?['Cancelled']}", "item/SourceURL": "@{item()?['SourceURL']}", "item/ObservedUTC": "@{item()?['ObservedUTC']}", "item/ReviewStatus": "@{item()?['ReviewStatus']}"}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}}}}
+                }, "else": {"actions": {}}}
+              }}}
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {"shared_sharepointonline": {"connectionName": "shared-sharepointonline", "source": "Invoker", "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "tier": "NotSpecified", "apiName": "sharepointonline"}},
+    "flowFailureAlertSubscribed": false,
+    "isManaged": false
+  }
+}

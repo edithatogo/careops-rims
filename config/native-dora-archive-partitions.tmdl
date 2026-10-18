@@ -1,0 +1,40 @@
+// Isolated-model fallback for a direct DORA web-feed outage. Apply as one
+// command before refreshing. It preserves the existing table definitions and
+// replaces only their import partitions with the last committed DORA archive.
+// The collection/commit process remains separate; an unavailable feed must
+// not be represented as a successful empty collection.
+createOrReplace
+
+  ref table DoraSourceObservations
+
+    partition DoraSourceObservations = m
+      mode: import
+      source =
+          let
+              Source = fnParseRetainedDoraMetadata(RetainedSourceObservations),
+              Selected = Table.SelectColumns(Source, {"Title", "DORAURL", "AttributionEvidence", "PublicationDateRaw"}),
+              Result = Table.RenameColumns(Selected, {{"Title", "title"}, {"DORAURL", "link"}, {"AttributionEvidence", "description"}, {"PublicationDateRaw", "pubDate"}})
+          in
+              Result
+
+  ref table DoraHarvest
+
+    partition DoraHarvest = m
+      mode: import
+      source =
+          let
+              Source = fnParseRetainedDoraMetadata(RetainedSourceObservations),
+              Result = Table.SelectColumns(Source, {"DORAKey", "DORAURL", "Title", "Authors", "Abstract", "CHHHSAffiliatedAuthors", "AttributionEvidence", "PublicationDate", "PublicationDateRaw", "PublicationDatePrecision", "PublicationYear", "NormalizedTitle"})
+          in
+              Result
+
+  ref table DoraPublications
+
+    partition DoraPublications = m
+      mode: import
+      source =
+          let
+              Source = fnParseRetainedDoraMetadata(RetainedSourceObservations),
+              Result = Table.SelectColumns(Source, {"DORAKey", "DORAURL", "Title", "Authors", "Abstract", "CHHHSAffiliatedAuthors", "AttributionEvidence", "PublicationDate", "PublicationDateRaw", "PublicationDatePrecision", "PublicationYear", "NormalizedTitle", "PMID", "DOI", "Journal", "CoverageStatus", "CollectionExpectedCount"})
+          in
+              Result

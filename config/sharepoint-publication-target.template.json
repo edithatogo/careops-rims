@@ -1,0 +1,24 @@
+{
+  "site_url": "{{SHAREPOINT_SITE_URL}}",
+  "list_id": "{{PUBLICATION_REGISTRY_LIST_ID}}",
+  "unique_fields": ["source_key"],
+  "fields": {
+    "title": "Title",
+    "source_key": "field_1",
+    "canonical_key": "field_2",
+    "authors": "field_3",
+    "journal": "field_4",
+    "publication_year": "field_5",
+    "publication_month": "field_6",
+    "publication_date_raw": "field_7",
+    "publication_date_precision": "field_8",
+    "source_set": "field_9",
+    "pmid": "field_10",
+    "doi": "field_11",
+    "matched_facilities": "field_14",
+    "attribution_evidence": "field_16",
+    "review_status": "field_17",
+    "first_observed": "field_19",
+    "last_observed": "field_20"
+  }
+}

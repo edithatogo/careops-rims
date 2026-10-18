@@ -1,0 +1,12 @@
+{
+  "id": "S02_release_versioning",
+  "title": "Reproducible source and deployment versioning",
+  "type": "stabilisation",
+  "status": "in_progress",
+  "depends_on": [
+    "S01_publication_stabilisation"
+  ],
+  "requires_live_evidence": true,
+  "created_at": "2026-09-20T00:00:00Z",
+  "updated_at": "2026-09-20T00:00:00Z"
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "artifact": "CHHHS Publications monthly printable report",
+  "purpose": "Immutable printable publication report for one completed Brisbane calendar month.",
+  "identity": {
+    "RunID": "unique month/query-version/source-batch execution identifier",
+    "ReportingMonth": "YYYY-MM for the previous complete Brisbane calendar month",
+    "QueryVersion": "version of the canonical extraction and layout contract",
+    "AcceptedSourceBatchID": "committed retained source batch used by the refreshed model",
+    "ModelRefreshCorrelation": "verified refresh identity or documented manual correlation receipt"
+  },
+  "required_manifest_fields": [
+    "SchemaVersion",
+    "Status",
+    "RunID",
+    "ReportingMonth",
+    "QueryVersion",
+    "AcceptedSourceBatchID",
+    "ModelRefreshCorrelation",
+    "GeneratedAtUTC",
+    "SourceCoverage",
+    "PublicationCount",
+    "DistinctCanonicalKeyCount",
+    "CanonicalKeySetHash",
+    "CSVFile",
+    "HTMLFile",
+    "ReadbackVerified"
+  ],
+  "acceptance": [
+    "Status is committed only after CSV and HTML readback, independent counts and canonical key sets reconcile.",
+    "The artifact is immutable after commitment; a correction creates a new RunID and supersedes the prior manifest without overwriting it.",
+    "Publication dates with inadequate precision remain outside the monthly bibliography and are recorded in SourceCoverage.",
+    "A PDF export may accompany the artifact only where a supported licensed route exists; it is not evidence of complete bibliography output."
+  ],
+  "delivery": {
+    "enabled": false,
+    "recipients": [],
+    "approval_required_before_distribution": true
+  }
+}

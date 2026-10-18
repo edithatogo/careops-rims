@@ -1,0 +1,36 @@
+// Run only against a verified frozen staging refresh. Include nulls in the response.
+// Replace After variables with the last accepted tuple; double quotes in text cursors.
+// Reject all response errors and duplicate tuples; do not advance on partial results.
+EVALUATE
+VAR After0 = ""
+VAR PageSize = 100
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(PubMedPublications, (PubMedPublications[PMID] > After0)), PubMedPublications[PMID], ASC),
+    "PMID", PubMedPublications[PMID],
+    "Title", PubMedPublications[Title],
+    "Journal", PubMedPublications[Journal],
+    "Authors", PubMedPublications[Authors],
+    "DOI", PubMedPublications[DOI],
+    "PubMedURL", PubMedPublications[PubMedURL],
+    "PublicationDate", PubMedPublications[PublicationDate],
+    "PublicationDateRaw", PubMedPublications[PublicationDateRaw],
+    "PublicationDatePrecision", PubMedPublications[PublicationDatePrecision],
+    "PublicationMonth", PubMedPublications[PublicationMonth],
+    "PublicationYear", PubMedPublications[PublicationYear],
+    "OnlineDate", PubMedPublications[OnlineDate],
+    "OnlineDateRaw", PubMedPublications[OnlineDateRaw],
+    "AuthorCount", PubMedPublications[AuthorCount],
+    "PublicationTypes", PubMedPublications[PublicationTypes],
+    "PublicationClass", PubMedPublications[PublicationClass],
+    "IsClinicalTrial", PubMedPublications[IsClinicalTrial],
+    "IsEvidenceSynthesis", PubMedPublications[IsEvidenceSynthesis],
+    "MatchedFacilities", PubMedPublications[MatchedFacilities],
+    "AttributionStatus", PubMedPublications[AttributionStatus],
+    "AttributionEvidence", PubMedPublications[AttributionEvidence],
+    "PublicationNotice", PubMedPublications[PublicationNotice],
+    "FacilityMatchCount", PubMedPublications[FacilityMatchCount],
+    "RefreshedAtUTC", PubMedPublications[RefreshedAtUTC],
+    "Abstract", PubMedPublications[Abstract]
+)
+ORDER BY [PMID]

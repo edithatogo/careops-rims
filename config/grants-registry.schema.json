@@ -1,0 +1,31 @@
+{
+  "schema_version": "grants-registry-v1",
+  "list_name": "Grants Registry",
+  "identity_field": "OpportunityKey",
+  "source_observation_archive": "approved_private_archive",
+  "fields": [
+    {"display_name":"OpportunityKey","type":"text","required":true,"indexed":true,"unique":true},
+    {"display_name":"Title","type":"text","required":true},
+    {"display_name":"Funder","type":"text"},
+    {"display_name":"Source","type":"text"},
+    {"display_name":"SourceID","type":"text"},
+    {"display_name":"RoundID","type":"text"},
+    {"display_name":"URL","type":"url"},
+    {"display_name":"SourceRowURL","type":"url"},
+    {"display_name":"Description","type":"multiline_text"},
+    {"display_name":"Eligibility","type":"multiline_text"},
+    {"display_name":"Geography","type":"text"},
+    {"display_name":"Amount","type":"text"},
+    {"display_name":"Deadline","type":"text"},
+    {"display_name":"DeadlineRaw","type":"text"},
+    {"display_name":"DeadlinePrecision","type":"choice"},
+    {"display_name":"Status","type":"choice"},
+    {"display_name":"Contact","type":"text"},
+    {"display_name":"CHHHSRelevance","type":"choice"},
+    {"display_name":"ReviewStatus","type":"choice"},
+    {"display_name":"ReviewNotes","type":"multiline_text"},
+    {"display_name":"RetrievedUTC","type":"text"},
+    {"display_name":"RetrievedTimestampStatus","type":"choice"},
+    {"display_name":"EvidenceHash","type":"text"}
+  ]
+}

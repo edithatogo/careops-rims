@@ -1,0 +1,36 @@
+// Published-in-month, not first-observed-in-month. Check API limits and reconcile independent keys.
+EVALUATE
+VAR AfterKey = "" // Set to last accepted CanonicalKey; escape embedded quotes by doubling them.
+VAR PageSize = 100 // Reduce on response-size errors; never advance after an error.
+VAR MonthStart = MAX(ReportingWindow[ReportMonthStart])
+VAR MonthEnd = MAX(ReportingWindow[ReportMonthEndExclusive])
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(
+        Publication,
+        Publication[CanonicalKey] > AfterKey &&
+        Publication[PublicationDatePrecision] IN {"day", "month"}
+            && NOT ISBLANK(Publication[PublicationDate])
+            && Publication[PublicationDate] >= MonthStart
+            && Publication[PublicationDate] < MonthEnd
+    ), Publication[CanonicalKey], ASC),
+        "CanonicalKey", Publication[CanonicalKey],
+        "Title", Publication[Title],
+        "Authors", Publication[Authors],
+        "Journal", Publication[Journal],
+        "PublicationDateRaw", Publication[PublicationDateRaw],
+        "PublicationDatePrecision", Publication[PublicationDatePrecision],
+        "PublicationYear", Publication[PublicationYear],
+        "PublicationMonth", Publication[PublicationMonth],
+        "CHHHSAffiliatedAuthors", Publication[CHHHSAffiliatedAuthors],
+        "AttributionStatus", Publication[AttributionStatus],
+        "AttributionEvidence", Publication[AttributionEvidence],
+        "DedupMethod", Publication[DedupMethod],
+        "SourceSet", Publication[SourceSet],
+        "PMID", Publication[PMID],
+        "DOI", Publication[DOI],
+        "PubMedURL", Publication[PubMedURL],
+        "DORAURL", Publication[DORAURL],
+        "MatchedFacilities", Publication[MatchedFacilities]
+)
+ORDER BY [CanonicalKey]

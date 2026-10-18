@@ -1,0 +1,20 @@
+table PublicationFacility
+	isHidden
+	lineageTag: 00000000-0000-4000-8000-60e265139710
+
+	column CanonicalKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-013adc94d8ec
+		summarizeBy: none
+		sourceColumn: CanonicalKey
+
+	column FacilityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-0ccae1cd8b56
+		summarizeBy: none
+		sourceColumn: FacilityKey
+
+	partition PublicationFacility = m
+		mode: import
+		source =
+			CanonicalPublications[Matches]

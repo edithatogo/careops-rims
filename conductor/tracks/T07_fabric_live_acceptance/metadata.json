@@ -1,0 +1,7 @@
+{
+  "id": "T07_fabric_live_acceptance",
+  "status": "superseded",
+  "type": "deployment",
+  "superseded_by": "T08_web_capability_discovery through T15_web_acceptance_release",
+  "reason": "User prefers ordinary Power BI web UI/plugin, with existing UTM Windows VM only as fallback. No Fabric Git deployment required."
+}

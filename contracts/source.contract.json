@@ -1,0 +1,7 @@
+{
+  "sources":[
+    {"name":"PubMed","origin":"https://eutils.ncbi.nlm.nih.gov","purpose":"affiliation-based discovery and citation metadata"},
+    {"name":"DORA","origin":"https://dora.health.qld.gov.au/qldresearchjspui/feed/rss_2.0/1/849","purpose":"Queensland Health institutional repository signal and CHHHS-affiliated-author evidence"}
+  ],
+  "historic_attachment_policy":"The supplied DORA XML is schema/design evidence only and must not be committed as production historic data."
+}

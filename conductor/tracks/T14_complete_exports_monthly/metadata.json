@@ -1,0 +1,20 @@
+{
+  "id": "T14_complete_exports_monthly",
+  "title": "Export every citation and stage the monthly workflow",
+  "status": "in_progress",
+  "scope": "live_web",
+  "created_at_utc": "2026-09-12T03:38:54.708930+00:00",
+  "depends_on": [
+    "T13_web_visuals"
+  ],
+  "requires_live_evidence": true,
+  "baseline_commit": "92c1d0e0ddfe5ee3400b054d50ad3abeb11a8665",
+  "completion_evidence": [
+    "reports/CHHHS-Publications-Monthly-2026-08.docx",
+    "reports/CHHHS-Publications-Monthly-2026-07.docx",
+    "config/monthly-flow.blueprint.json",
+    "scripts/export_monthly_docx.py"
+  ],
+  "updated_at": "2026-09-20T00:00:00Z",
+  "acceptance_note": "Reopened during Conductor audit: incomplete native or operational acceptance; prior artefacts retained as historical evidence."
+}

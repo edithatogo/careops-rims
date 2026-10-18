@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "coverage_status": "provisional",
+  "facility_query_version": "2026-09-11-v2",
+  "pubmed": {
+    "enabled": true,
+    "query": "((\"Cairns and Hinterland Hospital and Health Service\"[Affiliation] OR \"Cairns & Hinterland Hospital and Health Service\"[Affiliation] OR \"Cairns and Hinterland Hospital & Health Service\"[Affiliation] OR \"Cairns & Hinterland Hospital & Health Service\"[Affiliation] OR \"Cairns and Hinterland Health Service\"[Affiliation] OR \"CHHHS\"[Affiliation] OR \"Cairns Health Service District\"[Affiliation] OR \"Liz Plummer Cancer Care Centre\"[Affiliation] OR \"Tropical Public Health Services\"[Affiliation] OR \"Cairns Sexual Health Service\"[Affiliation])) OR ((\"Cairns Hospital\"[Affiliation] OR \"Cairns Base Hospital\"[Affiliation])) OR ((\"Atherton Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Babinda Hospital\"[Affiliation] OR \"Babinda Multi-Purpose Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Gordonvale Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Herberton Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Innisfail Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Mareeba Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Mossman Hospital\"[Affiliation] OR \"Mossman Multi-Purpose Health Service\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Tully Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Yarrabah Emergency Service\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Cairns North Community Health\"[Affiliation])) OR ((\"Cairns South Health Facility\"[Affiliation])) OR ((\"Chillagoe Primary Health Centre\"[Affiliation] OR \"Chillagoe Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Cow Bay Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Croydon Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Dimbulah Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Edmonton Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Forsayth Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Georgetown Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Jumbun Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Malanda Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Millaa Millaa Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Mission Beach Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Mount Garnet Primary Health Centre\"[Affiliation] OR \"Mt Garnet Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Ravenshoe Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR ((\"Cairns Sub-Acute Care Unit\"[Affiliation])) OR ((\"Smithfield Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])) OR (\"Cairns Public Health Unit\"[Affiliation])",
+    "api_base": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/",
+    "max_requests_per_second": 2,
+    "fetch_batch_size": 100,
+    "maximum_ids_per_search_window": 9999,
+    "initial_ingestion_kind": "baseline"
+  },
+  "dora": {
+    "enabled": false,
+    "status": "awaiting_verified_export_adapter"
+  },
+  "schedule": {
+    "enabled": false,
+    "timezone": "Australia/Brisbane"
+  }
+}

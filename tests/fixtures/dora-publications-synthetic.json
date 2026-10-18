@@ -1,0 +1,5 @@
+[
+  {"DORAKey":"DORA:https://example.invalid/1","Title":"Remote care pathways in tropical health","PublicationYear":2026,"CHHHSAffiliatedAuthors":"Alex Example"},
+  {"DORAKey":"DORA:https://example.invalid/2","Title":"A DORA-only CHHHS publication","PublicationYear":2026,"CHHHSAffiliatedAuthors":"Sam Example"},
+  {"DORAKey":"DORA:https://example.invalid/3","Title":"Ambiguous institutional title","PublicationYear":2025,"CHHHSAffiliatedAuthors":"Jamie Example"}
+]

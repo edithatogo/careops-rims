@@ -1,0 +1,61 @@
+table Date
+	dataCategory: Time
+	lineageTag: 00000000-0000-4000-8000-0236e7ab1864
+
+	column Date
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		isKey
+		lineageTag: 00000000-0000-4000-8000-3f103db37e87
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-7052316c45de
+		summarizeBy: none
+		sourceColumn: Year
+
+	column MonthNumber
+		dataType: int64
+		isHidden
+		lineageTag: 00000000-0000-4000-8000-efc2c3c525d8
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+	column MonthName
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-9ce0d3a92db2
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+	column YearMonth
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-07a29ad9895d
+		summarizeBy: none
+		sourceColumn: YearMonth
+		sortByColumn: YearMonthSort
+
+	column YearMonthSort
+		dataType: int64
+		isHidden
+		lineageTag: 00000000-0000-4000-8000-462bd6ce4f0b
+		summarizeBy: none
+		sourceColumn: YearMonthSort
+
+	partition Date = m
+		mode: import
+		source =
+			let
+			    Start = #date(1900,1,1),
+			    Finish = #date(Date.Year(Date.From(DateTimeZone.SwitchZone(DateTimeZone.FixedUtcNow(),10)))+2,12,31),
+			    Days = List.Dates(Start,Duration.Days(Finish-Start)+1,#duration(1,0,0,0)),
+			    A = Table.FromList(Days,Splitter.SplitByNothing(),{"Date"}),
+			    B = Table.TransformColumnTypes(A,{{"Date",type date}}),
+			    C = Table.AddColumn(B,"Year",each Date.Year([Date]),Int64.Type),
+			    D = Table.AddColumn(C,"MonthNumber",each Date.Month([Date]),Int64.Type),
+			    E = Table.AddColumn(D,"MonthName",each Date.ToText([Date],"MMM","en-AU"),type text),
+			    F = Table.AddColumn(E,"YearMonth",each Date.ToText([Date],"yyyy-MM","en-AU"),type text),
+			    G = Table.AddColumn(F,"YearMonthSort",each [Year]*100+[MonthNumber],Int64.Type)
+			in G

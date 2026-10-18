@@ -1,0 +1,141 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "watchlist-register",
+  "position": {
+    "x": 32,
+    "y": 224,
+    "z": 6,
+    "width": 1856,
+    "height": 632,
+    "tabOrder": 6
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MyFundingWatchlist"
+                    }
+                  },
+                  "Property": "Active"
+                }
+              },
+              "queryRef": "MyFundingWatchlist.Active",
+              "nativeQueryRef": "Active",
+              "displayName": "Active"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MyFundingWatchlist"
+                    }
+                  },
+                  "Property": "OpportunityKey"
+                }
+              },
+              "queryRef": "MyFundingWatchlist.OpportunityKey",
+              "nativeQueryRef": "OpportunityKey",
+              "displayName": "Opportunity key"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MyFundingWatchlist"
+                    }
+                  },
+                  "Property": "Scope"
+                }
+              },
+              "queryRef": "MyFundingWatchlist.Scope",
+              "nativeQueryRef": "Scope",
+              "displayName": "Scope"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MyFundingWatchlist"
+                    }
+                  },
+                  "Property": "TargetKey"
+                }
+              },
+              "queryRef": "MyFundingWatchlist.TargetKey",
+              "nativeQueryRef": "TargetKey",
+              "displayName": "Target key"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Candidate watchlist'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

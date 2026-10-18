@@ -1,0 +1,28 @@
+// Run only against a verified frozen staging refresh. Include nulls in the response.
+// Replace After variables with the last accepted tuple; double quotes in text cursors.
+// Reject all response errors and duplicate tuples; do not advance on partial results.
+EVALUATE
+VAR After0 = ""
+VAR PageSize = 100
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(DoraPublications, (DoraPublications[DORAKey] > After0)), DoraPublications[DORAKey], ASC),
+    "DORAKey", DoraPublications[DORAKey],
+    "DORAURL", DoraPublications[DORAURL],
+    "Title", DoraPublications[Title],
+    "Authors", DoraPublications[Authors],
+    "Abstract", DoraPublications[Abstract],
+    "CHHHSAffiliatedAuthors", DoraPublications[CHHHSAffiliatedAuthors],
+    "AttributionEvidence", DoraPublications[AttributionEvidence],
+    "PublicationDate", DoraPublications[PublicationDate],
+    "PublicationDateRaw", DoraPublications[PublicationDateRaw],
+    "PublicationDatePrecision", DoraPublications[PublicationDatePrecision],
+    "PublicationYear", DoraPublications[PublicationYear],
+    "NormalizedTitle", DoraPublications[NormalizedTitle],
+    "PMID", DoraPublications[PMID],
+    "DOI", DoraPublications[DOI],
+    "Journal", DoraPublications[Journal],
+    "CoverageStatus", DoraPublications[CoverageStatus],
+    "CollectionExpectedCount", DoraPublications[CollectionExpectedCount]
+)
+ORDER BY [DORAKey]

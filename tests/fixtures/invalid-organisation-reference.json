@@ -1,0 +1,13 @@
+{
+  "version": "test",
+  "effective_from": "2026-01-01",
+  "units": [
+    {
+      "OrganisationKey": "child",
+      "OrganisationName": "Child",
+      "OrganisationType": "Unit",
+      "ParentOrganisationKey": "missing",
+      "Aliases": ["Child"]
+    }
+  ]
+}

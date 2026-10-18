@@ -1,0 +1,13 @@
+{
+  "schema_version": "my-funding-watchlist-v1",
+  "list_name": "My Funding Watchlist",
+  "identity_field": "OpportunityKey",
+  "source_observation_archive": "approved_private_archive",
+  "access_scope": "authenticated_current_user_personal_list",
+  "fields": [
+    {"display_name":"OpportunityKey","type":"text","required":true,"unique":true},
+    {"display_name":"Scope","type":"text"},
+    {"display_name":"TargetKey","type":"text"},
+    {"display_name":"Active","type":"boolean","default":false}
+  ]
+}

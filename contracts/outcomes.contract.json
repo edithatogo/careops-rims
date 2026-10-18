@@ -1,0 +1,12 @@
+{
+  "version":"2026-09-11",
+  "primary_question":"What publications are attributable to Cairns and Hinterland Hospital and Health Service?",
+  "required_outcomes":[
+    "canonical publication register",
+    "last complete Brisbane calendar month publications",
+    "PubMed/DORA source provenance",
+    "CHHHS attribution evidence",
+    "deduplication and ambiguity audit"
+  ],
+  "forbidden_primary_outcomes":["employment metrics","hiring metrics","demographics","clinical trial proxy dashboard","citation impact scores","grant metrics"]
+}

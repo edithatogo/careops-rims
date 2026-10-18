@@ -1,0 +1,77 @@
+table GrantRelationships
+	description: "Typed, evidence-required relationship bridge. FromKey and ToKey preserve separate grant, award and publication identities; no implicit join is performed."
+	lineageTag: 00000000-0000-4000-8000-eb79aae6a460
+
+	column RelationshipKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-8dd902f2aeca
+		summarizeBy: none
+		sourceColumn: RelationshipKey
+
+	column RelationshipType
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-3c0c1dbcd331
+		summarizeBy: none
+		sourceColumn: RelationshipType
+
+	column FromKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-92dd71ce5df3
+		summarizeBy: none
+		sourceColumn: FromKey
+
+	column ToKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-3b8c102a059f
+		summarizeBy: none
+		sourceColumn: ToKey
+
+	column AwardID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-afbbc0f48e6b
+		summarizeBy: none
+		sourceColumn: AwardID
+
+	column EvidenceURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-3257b210d592
+		summarizeBy: none
+		sourceColumn: EvidenceURL
+
+	column Confidence
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-eda29704c0a3
+		summarizeBy: none
+		sourceColumn: Confidence
+
+	column ReviewStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-0a2513ca5fbd
+		summarizeBy: none
+		sourceColumn: ReviewStatus
+
+	partition GrantRelationships = m
+		mode: import
+		source =
+			// Power Query M: read the typed grant/publication relationship bridge.
+			let
+			    SiteUrl = try pSharePointSiteUrl otherwise error "pSharePointSiteUrl is required; no tenant default is embedded.",
+			    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ApiVersion = 15]),
+			    RelationshipTable = Source{[Title = "Grant Relationships"]}[Data],
+			    Selected = Table.SelectColumns(RelationshipTable, {
+			        "RelationshipKey", "RelationshipType", "FromKey", "ToKey", "AwardID",
+			        "EvidenceURL", "Confidence", "ReviewStatus"
+			    }, MissingField.UseNull),
+			    Typed = Table.TransformColumnTypes(Selected, {
+			        {"RelationshipKey", type text}, {"RelationshipType", type text},
+			        {"FromKey", type text}, {"ToKey", type text}, {"AwardID", type text},
+			        {"EvidenceURL", type text}, {"Confidence", type text}, {"ReviewStatus", type text}
+			    }),
+			    ValidRows = Table.SelectRows(Typed, each
+			        [RelationshipKey] <> null and [RelationshipKey] <> "" and
+			        [RelationshipType] <> null and [FromKey] <> null and [FromKey] <> "" and
+			        [ToKey] <> null and [ToKey] <> "" and [EvidenceURL] <> null and [EvidenceURL] <> ""
+			    )
+			in
+			    ValidRows

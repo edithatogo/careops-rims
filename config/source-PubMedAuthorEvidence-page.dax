@@ -1,0 +1,19 @@
+// Run only against a verified frozen staging refresh. Include nulls in the response.
+// Replace After variables with the last accepted tuple; double quotes in text cursors.
+// Reject all response errors and duplicate tuples; do not advance on partial results.
+EVALUATE
+VAR After0 = ""
+VAR After1 = -1
+VAR After2 = -1
+VAR PageSize = 100
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(PubMedAuthorEvidence, (PubMedAuthorEvidence[PMID] > After0) || (PubMedAuthorEvidence[PMID] = After0 && PubMedAuthorEvidence[AuthorIndex] > After1) || (PubMedAuthorEvidence[PMID] = After0 && PubMedAuthorEvidence[AuthorIndex] = After1 && PubMedAuthorEvidence[AffiliationIndex] > After2)), PubMedAuthorEvidence[PMID], ASC, PubMedAuthorEvidence[AuthorIndex], ASC, PubMedAuthorEvidence[AffiliationIndex], ASC),
+    "PMID", PubMedAuthorEvidence[PMID],
+    "AuthorIndex", PubMedAuthorEvidence[AuthorIndex],
+    "AuthorName", PubMedAuthorEvidence[AuthorName],
+    "AffiliationIndex", PubMedAuthorEvidence[AffiliationIndex],
+    "AffiliationText", PubMedAuthorEvidence[AffiliationText],
+    "EvidenceKind", PubMedAuthorEvidence[EvidenceKind]
+)
+ORDER BY [PMID], [AuthorIndex], [AffiliationIndex]

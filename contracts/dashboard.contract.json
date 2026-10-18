@@ -1,0 +1,13 @@
+{
+  "pages":[
+    {"name":"PublicationRegister","purpose":"complete canonical register and visual analytics"},
+    {"name":"MonthlyPublications","purpose":"last complete Brisbane calendar month, trend, and specialty breakdown"},
+    {"name":"SourceReconciliation","purpose":"source overlap, DORA-only items, ambiguity and attribution audit"},
+    {"name":"ClinicalAnalytics","purpose":"clinical directorate specialties, ANZSRC FoR classification, and research intelligence"}
+    ,{"name":"FundingOpportunities","purpose":"canonical grant opportunity register and review state"}
+    ,{"name":"FundingCalendar","purpose":"external grant deadlines with preserved date precision"}
+    ,{"name":"MyFundingWatchlist","purpose":"personal watchlist preview pending private subscription persistence"}
+  ],
+  "page_count":7,
+  "forbidden_pages":["Employment","ClinicalTrialsEvidence","Demographics","Hiring"]
+}

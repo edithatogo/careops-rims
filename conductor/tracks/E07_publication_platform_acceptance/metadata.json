@@ -1,0 +1,10 @@
+{
+  "id": "E07_publication_platform_acceptance",
+  "title": "publication platform acceptance",
+  "status": "in_progress",
+  "scope": "rims_extension",
+  "depends_on": ["S01_publication_stabilisation", "T11_sources_and_reconciliation", "E01_flow_automation", "T14_complete_exports_monthly"],
+  "requires_live_evidence": true,
+  "created_at": "2026-09-20T00:00:00Z",
+  "updated_at": "2026-09-20T00:00:00Z"
+}

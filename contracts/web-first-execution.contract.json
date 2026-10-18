@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "baseline_commit": "92c1d0e0ddfe5ee3400b054d50ad3abeb11a8665",
+  "route_priority": [
+    "powerbi_plugin",
+    "powerbi_service_webui",
+    "assisted_powerbi_webui",
+    "utm_windows_desktop_conditional"
+  ],
+  "not_required": [
+    "Fabric Git integration",
+    "new Fabric capacity",
+    "lakehouse",
+    "new GitHub repository"
+  ],
+  "required_pages": [
+    "CHHHS Publications",
+    "Monthly Publications",
+    "Source Reconciliation",
+    "Clinical Analytics",
+    "Funding Opportunities",
+    "Funding Calendar",
+    "My Funding Watchlist"
+  ],
+  "headline_identity": "CanonicalKey",
+  "sources": [
+    "PubMed",
+    "DORA"
+  ],
+  "required_capabilities": [
+    "read_report",
+    "read_model",
+    "edit_report",
+    "edit_model",
+    "edit_power_query",
+    "refresh",
+    "export_rows"
+  ],
+  "before_write": [
+    "exact_target_ids",
+    "recoverable_baseline",
+    "distinct_development_model",
+    "downstream_dependencies_checked",
+    "baseline_revision_unchanged",
+    "canary_roundtrip_and_rollback"
+  ],
+  "live_evidence_required": [
+    "native_m",
+    "native_dax",
+    "live_refresh",
+    "report_readback",
+    "model_readback",
+    "rendered_pages",
+    "full_export_reconciliation",
+    "monthly_export_reconciliation",
+    "legacy_metadata_scan",
+    "fixture_exclusion"
+  ],
+  "fallback_eligible_reasons": [
+    "unsupported_web_model_type",
+    "unsupported_web_power_query_operation",
+    "unsupported_required_web_authoring_operation"
+  ],
+  "fallback_ineligible_reasons": [
+    "plugin_not_exposed_in_this_chat",
+    "missing_device",
+    "permission_denied",
+    "credentials_missing",
+    "tenant_policy",
+    "unverified_capability",
+    "pbix_download_unavailable_only"
+  ],
+  "forbidden_metadata_terms": [
+    "Employee",
+    "EmplID",
+    "Gender",
+    "Ethnicity",
+    "New Hires",
+    "Separations",
+    "Bad hires",
+    "Actives",
+    "TermReason",
+    "Employee type"
+  ],
+  "metadata_scan_excludes": [
+    "citation_text",
+    "source_audit_history",
+    "test_fixtures"
+  ],
+  "coverage_label_required": true,
+  "synthetic_data_in_live_model_allowed": false,
+  "historical_attachment_seed_allowed": false,
+  "production_publish_requires_approval": true,
+  "activate_schedule_requires_approval": true,
+  "fallback_requires_approval": true,
+  "local_validation_is_native_acceptance": false
+}

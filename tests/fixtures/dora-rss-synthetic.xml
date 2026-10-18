@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>DORA Site:</title>
+    <link>https://dora.health.qld.gov.au/qldresearchjspui/handle/1/849</link>
+    <pubDate>Fri, 11 Sep 2026 06:08:27 GMT</pubDate>
+    <item>
+      <title>Remote care pathways in tropical health</title>
+      <link>https://example.invalid/1</link>
+      <description>Title: Remote care pathways in tropical health
+Authors: Example, Alex; Example, Taylor
+Abstract: Synthetic test abstract only.
+Description: Cairns &amp; Hinterland Hospital and Health Service (CHHHS) affiliated author: Alex Example</description>
+      <pubDate>Thu, 01 Jan 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="false">https://example.invalid/1</guid>
+      <dc:date>2026-01-01T00:00:00Z</dc:date>
+    </item>
+  </channel>
+</rss>

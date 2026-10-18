@@ -1,0 +1,141 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "calendar-register",
+  "position": {
+    "x": 32,
+    "y": 224,
+    "z": 5,
+    "width": 1856,
+    "height": 632,
+    "tabOrder": 5
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FundingCalendar"
+                    }
+                  },
+                  "Property": "CalculatedDate"
+                }
+              },
+              "queryRef": "FundingCalendar.CalculatedDate",
+              "nativeQueryRef": "CalculatedDate",
+              "displayName": "Calculated date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FundingCalendar"
+                    }
+                  },
+                  "Property": "DeadlineKey"
+                }
+              },
+              "queryRef": "FundingCalendar.DeadlineKey",
+              "nativeQueryRef": "DeadlineKey",
+              "displayName": "Deadline key"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FundingCalendar"
+                    }
+                  },
+                  "Property": "ReviewStatus"
+                }
+              },
+              "queryRef": "FundingCalendar.ReviewStatus",
+              "nativeQueryRef": "ReviewStatus",
+              "displayName": "Review status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FundingCalendar"
+                    }
+                  },
+                  "Property": "SourceURL"
+                }
+              },
+              "queryRef": "FundingCalendar.SourceURL",
+              "nativeQueryRef": "SourceURL",
+              "displayName": "Source link"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Funding calendar data'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

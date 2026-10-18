@@ -1,0 +1,14 @@
+{
+  "id": "T05_native_acceptance",
+  "title": "Native Desktop and tenant acceptance",
+  "status": "superseded",
+  "created": "2026-09-11",
+  "scope": "external_acceptance",
+  "blockers": [
+    "Power BI Desktop/native M and DAX engine not available in the build environment",
+    "Live NCBI harvest not executed in container",
+    "Tenant resources, credentials, capacity and approved distribution not configured"
+  ],
+  "superseded_by": "T17_desktop_fallback_acceptance",
+  "reason": "User prefers ordinary Power BI web UI/plugin, with existing UTM Windows VM only as fallback. No Fabric Git deployment required."
+}

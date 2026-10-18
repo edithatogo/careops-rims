@@ -1,0 +1,33 @@
+#table(
+    type table [FacilityKey=text, FacilityName=text, FacilityGroup=text, PubMedQuery=text, Active=logical],
+    {
+        {"hhs", "Cairns and Hinterland HHS", "Service-wide", "(""Cairns and Hinterland Hospital and Health Service""[Affiliation] OR ""Cairns & Hinterland Hospital and Health Service""[Affiliation] OR ""Cairns and Hinterland Hospital & Health Service""[Affiliation] OR ""Cairns & Hinterland Hospital & Health Service""[Affiliation] OR ""Cairns and Hinterland Health Service""[Affiliation] OR ""CHHHS""[Affiliation] OR ""Cairns Health Service District""[Affiliation] OR ""Liz Plummer Cancer Care Centre""[Affiliation] OR ""Tropical Public Health Services""[Affiliation] OR ""Cairns Sexual Health Service""[Affiliation])", true},
+        {"cairns", "Cairns Hospital", "Cairns", "(""Cairns Hospital""[Affiliation] OR ""Cairns Base Hospital""[Affiliation])", true},
+        {"atherton", "Atherton Hospital", "Hinterland", "(""Atherton Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"babinda", "Babinda Multi-Purpose Health Centre", "Hinterland", "(""Babinda Hospital""[Affiliation] OR ""Babinda Multi-Purpose Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"gordonvale", "Gordonvale Hospital", "Hinterland", "(""Gordonvale Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"herberton", "Herberton Hospital", "Hinterland", "(""Herberton Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"innisfail", "Innisfail Hospital", "Hinterland", "(""Innisfail Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"mareeba", "Mareeba Hospital", "Hinterland", "(""Mareeba Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"mossman", "Mossman Multi-Purpose Health Service", "Hinterland", "(""Mossman Hospital""[Affiliation] OR ""Mossman Multi-Purpose Health Service""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"tully", "Tully Hospital", "Hinterland", "(""Tully Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"yarrabah", "Yarrabah Emergency Service", "Community", "(""Yarrabah Emergency Service""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"cairns-north", "Cairns North Community Health", "Community", "(""Cairns North Community Health""[Affiliation])", true},
+        {"cairns-south", "Cairns South Health Facility", "Community", "(""Cairns South Health Facility""[Affiliation])", true},
+        {"chillagoe", "Chillagoe Primary Health Centre", "Community", "(""Chillagoe Primary Health Centre""[Affiliation] OR ""Chillagoe Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"cow-bay", "Cow Bay Primary Health Centre", "Community", "(""Cow Bay Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"croydon", "Croydon Primary Health Centre", "Community", "(""Croydon Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"dimbulah", "Dimbulah Primary Health Centre", "Community", "(""Dimbulah Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"edmonton", "Edmonton Community Health Centre", "Community", "(""Edmonton Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"forsayth", "Forsayth Primary Health Centre", "Community", "(""Forsayth Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"georgetown", "Georgetown Primary Health Centre", "Community", "(""Georgetown Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"jumbun", "Jumbun Community Health Centre", "Community", "(""Jumbun Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"malanda", "Malanda Primary Health Centre", "Community", "(""Malanda Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"millaa-millaa", "Millaa Millaa Primary Health Centre", "Community", "(""Millaa Millaa Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"mission-beach", "Mission Beach Community Health Centre", "Community", "(""Mission Beach Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"mount-garnet", "Mount Garnet Primary Health Centre", "Community", "(""Mount Garnet Primary Health Centre""[Affiliation] OR ""Mt Garnet Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"ravenshoe", "Ravenshoe Primary Health Centre", "Community", "(""Ravenshoe Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+        {"sub-acute", "Cairns Sub-Acute Care Unit", "Cairns", "(""Cairns Sub-Acute Care Unit""[Affiliation])", true},
+        {"smithfield", "Smithfield Community Health Centre", "Community", "(""Smithfield Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true}
+    }
+)

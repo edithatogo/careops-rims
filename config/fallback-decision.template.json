@@ -1,0 +1,9 @@
+{
+  "reason": "unverified_capability",
+  "webui_attempted": false,
+  "blocker_confirmed": false,
+  "permissions_ok": false,
+  "owner_approved": false,
+  "evidence_refs": [],
+  "note": "Not activated. Missing plugin exposure or an empty remote-device list in this chat is not proof of a web authoring failure."
+}

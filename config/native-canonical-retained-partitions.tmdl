@@ -1,0 +1,17 @@
+// Apply only to the isolated development model after the retained projection
+// tables and committed-history readers have been accepted. This keeps the
+// canonical table names used by the report while making their data source the
+// immutable committed history. Do not apply to the shared/original model.
+createOrReplace
+
+  ref table PubMedPublications
+
+    partition PubMedPublications = m
+      mode: import
+      source = RetainedPubMedPublications
+
+  ref table DoraPublications
+
+    partition DoraPublications = m
+      mode: import
+      source = RetainedDoraPublications

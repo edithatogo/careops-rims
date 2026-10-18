@@ -1,0 +1,19 @@
+relationship '00000000-0000-4000-8000-8a501a3a46a0'
+	fromColumn: Publication.PublicationDate
+	toColumn: Date.Date
+	crossFilteringBehavior: oneDirection
+
+relationship '00000000-0000-4000-8000-aaf9b04ed57c'
+	fromColumn: PublicationFacility.CanonicalKey
+	toColumn: Publication.CanonicalKey
+	crossFilteringBehavior: oneDirection
+
+relationship '00000000-0000-4000-8000-7e74653335dc'
+	fromColumn: PublicationFacility.FacilityKey
+	toColumn: Facility.FacilityKey
+	crossFilteringBehavior: oneDirection
+
+relationship '00000000-0000-4000-8000-22b33f850006'
+	fromColumn: SearchAudit.FacilityKey
+	toColumn: Facility.FacilityKey
+	crossFilteringBehavior: oneDirection

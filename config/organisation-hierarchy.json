@@ -1,0 +1,53 @@
+{
+  "version": "2026-09-20",
+  "effective_from": "2026-09-20",
+  "effective_to": "",
+  "source": "CHHHS organisational reference supplied for research attribution",
+  "units": [
+    {
+      "OrganisationKey": "chhhs",
+      "OrganisationName": "Cairns and Hinterland Hospital and Health Service",
+      "OrganisationType": "HHS",
+      "ParentOrganisationKey": null,
+      "Aliases": ["Cairns and Hinterland Hospital and Health Service", "Cairns & Hinterland HHS", "CHHHS"],
+      "EffectiveFrom": "2026-09-20",
+      "EffectiveTo": ""
+    },
+    {
+      "OrganisationKey": "chhhs:service-wide",
+      "OrganisationName": "Cairns and Hinterland HHS service-wide",
+      "OrganisationType": "ServiceGroup",
+      "ParentOrganisationKey": "chhhs",
+      "Aliases": ["Cairns Health Service District", "Tropical Public Health Services", "Cairns Sexual Health Service", "Liz Plummer Cancer Care Centre"],
+      "EffectiveFrom": "2026-09-20",
+      "EffectiveTo": ""
+    },
+    {
+      "OrganisationKey": "chhhs:cairns",
+      "OrganisationName": "Cairns facility group",
+      "OrganisationType": "FacilityGroup",
+      "ParentOrganisationKey": "chhhs",
+      "Aliases": ["Cairns Hospital", "Cairns Base Hospital", "Cairns Sub-Acute Care Unit"],
+      "EffectiveFrom": "2026-09-20",
+      "EffectiveTo": ""
+    },
+    {
+      "OrganisationKey": "chhhs:hinterland",
+      "OrganisationName": "Hinterland facility group",
+      "OrganisationType": "FacilityGroup",
+      "ParentOrganisationKey": "chhhs",
+      "Aliases": ["Atherton Hospital", "Babinda Hospital", "Gordonvale Hospital", "Herberton Hospital", "Innisfail Hospital", "Mareeba Hospital", "Mossman Hospital", "Tully Hospital", "Yarrabah Emergency Service"],
+      "EffectiveFrom": "2026-09-20",
+      "EffectiveTo": ""
+    },
+    {
+      "OrganisationKey": "chhhs:community",
+      "OrganisationName": "Community facility group",
+      "OrganisationType": "FacilityGroup",
+      "ParentOrganisationKey": "chhhs",
+      "Aliases": ["CHHHS Community Health", "Cairns Community Health", "CHHHS Primary Health Centre"],
+      "EffectiveFrom": "2026-09-20",
+      "EffectiveTo": ""
+    }
+  ]
+}

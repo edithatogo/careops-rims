@@ -1,0 +1,18 @@
+{
+  "data_kind": "synthetic",
+  "scope": {
+    "mode": "all",
+    "reporting_month": null
+  },
+  "source_snapshot_id": "synthetic-webfirst-export-v1",
+  "rows": 6,
+  "canonical_keys_sha256": "8bec64446e711fff4f9ec8da2d2d47622d085865e0ee948602d6689eca80df10",
+  "verified_against_supplied_expectations": true,
+  "native_powerbi_extraction_verified_by_this_script": false,
+  "pdf_created": false,
+  "csv_formula_safety": "apostrophe prefix; no text truncation",
+  "files": {
+    "publications.csv": "d08c0624af4f54a5dd4e77adea6de2fd6b57b82c4c035cb654ed80782ead50de",
+    "publications.html": "8662070cc85c6059b33d8a00e7ac42c82e96c7a37aef36def97fc33d0ea01108"
+  }
+}

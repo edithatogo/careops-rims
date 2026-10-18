@@ -1,0 +1,141 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "facility-contributions",
+  "position": {
+    "x": 1344,
+    "y": 224,
+    "z": 8,
+    "width": 544,
+    "height": 312,
+    "tabOrder": 8
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SearchAudit"
+                    }
+                  },
+                  "Property": "FacilityKey"
+                }
+              },
+              "queryRef": "SearchAudit.FacilityKey",
+              "nativeQueryRef": "FacilityKey",
+              "displayName": "Search key"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SearchAudit"
+                    }
+                  },
+                  "Property": "SearchCount"
+                }
+              },
+              "queryRef": "SearchAudit.SearchCount",
+              "nativeQueryRef": "SearchCount",
+              "displayName": "Source matches"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SearchAudit"
+                    }
+                  },
+                  "Property": "Warnings"
+                }
+              },
+              "queryRef": "SearchAudit.Warnings",
+              "nativeQueryRef": "Warnings",
+              "displayName": "Warnings"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SearchAudit"
+                    }
+                  },
+                  "Property": "QueryVersion"
+                }
+              },
+              "queryRef": "SearchAudit.QueryVersion",
+              "nativeQueryRef": "QueryVersion",
+              "displayName": "Query version"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'PubMed search coverage and warnings'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

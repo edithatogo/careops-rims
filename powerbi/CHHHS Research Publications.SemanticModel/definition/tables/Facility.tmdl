@@ -1,0 +1,31 @@
+table Facility
+	lineageTag: 00000000-0000-4000-8000-61dd3af6faf2
+
+	column FacilityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-07ea1bdf974e
+		summarizeBy: none
+		sourceColumn: FacilityKey
+
+	column FacilityName
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-bb74d9ef5a19
+		summarizeBy: none
+		sourceColumn: FacilityName
+
+	column FacilityGroup
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-9c2570d152d5
+		summarizeBy: none
+		sourceColumn: FacilityGroup
+
+	column PubMedQuery
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d1d1cf4dac7c
+		summarizeBy: none
+		sourceColumn: PubMedQuery
+
+	partition Facility = m
+		mode: import
+		source =
+			Table.SelectColumns(FacilityDefinitions,{"FacilityKey","FacilityName","FacilityGroup","PubMedQuery"})

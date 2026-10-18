@@ -1,0 +1,46 @@
+{
+  "artifact_type": "implementation_blueprint_not_importable_flow",
+  "deployed": false,
+  "trigger_enabled": false,
+  "development_trigger": "manual",
+  "proposed_recurrence": {
+    "frequency": "Day",
+    "interval": 1,
+    "hour": 8,
+    "timezone": "E. Australia Standard Time",
+    "approval_status": "not_enabled"
+  },
+  "concurrency": 1,
+  "recipients": [],
+  "source_queries": [
+    "config/source-PubMedPublications-page.dax",
+    "config/source-DoraPublications-page.dax",
+    "config/source-PubMedMetadataChunks-page.dax",
+    "config/source-DoraMetadataChunks-page.dax",
+    "config/source-PubMedAuthorEvidence-page.dax"
+  ],
+  "states": [
+    "Acquire unique run record",
+    "Request and correlate staging refresh",
+    "Require terminal success and ingestion audits",
+    "Extract all source pages with includeNulls and compound cursors",
+    "Read back immutable source files and reconcile every source key and metadata chunk",
+    "Upsert retained source IDs preserving first observation and review decisions",
+    "Commit validated batch manifest",
+    "Refresh canonical model from committed batch and review version",
+    "Require correlated success and matching batch/key sets",
+    "Generate and verify full CSV/HTML outputs",
+    "Record accepted batch and release lock"
+  ],
+  "failure_policy": "Leave incomplete batches uncommitted; preserve last accepted register. Do not label it current or send notifications to an unapproved destination.",
+  "proof_gates": [
+    "Standard Power BI query action execution in existing My workspace",
+    "Source row, unique tuple and complete metadata reconciliation before commit",
+    "Persistent review and first-observed state",
+    "Exact staging/report refresh correlation",
+    "Native storage readback and hash contract",
+    "Two consecutive live cycles, replay and rollover tests",
+    "Post-trial operation"
+  ],
+  "cloud_blocker": "Browser policy verification unavailable when opening Power Automate controls on 2026-09-13; flow not created"
+}

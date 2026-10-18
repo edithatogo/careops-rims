@@ -1,0 +1,96 @@
+{
+  "name": "{{FLOW_ID}}",
+  "id": "/providers/Microsoft.Flow/flows/{{FLOW_ID}}",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "CHHHS RIMS - Funding Delivery Ledger - Reviewed Upsert",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {"defaultValue": {}, "type": "SecureObject"},
+        "$connections": {"defaultValue": {}, "type": "Object"}
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "required": ["DeliveryRowsJson"],
+              "properties": {"DeliveryRowsJson": {"type": "string", "description": "JSON array validated against funding-delivery-ledger-v1."}}
+            }
+          }
+        }
+      },
+      "actions": {
+        "Parse_Delivery_Rows": {"runAfter": {}, "type": "Compose", "inputs": "@json(triggerBody()?['DeliveryRowsJson'])"},
+        "Apply_to_each_Delivery_Row": {
+          "runAfter": {"Parse_Delivery_Rows": ["Succeeded"]},
+          "type": "Foreach",
+          "foreach": "@coalesce(outputs('Parse_Delivery_Rows'), createArray())",
+          "runtimeConfiguration": {"concurrency": {"repetitions": 1}},
+          "actions": {
+            "SharePoint_Get_items": {
+              "runAfter": {}, "type": "OpenApiConnection",
+              "inputs": {
+                "host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "GetItems"},
+                "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "$filter": "Title eq '@{replace(string(item()?['DeliveryEventKey']),'''','''''')}'", "$top": 2},
+                "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+              }
+            },
+            "Condition_Duplicate_DeliveryEventKey": {
+              "runAfter": {"SharePoint_Get_items": ["Succeeded"]}, "type": "If",
+              "expression": {"greater": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+              "actions": {"Compose_Duplicate_DeliveryEventKey_Failure": {"type": "Compose", "inputs": "@concat('DUPLICATE_DELIVERY_EVENT_KEY: ', string(item()?['DeliveryEventKey']))"}},
+              "else": {"actions": {}}
+            },
+            "Condition_Is_New_Delivery_Row": {
+              "runAfter": {"Condition_Duplicate_DeliveryEventKey": ["Succeeded"]}, "type": "If",
+              "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 0]},
+              "actions": {
+                "SharePoint_Create_item": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PostItem"},
+                    "parameters": {
+                      "dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}",
+                      "item/Title": "@{item()?['DeliveryEventKey']}", "item/UserKey": "@{item()?['UserKey']}", "item/OpportunityKey": "@{item()?['OpportunityKey']}", "item/EventType": "@{item()?['EventType']}", "item/Revision": "@{item()?['Revision']}", "item/OffsetDays": "@{item()?['OffsetDays']}", "item/Channel": "@{item()?['Channel']}", "item/Status": "@{item()?['Status']}", "item/ScheduledFor": "@{item()?['ScheduledFor']}", "item/SentAt": "@{if(empty(item()?['SentAt']), null, item()?['SentAt'])}", "item/ErrorMessage": "@{if(empty(item()?['ErrorMessage']), null, item()?['ErrorMessage'])}"
+                    },
+                    "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Condition_Exactly_One_Delivery_Row": {
+                    "type": "If", "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+                    "actions": {
+                      "SharePoint_Update_item": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PatchItem"},
+                          "parameters": {
+                            "dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']",
+                            "item/Title": "@{item()?['DeliveryEventKey']}", "item/UserKey": "@{item()?['UserKey']}", "item/OpportunityKey": "@{item()?['OpportunityKey']}", "item/EventType": "@{item()?['EventType']}", "item/Revision": "@{item()?['Revision']}", "item/OffsetDays": "@{item()?['OffsetDays']}", "item/Channel": "@{item()?['Channel']}", "item/Status": "@{item()?['Status']}", "item/ScheduledFor": "@{item()?['ScheduledFor']}", "item/SentAt": "@{if(empty(item()?['SentAt']), null, item()?['SentAt'])}", "item/ErrorMessage": "@{if(empty(item()?['ErrorMessage']), null, item()?['ErrorMessage'])}"
+                          },
+                          "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}
+                        }
+                      }
+                    },
+                    "else": {"actions": {}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {"shared_sharepointonline": {"connectionName": "shared-sharepointonline", "source": "Invoker", "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "tier": "NotSpecified", "apiName": "sharepointonline"}},
+    "flowFailureAlertSubscribed": false,
+    "isManaged": false
+  }
+}

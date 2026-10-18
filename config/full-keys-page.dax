@@ -1,0 +1,10 @@
+// Full scope. Check API limits and reconcile independent keys before accepting any export.
+EVALUATE
+VAR AfterKey = "" // Set to last accepted CanonicalKey; escape embedded quotes by doubling them.
+VAR PageSize = 100 // Reduce on response-size errors; never advance after an error.
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(Publication, Publication[CanonicalKey] > AfterKey), Publication[CanonicalKey], ASC),
+        "CanonicalKey", Publication[CanonicalKey]
+)
+ORDER BY [CanonicalKey]

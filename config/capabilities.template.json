@@ -1,0 +1,51 @@
+{
+  "plugin_name": null,
+  "plugin_version": null,
+  "schema_receipt_ref": null,
+  "permission_denied": false,
+  "capabilities": [
+    {
+      "operation": "read_report",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    },
+    {
+      "operation": "read_model",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    },
+    {
+      "operation": "edit_report",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    },
+    {
+      "operation": "edit_model",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    },
+    {
+      "operation": "edit_power_query",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    },
+    {
+      "operation": "refresh",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    },
+    {
+      "operation": "export_rows",
+      "provider": "plugin",
+      "status": "unknown",
+      "evidence_ref": null
+    }
+  ],
+  "note": "Add webui or assisted_webui observations per operation. Available schemas are not verified write operations. Keep actual tenant identities privately."
+}

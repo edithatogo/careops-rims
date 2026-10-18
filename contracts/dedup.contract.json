@@ -1,0 +1,7 @@
+{
+  "canonical_key_order":["PMID for PubMed records","DORA item URL for unmatched DORA records"],
+  "cross_source_match":"unique normalized title + publication year",
+  "ambiguous_match_policy":"do not merge when more than one PubMed candidate matches; retain DORA record separately and flag for review",
+  "counting_rule":"DISTINCTCOUNT(Publication[CanonicalKey])",
+  "provenance_rule":"retain SourceSet, DedupMethod, PubMedURL, DORAURL and CHHHSAffiliatedAuthors"
+}

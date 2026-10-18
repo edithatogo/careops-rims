@@ -1,0 +1,92 @@
+table FundingDeliveryLedger
+	description: "Current-user delivery revision ledger. Persistence does not prove an actual email or calendar delivery."
+	lineageTag: 00000000-0000-4000-8000-f6e2a1598682
+
+	column DeliveryEventKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-de5be9134bce
+		summarizeBy: none
+		sourceColumn: DeliveryEventKey
+
+	column UserKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-914f6f5b5497
+		summarizeBy: none
+		sourceColumn: UserKey
+
+	column OpportunityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-e2b7d8ed3706
+		summarizeBy: none
+		sourceColumn: OpportunityKey
+
+	column EventType
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-55b8405de7b0
+		summarizeBy: none
+		sourceColumn: EventType
+
+	column Revision
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-a2d950b4a747
+		summarizeBy: none
+		sourceColumn: Revision
+
+	column OffsetDays
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-71d34242b257
+		summarizeBy: none
+		sourceColumn: OffsetDays
+
+	column Channel
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-b6861d7224c1
+		summarizeBy: none
+		sourceColumn: Channel
+
+	column Status
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-ce51a286dd7a
+		summarizeBy: none
+		sourceColumn: Status
+
+	column ScheduledFor
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-db069bee5a69
+		summarizeBy: none
+		sourceColumn: ScheduledFor
+
+	column SentAt
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-d893db6605d5
+		summarizeBy: none
+		sourceColumn: SentAt
+
+	column ErrorMessage
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-8f5d8bba2caa
+		summarizeBy: none
+		sourceColumn: ErrorMessage
+
+	partition FundingDeliveryLedger = m
+		mode: import
+		source =
+			// Power Query M: read the current user's personal funding delivery ledger.
+			let
+			    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+			    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+			    Ledger = Source{[Title = "Funding Delivery Ledger"]}[Items],
+			    Selected = Table.SelectColumns(Ledger, {
+			        "DeliveryEventKey", "UserKey", "OpportunityKey", "EventType", "Revision", "OffsetDays",
+			        "Channel", "Status", "ScheduledFor", "SentAt", "ErrorMessage"
+			    }, MissingField.UseNull),
+			    Typed = Table.TransformColumnTypes(Selected, {
+			        {"DeliveryEventKey", type text}, {"UserKey", type text}, {"OpportunityKey", type text},
+			        {"EventType", type text}, {"Revision", type text}, {"OffsetDays", Int64.Type},
+			        {"Channel", type text}, {"Status", type text}, {"ScheduledFor", type datetime},
+			        {"SentAt", type datetime}, {"ErrorMessage", type text}
+			    })
+			in
+			    Typed

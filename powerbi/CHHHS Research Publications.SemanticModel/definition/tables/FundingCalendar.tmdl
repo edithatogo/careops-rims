@@ -1,0 +1,65 @@
+table FundingCalendar
+	description: "Current-user institutional-date projection. Source dates and cancellation/review state remain explicit."
+	lineageTag: 00000000-0000-4000-8000-5ea2bb2518f6
+
+	column DeadlineKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-22c1c8608149
+		summarizeBy: none
+		sourceColumn: DeadlineKey
+
+	column OpportunityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-e7c6471dc3a2
+		summarizeBy: none
+		sourceColumn: OpportunityKey
+
+	column CalculatedDate
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-c82a191f3d4e
+		summarizeBy: none
+		sourceColumn: CalculatedDate
+
+	column SourceURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-5627486b613b
+		summarizeBy: none
+		sourceColumn: SourceURL
+
+	column Cancelled
+		dataType: boolean
+		lineageTag: 00000000-0000-4000-8000-84105e6f3250
+		summarizeBy: none
+		sourceColumn: Cancelled
+
+	column PolicyKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-f77ec13f7fd7
+		summarizeBy: none
+		sourceColumn: PolicyKey
+
+	column ReviewStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d3ec06c13828
+		summarizeBy: none
+		sourceColumn: ReviewStatus
+
+	partition FundingCalendar = m
+		mode: import
+		source =
+			// Power Query M: read the personal Funding Calendar SharePoint list.
+			let
+			    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+			    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+			    Calendar = Source{[Title = "Funding Calendar"]}[Items],
+			    Selected = Table.SelectColumns(Calendar, {
+			        "DeadlineKey", "OpportunityKey", "CalculatedDate", "SourceURL", "Cancelled", "PolicyKey", "ReviewStatus"
+			    }, MissingField.UseNull),
+			    Typed = Table.TransformColumnTypes(Selected, {
+			        {"DeadlineKey", type text}, {"OpportunityKey", type text}, {"CalculatedDate", type datetime},
+			        {"SourceURL", type text}, {"Cancelled", type logical}, {"PolicyKey", type text}, {"ReviewStatus", type text}
+			    })
+			in
+			    Typed

@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "data_kind": "unverified",
+  "target": {
+    "tenant_id": null,
+    "workspace_id": null,
+    "report_id": null,
+    "model_id": null
+  },
+  "refresh_run_id": null,
+  "source_health": {
+    "PubMed": "not_run",
+    "DORA": "not_run"
+  },
+  "checks": {
+    "native_m": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "native_dax": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "live_refresh": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "report_readback": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "model_readback": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "rendered_pages": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "full_export_reconciliation": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "monthly_export_reconciliation": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "legacy_metadata_scan": {
+      "status": "not_run",
+      "artifact_id": null
+    },
+    "fixture_exclusion": {
+      "status": "not_run",
+      "artifact_id": null
+    }
+  },
+  "artifacts": [],
+  "artifact_format_example": {
+    "id": "unique-evidence-id",
+    "path": "relative/file.json",
+    "sha256": "actual-file-sha256",
+    "target": "copy exact target object",
+    "refresh_run_id": "same actual refresh id",
+    "captured_at_utc": "actual aware timestamp within observation window"
+  },
+  "note": "Template deliberately fails. Populate only from real evidence; keep privately. File-integrity checks do not authenticate the source or replace authorised review.",
+  "started_at_utc": null,
+  "finished_at_utc": null,
+  "contract_sha256": null
+}

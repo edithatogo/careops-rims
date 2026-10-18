@@ -1,0 +1,33 @@
+table ReportingWindow
+	lineageTag: 00000000-0000-4000-8000-06bd6003ffcc
+
+	column ReportMonthStart
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-f413e5fc2115
+		summarizeBy: none
+		sourceColumn: ReportMonthStart
+
+	column ReportMonthEndExclusive
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-fb979d3258ff
+		summarizeBy: none
+		sourceColumn: ReportMonthEndExclusive
+
+	column RefreshedAtUTC
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-a78d34d36f11
+		summarizeBy: none
+		sourceColumn: RefreshedAtUTC
+
+	partition ReportingWindow = m
+		mode: import
+		source =
+			let
+			    NowUTC = DateTimeZone.FixedUtcNow(),
+			    BrisbaneToday = Date.From(DateTimeZone.SwitchZone(NowUTC,10)),
+			    EndExclusive = Date.StartOfMonth(BrisbaneToday),
+			    StartDate = Date.AddMonths(EndExclusive,-1)
+			in #table(type table [ReportMonthStart=date,ReportMonthEndExclusive=date,RefreshedAtUTC=datetime],{{StartDate,EndExclusive,DateTimeZone.RemoveZone(NowUTC)}})

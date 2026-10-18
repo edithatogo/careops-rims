@@ -1,0 +1,18 @@
+{
+  "id": "T10_isolated_baseline",
+  "title": "Protect the existing report and prove an isolated write",
+  "status": "complete",
+  "scope": "live_web",
+  "created_at_utc": "2026-09-12T03:38:54.708930+00:00",
+  "depends_on": [
+    "T08_web_capability_discovery",
+    "T09_execution_contracts"
+  ],
+  "requires_live_evidence": true,
+  "baseline_commit": "92c1d0e0ddfe5ee3400b054d50ad3abeb11a8665",
+  "completion_evidence": [
+    "private/ops/isolated-baseline-observation.json",
+    "private/ops/original-pbix-backup.json"
+  ],
+  "updated_at": "2026-09-15T00:25:00.000000+00:00"
+}

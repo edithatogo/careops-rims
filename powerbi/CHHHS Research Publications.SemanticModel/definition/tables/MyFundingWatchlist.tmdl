@@ -1,0 +1,42 @@
+table MyFundingWatchlist
+	description: "Current-user personal subscription scope. Active state is explicit and does not imply notification delivery."
+	lineageTag: 00000000-0000-4000-8000-258c611fb992
+
+	column OpportunityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-42d44edad6b1
+		summarizeBy: none
+		sourceColumn: OpportunityKey
+
+	column Scope
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d9c2d7c94e25
+		summarizeBy: none
+		sourceColumn: Scope
+
+	column TargetKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-8e0229428c52
+		summarizeBy: none
+		sourceColumn: TargetKey
+
+	column Active
+		dataType: boolean
+		lineageTag: 00000000-0000-4000-8000-42283c8ec51f
+		summarizeBy: none
+		sourceColumn: Active
+
+	partition MyFundingWatchlist = m
+		mode: import
+		source =
+			// Power Query M: read the current user's personal funding watchlist.
+			let
+			    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+			    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+			    Watchlist = Source{[Title = "My Funding Watchlist"]}[Items],
+			    Selected = Table.SelectColumns(Watchlist, {"OpportunityKey", "Scope", "TargetKey", "Active"}, MissingField.UseNull),
+			    Typed = Table.TransformColumnTypes(Selected, {
+			        {"OpportunityKey", type text}, {"Scope", type text}, {"TargetKey", type text}, {"Active", type logical}
+			    })
+			in
+			    Typed

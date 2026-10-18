@@ -1,0 +1,65 @@
+{
+  "checked_date": "2026-09-12",
+  "sources": [
+    {
+      "id": "WEB_MODEL",
+      "title": "Power BI Service semantic-model editing",
+      "url": "https://learn.microsoft.com/en-us/power-bi/transform-model/service-edit-data-models",
+      "relevance": "Import-model Power Query, owner/write/build and tenant settings; edits can autosave; field renaming can leave downstream visual references stale. Feature applicability must be checked in the actual tenant."
+    },
+    {
+      "id": "COPY",
+      "title": "Copying reports",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/service-datasets-copy-reports",
+      "relevance": "A report copy still references the original semantic model; copying is not model isolation."
+    },
+    {
+      "id": "EXPORT",
+      "title": "Export visual data",
+      "url": "https://learn.microsoft.com/en-us/power-bi/visuals/power-bi-visualization-export-data",
+      "relevance": "Export limits and active filters can limit output; verify row counts and identity sets instead of assuming a complete bibliography."
+    },
+    {
+      "id": "PDF",
+      "title": "PDF export",
+      "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/end-user-pdf",
+      "relevance": "Report-page PDF is a report rendering route; a full bibliographic deliverable needs its own completeness check."
+    },
+    {
+      "id": "MONTHLY",
+      "title": "Scheduled refresh",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-scheduled-refresh",
+      "relevance": "The regular scheduled-refresh UI does not offer a monthly interval; use an approved monthly Power Automate orchestration where appropriate."
+    },
+    {
+      "id": "DYNAMIC",
+      "title": "Data refresh",
+      "url": "https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-data",
+      "relevance": "Dynamic data sources can block refresh; fixed base URLs with RelativePath/Query can qualify for documented exceptions. Test the actual query/tenant; no guarantee inferred."
+    },
+    {
+      "id": "PBIX",
+      "title": "PBIX download",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/service-export-to-pbix",
+      "relevance": "Report-only and full-model downloads have distinct limitations; do not promise a full PBIX for every service item."
+    },
+    {
+      "id": "UTM",
+      "title": "UTM Windows guide",
+      "url": "https://docs.getutm.app/guides/windows/",
+      "relevance": "Match ARM64 or AMD64 media to the host; official guest tools and valid licensing. This project does not adopt installer-check bypass advice."
+    },
+    {
+      "id": "DESKTOP",
+      "title": "Power BI Desktop requirements",
+      "url": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-get-the-desktop",
+      "relevance": "Windows-on-ARM cumulative update requirement, WebView2/display requirements and limited certified virtual-desktop environments. UTM needs an empirical compatibility check."
+    },
+    {
+      "id": "APPS",
+      "title": "Connected apps in ChatGPT",
+      "url": "https://help.openai.com/en/articles/11487775-connected-apps-in-chatgpt",
+      "relevance": "Availability, plugin installation, provider authorisation and write permissions are separate. The exact user plugin was not exposed in the originating session."
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "version": "2026-09-11-v2",
+  "source": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres",
+  "rows": [
+    {
+      "FacilityKey": "hhs",
+      "FacilityName": "Cairns and Hinterland HHS",
+      "FacilityGroup": "Service-wide",
+      "PubMedQuery": "(\"Cairns and Hinterland Hospital and Health Service\"[Affiliation] OR \"Cairns & Hinterland Hospital and Health Service\"[Affiliation] OR \"Cairns and Hinterland Hospital & Health Service\"[Affiliation] OR \"Cairns & Hinterland Hospital & Health Service\"[Affiliation] OR \"Cairns and Hinterland Health Service\"[Affiliation] OR \"CHHHS\"[Affiliation] OR \"Cairns Health Service District\"[Affiliation] OR \"Liz Plummer Cancer Care Centre\"[Affiliation] OR \"Tropical Public Health Services\"[Affiliation] OR \"Cairns Sexual Health Service\"[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "cairns",
+      "FacilityName": "Cairns Hospital",
+      "FacilityGroup": "Cairns",
+      "PubMedQuery": "(\"Cairns Hospital\"[Affiliation] OR \"Cairns Base Hospital\"[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "atherton",
+      "FacilityName": "Atherton Hospital",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Atherton Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "babinda",
+      "FacilityName": "Babinda Multi-Purpose Health Centre",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Babinda Hospital\"[Affiliation] OR \"Babinda Multi-Purpose Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "gordonvale",
+      "FacilityName": "Gordonvale Hospital",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Gordonvale Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "herberton",
+      "FacilityName": "Herberton Hospital",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Herberton Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "innisfail",
+      "FacilityName": "Innisfail Hospital",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Innisfail Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "mareeba",
+      "FacilityName": "Mareeba Hospital",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Mareeba Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "mossman",
+      "FacilityName": "Mossman Multi-Purpose Health Service",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Mossman Hospital\"[Affiliation] OR \"Mossman Multi-Purpose Health Service\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "tully",
+      "FacilityName": "Tully Hospital",
+      "FacilityGroup": "Hinterland",
+      "PubMedQuery": "(\"Tully Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "yarrabah",
+      "FacilityName": "Yarrabah Emergency Service",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Yarrabah Emergency Service\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "cairns-north",
+      "FacilityName": "Cairns North Community Health",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Cairns North Community Health\"[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "cairns-south",
+      "FacilityName": "Cairns South Health Facility",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Cairns South Health Facility\"[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "chillagoe",
+      "FacilityName": "Chillagoe Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Chillagoe Primary Health Centre\"[Affiliation] OR \"Chillagoe Hospital\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "cow-bay",
+      "FacilityName": "Cow Bay Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Cow Bay Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "croydon",
+      "FacilityName": "Croydon Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Croydon Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "dimbulah",
+      "FacilityName": "Dimbulah Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Dimbulah Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "edmonton",
+      "FacilityName": "Edmonton Community Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Edmonton Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "forsayth",
+      "FacilityName": "Forsayth Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Forsayth Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "georgetown",
+      "FacilityName": "Georgetown Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Georgetown Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "jumbun",
+      "FacilityName": "Jumbun Community Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Jumbun Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "malanda",
+      "FacilityName": "Malanda Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Malanda Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "millaa-millaa",
+      "FacilityName": "Millaa Millaa Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Millaa Millaa Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "mission-beach",
+      "FacilityName": "Mission Beach Community Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Mission Beach Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "mount-garnet",
+      "FacilityName": "Mount Garnet Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Mount Garnet Primary Health Centre\"[Affiliation] OR \"Mt Garnet Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "ravenshoe",
+      "FacilityName": "Ravenshoe Primary Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Ravenshoe Primary Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "sub-acute",
+      "FacilityName": "Cairns Sub-Acute Care Unit",
+      "FacilityGroup": "Cairns",
+      "PubMedQuery": "(\"Cairns Sub-Acute Care Unit\"[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    },
+    {
+      "FacilityKey": "smithfield",
+      "FacilityName": "Smithfield Community Health Centre",
+      "FacilityGroup": "Community",
+      "PubMedQuery": "(\"Smithfield Community Health Centre\"[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])",
+      "Active": true,
+      "SourceURL": "https://www.cairns-hinterland.health.qld.gov.au/hospitals-and-health-centres"
+    }
+  ]
+}

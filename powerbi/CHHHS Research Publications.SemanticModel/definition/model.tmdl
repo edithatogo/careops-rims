@@ -1,0 +1,764 @@
+model Model
+	culture: en-AU
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-AU
+	annotation PBI_QueryOrder = ["pNCBIEmail", "FacilityDefinitions", "fnParsePubDate", "fnNCBIJson", "fnPubMedXML", "PubMedHarvest", "PubMedFullMetadata", "PubMedPublications", "PubMedAuthorEvidence", "PubMedMetadataChunks", "PubMedIngestionAudit", "DoraSourceObservations", "DoraHistoricalMetadata", "DoraMetadataChunks", "DoraIngestionAudit", "DoraHarvest", "CanonicalPublications", "GrantsRegistry", "FundingCalendar", "MyFundingWatchlist", "FundingDeliveryLedger", "FundingCalendarChanges", "DoraActivityRegistry", "GrantRelationships", "Publication", "Facility", "PublicationFacility", "Date", "SearchAudit", "ReportingWindow", "ReleaseMetadata"]
+	annotation PBI_TimeIntelligenceEnabled = 0
+
+expression pNCBIEmail = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	lineageTag: 00000000-0000-4000-8000-e123098cb12d
+
+expression FacilityDefinitions =
+	#table(
+	    type table [FacilityKey=text, FacilityName=text, FacilityGroup=text, PubMedQuery=text, Active=logical],
+	    {
+	        {"hhs", "Cairns and Hinterland HHS", "Service-wide", "(""Cairns and Hinterland Hospital and Health Service""[Affiliation] OR ""Cairns & Hinterland Hospital and Health Service""[Affiliation] OR ""Cairns and Hinterland Hospital & Health Service""[Affiliation] OR ""Cairns & Hinterland Hospital & Health Service""[Affiliation] OR ""Cairns and Hinterland Health Service""[Affiliation] OR ""CHHHS""[Affiliation] OR ""Cairns Health Service District""[Affiliation] OR ""Liz Plummer Cancer Care Centre""[Affiliation] OR ""Tropical Public Health Services""[Affiliation] OR ""Cairns Sexual Health Service""[Affiliation])", true},
+	        {"cairns", "Cairns Hospital", "Cairns", "(""Cairns Hospital""[Affiliation] OR ""Cairns Base Hospital""[Affiliation])", true},
+	        {"atherton", "Atherton Hospital", "Hinterland", "(""Atherton Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"babinda", "Babinda Multi-Purpose Health Centre", "Hinterland", "(""Babinda Hospital""[Affiliation] OR ""Babinda Multi-Purpose Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"gordonvale", "Gordonvale Hospital", "Hinterland", "(""Gordonvale Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"herberton", "Herberton Hospital", "Hinterland", "(""Herberton Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"innisfail", "Innisfail Hospital", "Hinterland", "(""Innisfail Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"mareeba", "Mareeba Hospital", "Hinterland", "(""Mareeba Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"mossman", "Mossman Multi-Purpose Health Service", "Hinterland", "(""Mossman Hospital""[Affiliation] OR ""Mossman Multi-Purpose Health Service""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"tully", "Tully Hospital", "Hinterland", "(""Tully Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"yarrabah", "Yarrabah Emergency Service", "Community", "(""Yarrabah Emergency Service""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"cairns-north", "Cairns North Community Health", "Community", "(""Cairns North Community Health""[Affiliation])", true},
+	        {"cairns-south", "Cairns South Health Facility", "Community", "(""Cairns South Health Facility""[Affiliation])", true},
+	        {"chillagoe", "Chillagoe Primary Health Centre", "Community", "(""Chillagoe Primary Health Centre""[Affiliation] OR ""Chillagoe Hospital""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"cow-bay", "Cow Bay Primary Health Centre", "Community", "(""Cow Bay Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"croydon", "Croydon Primary Health Centre", "Community", "(""Croydon Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"dimbulah", "Dimbulah Primary Health Centre", "Community", "(""Dimbulah Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"edmonton", "Edmonton Community Health Centre", "Community", "(""Edmonton Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"forsayth", "Forsayth Primary Health Centre", "Community", "(""Forsayth Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"georgetown", "Georgetown Primary Health Centre", "Community", "(""Georgetown Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"jumbun", "Jumbun Community Health Centre", "Community", "(""Jumbun Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"malanda", "Malanda Primary Health Centre", "Community", "(""Malanda Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"millaa-millaa", "Millaa Millaa Primary Health Centre", "Community", "(""Millaa Millaa Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"mission-beach", "Mission Beach Community Health Centre", "Community", "(""Mission Beach Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"mount-garnet", "Mount Garnet Primary Health Centre", "Community", "(""Mount Garnet Primary Health Centre""[Affiliation] OR ""Mt Garnet Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"ravenshoe", "Ravenshoe Primary Health Centre", "Community", "(""Ravenshoe Primary Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true},
+	        {"sub-acute", "Cairns Sub-Acute Care Unit", "Cairns", "(""Cairns Sub-Acute Care Unit""[Affiliation])", true},
+	        {"smithfield", "Smithfield Community Health Centre", "Community", "(""Smithfield Community Health Centre""[Affiliation]) AND (Queensland[Affiliation] OR Australia[Affiliation] OR QLD[Affiliation])", true}
+	    }
+	)
+	lineageTag: 00000000-0000-4000-8000-6bd760dfa874
+
+expression fnParsePubDate =
+	(raw as nullable text) as record =>
+	let
+	    TextValue = if raw = null then "" else Text.Trim(raw),
+	    Parts = List.Select(Text.SplitAny(TextValue, " /-"), each _ <> ""),
+	    YearToken = if List.Count(Parts) > 0 then Parts{0} else "",
+	    YearValue = if Text.Length(YearToken) = 4 then (try Number.FromText(YearToken, "en-US") otherwise null) else null,
+	    ValidYear = if YearValue = null then false else YearValue >= 1500 and YearValue <= 9999 and Number.RoundDown(YearValue) = YearValue,
+	    MonthToken = if List.Count(Parts) > 1 then Text.Lower(Parts{1}) else "",
+	    Months = [jan=1,feb=2,mar=3,apr=4,may=5,jun=6,jul=7,aug=8,sep=9,oct=10,nov=11,dec=12],
+	    MonthValue = if Record.HasFields(Months, MonthToken) then Record.Field(Months, MonthToken) else (try Number.FromText(MonthToken, "en-US") otherwise null),
+	    ValidMonth = if MonthValue = null then false else MonthValue >= 1 and MonthValue <= 12 and Number.RoundDown(MonthValue) = MonthValue,
+	    NumericParts = List.AllTrue(List.Transform(Parts, each Text.Length(_) > 0 and Text.Select(_, {"0".."9"}) = _)),
+	    IsRange = Text.Contains(TextValue, "-") and not NumericParts,
+	    DayValue = if List.Count(Parts) = 3 then (try Number.FromText(Parts{2}, "en-US") otherwise null) else 1,
+	    ValidDay = if DayValue = null then false else DayValue >= 1 and Number.RoundDown(DayValue) = DayValue,
+	    Candidate = if ValidYear and ValidMonth and ValidDay and not IsRange and List.Count(Parts) <= 3 then (try #date(YearValue, MonthValue, DayValue) otherwise null) else null,
+	    Precision = if not ValidYear then "unknown" else if List.Count(Parts) = 1 then "year" else if IsRange then "range" else if Candidate = null then "unknown" else if List.Count(Parts) = 3 then "day" else "month"
+	in
+	    [Date = Candidate, Precision = Precision, Year = if ValidYear then YearValue else null, Raw = TextValue]
+	lineageTag: 00000000-0000-4000-8000-a48ee7d898c2
+
+expression fnNCBIJson =
+	(endpoint as text, parameters as record, optional attempt as nullable number) as record =>
+	let
+	    Start = if attempt = null then 0 else attempt,
+	    Common = [db="pubmed", retmode="json", tool="CHHHSResearchPublications"],
+	    Contact = if pNCBIEmail = null then "" else Text.Trim(pNCBIEmail),
+	    WithEmail = if Contact = "" then Common else if not Text.Contains(Contact,"@") then error "pNCBIEmail must be blank or a valid operational contact" else Record.AddField(Common,"email",Contact),
+	    QueryParameters = Record.Combine({WithEmail,parameters}),
+	    RetryCodes = {408,429,500,502,503,504},
+	    Fetch = (n as number) as record =>
+	        let
+	            Body = Function.InvokeAfter(() => Web.Contents("https://eutils.ncbi.nlm.nih.gov", [RelativePath="entrez/eutils/" & endpoint, Query=QueryParameters, Timeout=#duration(0,0,2,0), ManualStatusHandling=RetryCodes, IsRetry=n>0]),#duration(0,0,0,if n=0 then 1.1 else Number.Power(2,n))),
+	            Status = Record.FieldOrDefault(Value.Metadata(Body),"Response.Status",200)
+	        in [Status=Status,Body=Binary.Buffer(Body)],
+	    Attempts = List.Generate(() => [N=Start,R=Fetch(Start)], each [N]<=4,
+	        each if List.Contains(RetryCodes,[R][Status]) and [N]<4 then [N=[N]+1,R=Fetch([N]+1)] else [N=5,R=null], each [R]),
+	    Final = List.Last(Attempts),
+	    Parsed = if Final[Status]<>200 then error Error.Record("PubMedHTTP","NCBI request failed after bounded retries; no successful empty result is substituted.",[Status=Final[Status],Endpoint=endpoint]) else Json.Document(Final[Body]),
+	    Result = if not Value.Is(Parsed,type record) then error "Unexpected NCBI JSON response" else if Record.HasFields(Parsed,"error") then error Error.Record("PubMedAPI",Text.From(Parsed[error]),null) else Parsed
+	in
+	    Result
+	lineageTag: 00000000-0000-4000-8000-2434077c9936
+
+expression fnPubMedXML =
+	// Full PubMed XML metadata; no author-level institutional conclusion is inferred.
+	(ids as list) as table =>
+	let
+	    EmptyNodes = #table(type table [Name=nullable text,Namespace=nullable text,Value=any,Attributes=any],{}),
+	    Nodes = (v as any) as table => if Value.Is(v,type table) then v else EmptyNodes,
+	    Children = (v as any, name as text) as list => Table.SelectRows(Nodes(v),each [Name]=name)[Value],
+	    Child = (v as any, name as text) as any => List.First(Children(v,name),null),
+	    // Iterative depth-first traversal preserves mixed-content text order.
+	    TextValue = (v as any) as text => Text.Combine(List.RemoveNulls(List.Generate(
+	        ()=>[Todo={v},Out=null], each not List.IsEmpty([Todo]) or [Out]<>null,
+	        each if List.IsEmpty([Todo]) then [Todo={},Out=null] else
+	            let Head=List.First([Todo]),Tail=List.Skip([Todo])
+	            in if Value.Is(Head,type table) then [Todo=Head[Value]&Tail,Out=null] else [Todo=Tail,Out=if Head=null then null else Text.From(Head)],
+	        each [Out])),""),
+	    DateText = (v as any) as text => let Medline=Child(v,"MedlineDate") in if Medline<>null then TextValue(Medline) else Text.Combine(List.Select(List.Transform({"Year","Month","Day"},each TextValue(Child(v,_))),each _<>"")," "),
+	    RetryCodes={408,429,500,502,503,504},
+	    Contact=if pNCBIEmail=null then "" else Text.Trim(pNCBIEmail),
+	    Common=[db="pubmed",retmode="xml",tool="CHHHSResearchPublications",id=Text.Combine(ids,",")],
+	    Parameters=if Contact="" then Common else Record.AddField(Common,"email",Contact),
+	    Fetch=(n as number) as record => let
+	        Body=Function.InvokeAfter(()=>Web.Contents("https://eutils.ncbi.nlm.nih.gov",[RelativePath="entrez/eutils/efetch.fcgi",Query=Parameters,Timeout=#duration(0,0,2,0),ManualStatusHandling=RetryCodes,IsRetry=n>0]),#duration(0,0,0,if n=0 then 1.1 else Number.Power(2,n))),
+	        Status=Record.FieldOrDefault(Value.Metadata(Body),"Response.Status",200)
+	        in [Status=Status,Body=Binary.Buffer(Body)],
+	    Attempts=List.Generate(()=>[N=0,R=Fetch(0)],each [N]<=4,each if List.Contains(RetryCodes,[R][Status]) and [N]<4 then [N=[N]+1,R=Fetch([N]+1)] else [N=5,R=null],each [R]),
+	    Final=List.Last(Attempts),
+	    XML=if Final[Status]<>200 then error "PubMed EFetch failed after bounded retries" else Xml.Document(Final[Body]),
+	    Root=Child(XML,"PubmedArticleSet"),
+	    Articles=Children(Root,"PubmedArticle"),
+	    Books=Children(Root,"PubmedBookArticle"),
+	    Checked=if Root=null or List.Count(Books)>0 then error "Unexpected PubMed XML structure; preserve and review unsupported records" else Articles,
+	    Records=List.Transform(Checked,(v)=>let
+	        Citation=Child(v,"MedlineCitation"), Article=Child(Citation,"Article"), Journal=Child(Article,"Journal"),
+	        Authors=List.Transform(Children(Child(Article,"AuthorList"),"Author"),(a)=>[
+	            Name=if Child(a,"CollectiveName")<>null then TextValue(Child(a,"CollectiveName")) else Text.Combine(List.Select({if Child(a,"ForeName")=null then TextValue(Child(a,"Initials")) else TextValue(Child(a,"ForeName")),TextValue(Child(a,"LastName")),TextValue(Child(a,"Suffix"))},each _<>"")," "),
+	            Affiliations=List.Transform(Children(a,"AffiliationInfo"),each TextValue(Child(_,"Affiliation"))) ]),
+	        RawDate=DateText(Child(Child(Journal,"JournalIssue"),"PubDate")),
+	        ArticleDates=Children(Article,"ArticleDate"),
+	        ParsedDate=fnParsePubDate(RawDate),
+	        AbstractNodes=Children(Child(Article,"Abstract"),"AbstractText"),
+	        Types=Children(Child(Article,"PublicationTypeList"),"PublicationType")
+	        in [PMID=TextValue(Child(Citation,"PMID")),FullTitle=TextValue(Child(Article,"ArticleTitle")),FullJournal=TextValue(Child(Journal,"Title")),
+	            FullAuthors=Text.Combine(List.Transform(Authors,each [Name]),"; "),FullAuthorCount=List.Count(Authors),
+	            AuthorAffiliationsJSON=Text.FromBinary(Json.FromValue(Authors),TextEncoding.Utf8),
+	            FullAbstract=Text.Combine(List.Transform(AbstractNodes,each TextValue(_)),"#(lf)"),
+	            IssueDateRaw=RawDate,IssueDatePrecision=ParsedDate[Precision],IssueDate=ParsedDate[Date],
+	            ArticleDatesJSON=Text.FromBinary(Json.FromValue(ArticleDates),TextEncoding.Utf8),
+	            FullPublicationTypes=Text.Combine(List.Transform(Types,each TextValue(_)),"; "),
+	            FullMetadataJSON=Text.FromBinary(Json.FromValue(v),TextEncoding.Utf8)]),
+	    Result=Table.FromRecords(Records,type table [PMID=text,FullTitle=text,FullJournal=text,FullAuthors=text,FullAuthorCount=number,AuthorAffiliationsJSON=text,FullAbstract=text,IssueDateRaw=text,IssueDatePrecision=text,IssueDate=nullable date,ArticleDatesJSON=text,FullPublicationTypes=text,FullMetadataJSON=text]),
+	    Returned=Result[PMID],
+	    Reconciled=if List.Count(Returned)<>List.Count(ids) or List.Count(List.Distinct(Returned))<>List.Count(ids) or not List.IsEmpty(List.Difference(ids,Returned)) or not List.IsEmpty(List.Difference(Returned,ids)) then error "EFetch requested and returned PMID sets do not reconcile" else Result
+	in
+	    Reconciled
+	lineageTag: 00000000-0000-4000-8000-e91a265f20a7
+
+expression PubMedHarvest =
+	let
+	    RefreshedUTC = DateTimeZone.RemoveZone(DateTimeZone.FixedUtcNow()),
+	    ActiveQueries = Table.ToRecords(Table.SelectRows(FacilityDefinitions, each [Active] = true)),
+	    SearchOne = (definition as record) as record =>
+	        let
+	            Payload = fnNCBIJson("esearch.fcgi", [term=definition[PubMedQuery], retmax="10000", sort="pub_date"]),
+	            Search = if Record.HasFields(Payload, "esearchresult") then Payload[esearchresult] else error "Missing esearchresult",
+	            // Unknown field names are fatal. An unmatched phrase can be a valid zero-hit affiliation search.
+	            SearchErrors = Record.FieldOrDefault(Search, "errorlist", []),
+	            FatalErrors = if Value.Is(SearchErrors,type record) then Record.RemoveFields(SearchErrors,{"phrasesnotfound", "quotedphrasesnotfound", "phrasesignored"},MissingField.Ignore) else error "Unexpected ESearch errorlist structure",
+	            HasFatalErrors = List.AnyTrue(List.Transform(Record.FieldValues(FatalErrors), each if Value.Is(_,type list) then List.Count(_) > 0 else if _ = null then false else Text.From(_) <> "")),
+	            Checked = if Record.HasFields(Search, "ERROR") then error Error.Record("PubMedSearch", Text.From(Search[ERROR]), null)
+	                      else if HasFatalErrors then error Error.Record("PubMedSearch", "Search contains errors; check the affiliation query", FatalErrors)
+	                      else Search,
+	            Count = Number.FromText(Text.From(Checked[count]), "en-US"),
+	            IDs = List.Buffer(List.Transform(Checked[idlist], each Text.From(_))),
+	            Complete = if Count > 10000 then error Error.Record("PubMedLimit", "Segment this affiliation search into date ranges before retrieving more than 10000 records", [Facility=definition[FacilityName], Count=Count])
+	                       else if Count < 0 or Count <> List.Count(List.Distinct(IDs)) or List.Count(IDs) <> List.Count(List.Distinct(IDs)) then error Error.Record("PubMedIncomplete", "ESearch count does not match retrieved distinct PMIDs", [Facility=definition[FacilityName], Count=Count, Retrieved=List.Count(IDs)])
+	                       else IDs,
+	            WarningParts = List.RemoveNulls({
+	                if Record.HasFields(Checked, "warninglist") then Checked[warninglist] else null,
+	                if Record.HasFields(SearchErrors,"phrasesnotfound") and List.Count(SearchErrors[phrasesnotfound]) > 0 then [phrasesnotfound=SearchErrors[phrasesnotfound]] else null,
+	                if Record.HasFields(SearchErrors,"quotedphrasesnotfound") and List.Count(SearchErrors[quotedphrasesnotfound]) > 0 then [quotedphrasesnotfound=SearchErrors[quotedphrasesnotfound]] else null,
+	                if Record.HasFields(SearchErrors,"phrasesignored") and List.Count(SearchErrors[phrasesignored]) > 0 then [phrasesignored=SearchErrors[phrasesignored]] else null
+	            }),
+	            Warnings = if List.Count(WarningParts) > 0 then Text.FromBinary(Json.FromValue(WarningParts), TextEncoding.Utf8) else "",
+	            Translation = Text.From(Record.FieldOrDefault(Checked, "querytranslation", ""))
+	        in [FacilityKey=definition[FacilityKey], IDs=Complete, SearchCount=Count, QueryTranslation=Translation, Warnings=Warnings],
+	    // Accumulate and buffer each request result to avoid unconstrained parallel fan-out.
+	    SearchResults = List.Buffer(List.Accumulate(ActiveQueries, {}, (state, definition) =>
+	        let Result = SearchOne(definition), Force = List.Count(Result[IDs])
+	        in if Force >= 0 then state & {Result} else error "Invalid count")),
+	    // Preserve the earlier collector's scope-review search without asserting a facility link.
+	    ScopeSearch = SearchOne([FacilityKey="scope-review:cphu",FacilityName="Cairns Public Health Unit - scope review",PubMedQuery="""Cairns Public Health Unit""[Affiliation]"]),
+	    MatchRecords = List.Combine(List.Transform(SearchResults, (s) => List.Transform(s[IDs], (id) => [PMID=id, FacilityKey=s[FacilityKey]]))),
+	    Matches = Table.Buffer(Table.Distinct(Table.FromRecords(MatchRecords, type table [PMID=text,FacilityKey=text]))),
+	    AllIDs = List.Buffer(List.Sort(List.Distinct(Matches[PMID] & ScopeSearch[IDs]))),
+	    Batches = List.Split(AllIDs,100),
+	    FetchBatch = (ids as list) as list =>
+	        let
+	            Payload = fnNCBIJson("esummary.fcgi", [id=Text.Combine(ids,",")]),
+	            Result = if Record.HasFields(Payload, "result") then Payload[result] else error "Missing ESummary result",
+	            ReturnedIDs = List.Transform(Result[uids], each Text.From(_)),
+	            CheckedIDs = if List.Count(List.Difference(ids,ReturnedIDs)) > 0 or List.Count(List.Difference(ReturnedIDs,ids)) > 0 or List.Count(ReturnedIDs) <> List.Count(ids) then error "ESummary PMID reconciliation failed" else ReturnedIDs,
+	            Rows = List.Transform(CheckedIDs, (id) =>
+	                let Row = Record.Field(Result,id)
+	                in if Record.HasFields(Row,"error") then error Error.Record("PubMedSummary",Text.From(Row[error]),[PMID=id])
+	                   else if Text.From(Row[uid]) <> id then error "ESummary UID mismatch" else Row)
+	        in List.Buffer(Rows),
+	    RawRows = List.Buffer(List.Accumulate(Batches, {}, (state,batch) => state & FetchBatch(batch))),
+	    ToPublication = (row as record) as record =>
+	        let
+	            PMID = Text.From(row[uid]),
+	            ParsedDate = fnParsePubDate(Text.From(Record.FieldOrDefault(row,"pubdate",""))),
+	            OnlineRaw = Text.From(Record.FieldOrDefault(row,"epubdate","")),
+	            OnlineParsed = fnParsePubDate(OnlineRaw),
+	            Types = List.Transform(Record.FieldOrDefault(row,"pubtype",{}),each Text.From(_)),
+	            TypeText = Text.Lower(Text.Combine(Types,"|")),
+	            Trial = Text.Contains(TypeText,"clinical trial") or Text.Contains(TypeText,"randomized controlled trial") or Text.Contains(TypeText,"controlled clinical trial"),
+	            Synthesis = Text.Contains(TypeText,"systematic review") or Text.Contains(TypeText,"meta-analysis"),
+	            Class = if Trial then "Clinical trial" else if Text.Contains(TypeText,"meta-analysis") then "Meta-analysis" else if Text.Contains(TypeText,"systematic review") then "Systematic review" else if Text.Contains(TypeText,"review") then "Review" else if Text.Contains(TypeText,"journal article") then "Journal article" else "Other",
+	            AuthorRows = Record.FieldOrDefault(row,"authors",{}),
+	            Identifiers = Record.FieldOrDefault(row,"articleids",{}),
+	            DOIValues = List.Select(Identifiers, each Record.FieldOrDefault(_,"idtype","") = "doi"),
+	            DOI = if List.Count(DOIValues) = 0 then null else Text.From(DOIValues{0}[value]),
+	            FacilityKeys = Table.SelectRows(Matches, each [PMID] = PMID)[FacilityKey],
+	            MatchedQueries = Table.SelectRows(FacilityDefinitions, each List.Contains(FacilityKeys,[FacilityKey]))[PubMedQuery],
+	            FacilityNames = Table.SelectRows(FacilityDefinitions, each List.Contains(FacilityKeys,[FacilityKey]))[FacilityName],
+	            ModelDate = if ParsedDate[Date] = null then null else if Date.Year(ParsedDate[Date]) < 1900 then null else ParsedDate[Date],
+	            ModelOnlineDate = if OnlineParsed[Date] = null then null else if Date.Year(OnlineParsed[Date]) < 1900 then null else OnlineParsed[Date],
+	            ModelDatePrecision = if ParsedDate[Date] <> null and ModelDate = null then "outside-model-range" else ParsedDate[Precision],
+	            PublicationMonth = if List.Contains({"day","month"},ModelDatePrecision) then Date.ToText(ModelDate, "yyyy-MM", "en-AU") else null,
+	            Notice = if Text.Contains(TypeText,"retracted publication") then "Retracted publication" else if Text.Contains(TypeText,"retraction of publication") then "Retraction notice" else if Text.Contains(TypeText,"expression of concern") then "Expression of concern" else "No notice in retrieved publication types"
+	        in [
+	            PMID=PMID, Title=Text.From(Record.FieldOrDefault(row,"title","")),
+	            Journal=Text.From(Record.FieldOrDefault(row,"fulljournalname","")),
+	            Authors=Text.Combine(List.Transform(AuthorRows,each Text.From(Record.FieldOrDefault(_,"name",""))),"; "),
+	            DOI=DOI, PubMedURL="https://pubmed.ncbi.nlm.nih.gov/" & PMID & "/",
+	            PublicationDate=ModelDate, PublicationDateRaw=ParsedDate[Raw], PublicationDatePrecision=ModelDatePrecision,
+	            PublicationMonth=PublicationMonth, PublicationYear=ParsedDate[Year],
+	            OnlineDate=ModelOnlineDate, OnlineDateRaw=OnlineRaw,
+	            AuthorCount=List.Count(AuthorRows), PublicationTypes=Text.Combine(Types,"; "),
+	            PublicationClass=Class, IsClinicalTrial=Trial, IsEvidenceSynthesis=Synthesis,
+	            MatchedFacilities=Text.Combine(List.Sort(FacilityNames),"; "),
+	            AttributionStatus=if List.IsEmpty(FacilityKeys) then "Historical scope query match - institutional scope needs review" else "Affiliation search match - not manually verified",
+	            AttributionEvidence="Retrieved by PubMed affiliation search; not author-level verification. Queries: " & Text.Combine(List.Sort(List.Distinct(MatchedQueries & (if List.Contains(ScopeSearch[IDs],PMID) then {"""Cairns Public Health Unit""[Affiliation] - historical institutional scope requires review"} else {}))), " | "),
+	            PublicationNotice=Notice, FacilityMatchCount=List.Count(FacilityKeys), RefreshedAtUTC=RefreshedUTC
+	        ],
+	    PublicationRecords = List.Transform(RawRows, each ToPublication(_)),
+	    Publications = Table.Buffer(Table.FromRecords(PublicationRecords, type table [
+	        PMID=text,Title=text,Journal=text,Authors=text,DOI=nullable text,PubMedURL=text,
+	        PublicationDate=nullable date,PublicationDateRaw=text,PublicationDatePrecision=text,
+	        PublicationMonth=nullable text,PublicationYear=nullable number,OnlineDate=nullable date,OnlineDateRaw=text,
+	        AuthorCount=number,PublicationTypes=text,PublicationClass=text,IsClinicalTrial=logical,IsEvidenceSynthesis=logical,
+	        MatchedFacilities=text,AttributionStatus=text,AttributionEvidence=text,PublicationNotice=text,FacilityMatchCount=number,RefreshedAtUTC=datetime
+	    ])),
+	    VerifiedPublications = if Table.RowCount(Publications) <> List.Count(AllIDs) or List.Count(List.Distinct(Publications[PMID])) <> List.Count(AllIDs) then error "Final publication row count mismatch" else Publications,
+	    AuditRows = List.Transform(SearchResults & {ScopeSearch}, (s) => [FacilityKey=s[FacilityKey], SearchCount=s[SearchCount], QueryTranslation=s[QueryTranslation], Warnings=s[Warnings], QueryVersion="2026-09-11-v2", RefreshedAtUTC=RefreshedUTC]),
+	    SearchAudit = Table.FromRecords(AuditRows, type table [FacilityKey=text,SearchCount=number,QueryTranslation=text,Warnings=text,QueryVersion=text,RefreshedAtUTC=datetime])
+	in
+	    [Publications=VerifiedPublications, Matches=Matches, SearchAudit=SearchAudit, IDs=AllIDs]
+	lineageTag: 00000000-0000-4000-8000-467c99971d94
+
+expression PubMedFullMetadata =
+	let
+	    IDs=List.Buffer(List.Sort(List.Distinct(PubMedHarvest[IDs]))),
+	    Batches=List.Split(IDs,100),
+	    Tables=List.Accumulate(Batches,{},(state,batch)=>let T=Table.Buffer(fnPubMedXML(batch)),N=Table.RowCount(T) in if N=List.Count(batch) then state&{T} else error "PubMed full metadata batch is incomplete"),
+	    Empty=type table [PMID=text,FullTitle=text,FullJournal=text,FullAuthors=text,FullAuthorCount=number,AuthorAffiliationsJSON=text,FullAbstract=text,IssueDateRaw=text,IssueDatePrecision=text,IssueDate=nullable date,ArticleDatesJSON=text,FullPublicationTypes=text,FullMetadataJSON=text],
+	    Result=Table.Combine(Tables,Empty),
+	    Verified=if Table.RowCount(Result)<>List.Count(IDs) or List.Count(List.Distinct(Result[PMID]))<>List.Count(IDs) then error "PubMed full metadata key reconciliation failed" else Result
+	in
+	    Verified
+	lineageTag: 00000000-0000-4000-8000-24be22454940
+
+expression PubMedPublications =
+	let
+	    Summary=PubMedHarvest[Publications],
+	    Joined=Table.NestedJoin(Summary,{"PMID"},PubMedFullMetadata,{"PMID"},"Full",JoinKind.LeftOuter),
+	    Verified=if List.AnyTrue(List.Transform(Joined[Full],each Table.RowCount(_)<>1)) then error "PubMed summary/full metadata join is not one-to-one" else Joined,
+	    Records=List.Transform(Table.ToRecords(Verified),(r)=>let
+	        F=r[Full]{0},Parsed=fnParsePubDate(F[IssueDateRaw]),D=if Parsed[Date]=null then null else if Date.Year(Parsed[Date])<1900 then null else Parsed[Date],
+	        Precision=if Parsed[Date]<>null and D=null then "outside-model-range" else Parsed[Precision],
+	        Base=Record.RemoveFields(r,{"Full","Title","Journal","Authors","AuthorCount","PublicationDate","PublicationDateRaw","PublicationDatePrecision","PublicationMonth","PublicationYear","AttributionEvidence"}),
+	        Added=[Title=F[FullTitle],Journal=F[FullJournal],Authors=F[FullAuthors],AuthorCount=F[FullAuthorCount],Abstract=F[FullAbstract],
+	            PublicationDate=D,PublicationDateRaw=F[IssueDateRaw],PublicationDatePrecision=Precision,PublicationYear=Parsed[Year],
+	            PublicationMonth=if D<>null and List.Contains({"day","month"},Precision) then Date.ToText(D,"yyyy-MM","en-AU") else null,
+	            AttributionEvidence=r[AttributionEvidence]&" Full author-level source statements retained separately in PubMedAuthorEvidence; no automatic institutional approval."]
+	        in Record.Combine({Base,Added})),
+	    Columns=Table.ColumnNames(Summary)&{"Abstract"},
+	    Result=Table.FromRecords(Records,Columns,MissingField.Error),
+	    Typed=Table.TransformColumnTypes(Result,{{"PMID",type text},{"Title",type text},{"Journal",type text},{"Authors",type text},{"DOI",type text},{"PubMedURL",type text},{"PublicationDate",type date},{"PublicationDateRaw",type text},{"PublicationDatePrecision",type text},{"PublicationMonth",type text},{"PublicationYear",Int64.Type},{"OnlineDate",type date},{"OnlineDateRaw",type text},{"AuthorCount",Int64.Type},{"PublicationTypes",type text},{"PublicationClass",type text},{"IsClinicalTrial",type logical},{"IsEvidenceSynthesis",type logical},{"MatchedFacilities",type text},{"AttributionStatus",type text},{"AttributionEvidence",type text},{"PublicationNotice",type text},{"FacilityMatchCount",Int64.Type},{"RefreshedAtUTC",type datetime},{"Abstract",type text}})
+	in Typed
+	lineageTag: 00000000-0000-4000-8000-fe929c89f6e6
+
+expression PubMedAuthorEvidence =
+	let
+	    Rows=List.Combine(List.Transform(Table.ToRecords(PubMedFullMetadata),(r)=>let
+	        Authors=Json.Document(r[AuthorAffiliationsJSON])
+	        in List.Combine(List.Transform(List.Positions(Authors),(i)=>let A=Authors{i},Affiliations=if List.IsEmpty(A[Affiliations]) then {null} else A[Affiliations]
+	            in List.Transform(List.Positions(Affiliations),(j)=>[PMID=r[PMID],AuthorIndex=i+1,AuthorName=A[Name],AffiliationIndex=j+1,AffiliationText=Affiliations{j},EvidenceKind="PubMed XML author affiliation; institutional scope not automatically approved"]))))),
+	    Result=Table.FromRecords(Rows,type table [PMID=text,AuthorIndex=number,AuthorName=text,AffiliationIndex=number,AffiliationText=nullable text,EvidenceKind=text])
+	in Result
+	lineageTag: 00000000-0000-4000-8000-7370f744220f
+
+expression PubMedMetadataChunks =
+	// UTF-8 hex chunks avoid text normalization and per-cell truncation in the model.
+	let
+	    Rows=List.Combine(List.Transform(Table.ToRecords(PubMedFullMetadata),(r)=>
+	        let S=Binary.ToText(Text.ToBinary(r[FullMetadataJSON],TextEncoding.Utf8),BinaryEncoding.Hex),N=Number.RoundUp(Text.Length(S)/20000)
+	        in List.Transform(List.Numbers(0,N),(i)=>[PMID=r[PMID],ChunkIndex=i,ChunkCount=N,MetadataChunk=Text.Middle(S,i*20000,20000),MetadataCharacters=Text.Length(S),Encoding="UTF8-HEX"]))),
+	    Result=Table.FromRecords(Rows,type table [PMID=text,ChunkIndex=number,ChunkCount=number,MetadataChunk=text,MetadataCharacters=number,Encoding=text])
+	in Result
+	lineageTag: 00000000-0000-4000-8000-94e075e524e3
+
+expression PubMedIngestionAudit =
+	let
+	    Full=Table.Buffer(PubMedFullMetadata),
+	    Chunks=Table.Buffer(PubMedMetadataChunks),
+	    Expected=List.Distinct(PubMedHarvest[IDs]),
+	    Joined=Table.NestedJoin(Full,{"PMID"},Chunks,{"PMID"},"Chunks",JoinKind.LeftOuter),
+	    BadChunks=Table.SelectRows(Joined,(r)=>let C=Table.Sort(r[Chunks],{{"ChunkIndex",Order.Ascending}}),N=Table.RowCount(C) in N=0 or Text.FromBinary(Binary.FromText(Text.Combine(C[MetadataChunk],""),BinaryEncoding.Hex),TextEncoding.Utf8)<>r[FullMetadataJSON] or List.Count(List.Distinct(C[ChunkIndex]))<>N or List.AnyTrue(List.Transform(C[ChunkCount],each _<>N))),
+	    BadDates=Table.SelectRows(Full,each (List.Contains({"year","unknown","range"},[IssueDatePrecision]) and [IssueDate]<>null) or (List.Contains({"day","month"},[IssueDatePrecision]) and [IssueDate]=null)),
+	    AuthorFailures=Table.SelectRows(Full,each List.Count(Json.Document([AuthorAffiliationsJSON]))<>[FullAuthorCount]),
+	    Result=#table(type table [Check=text,Observed=number,Passed=logical],{
+	        {"Full metadata publications",Table.RowCount(Full),Table.RowCount(Full)=List.Count(Expected)},
+	        {"Distinct full-metadata PMIDs",List.Count(List.Distinct(Full[PMID])),List.Count(List.Distinct(Full[PMID]))=List.Count(Expected)},
+	        {"Missing metadata PMIDs",List.Count(List.Difference(Expected,Full[PMID])),List.IsEmpty(List.Difference(Expected,Full[PMID]))},
+	        {"Unexpected metadata PMIDs",List.Count(List.Difference(Full[PMID],Expected)),List.IsEmpty(List.Difference(Full[PMID],Expected))},
+	        {"Metadata reconstruction failures",Table.RowCount(BadChunks),Table.IsEmpty(BadChunks)},
+	        {"Metadata chunk rows",Table.RowCount(Chunks),List.AllTrue(List.Transform(Chunks[MetadataChunk],each Text.Length(_)<=20000))},
+	        {"Author evidence count failures",Table.RowCount(AuthorFailures),Table.IsEmpty(AuthorFailures)},
+	        {"Date precision failures",Table.RowCount(BadDates),Table.IsEmpty(BadDates)},
+	        {"Blank full titles",Table.RowCount(Table.SelectRows(Full,each Text.Trim([FullTitle])="")),Table.IsEmpty(Table.SelectRows(Full,each Text.Trim([FullTitle])=""))}
+	    })
+	in Result
+	lineageTag: 00000000-0000-4000-8000-8408b454b98e
+
+expression DoraSourceObservations =
+	let
+	    // Raw source staging only; not canonical publications or historical completeness.
+	    Source = Xml.Tables(Web.Contents("https://dora.health.qld.gov.au", [RelativePath="qldresearchjspui/feed/rss_2.0/1/849", Timeout=#duration(0,0,2,0)])),
+	    Channel = if Table.RowCount(Source) = 1 and Table.HasColumns(Source,"channel") then Source{0}[channel] else error "DORA RSS channel schema changed",
+	    Items = if Table.RowCount(Channel) <> 1 then error "DORA RSS channel count changed" else if Table.HasColumns(Channel,"item") then Channel{0}[item] else #table(type table [title=nullable text,link=nullable text,description=nullable text,pubDate=nullable text],{}),
+	    Checked = if Table.HasColumns(Items,{"title","link"}) then Items else error "DORA RSS item schema changed",
+	    Selected = Table.SelectColumns(Checked,{"title","link","description","pubDate"},MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected,{{"title",type text},{"link",type text},{"description",type text},{"pubDate",type text}},"en-AU")
+	in Typed
+	lineageTag: 00000000-0000-4000-8000-f8d1e1072b2c
+
+expression DoraHistoricalMetadata =
+	// Public collection snapshot, not a durable first-observed registry.
+	let
+	    Origin="https://dora.health.qld.gov.au",
+	    CollectionPath="qldresearchjspui/handle/1/849",
+	    Fetch=(path as text, query as record) as binary =>
+	        let
+	            RetryCodes={408,429,500,502,503,504},
+	            Get=(n as number) as record => let
+	                Body=Function.InvokeAfter(()=>Web.Contents("https://dora.health.qld.gov.au",[RelativePath=path,Query=query,Timeout=#duration(0,0,2,0),ManualStatusHandling=RetryCodes,IsRetry=n>0]),#duration(0,0,0,if n=0 then 0.5 else Number.Power(2,n))),
+	                Status=Record.FieldOrDefault(Value.Metadata(Body),"Response.Status",200)
+	                in [Status=Status,Body=Binary.Buffer(Body)],
+	            Attempts=List.Generate(()=>[N=0,R=Get(0)],each [N]<=4,each if List.Contains(RetryCodes,[R][Status]) and [N]<4 then [N=[N]+1,R=Get([N]+1)] else [N=5,R=null],each [R]),
+	            Final=List.Last(Attempts)
+	        in if Final[Status]<>200 then error "DORA HTTP retrieval failed; incomplete history must not replace prior data" else Final[Body],
+	    Page=(offset as number) as record => let
+	        Body=Fetch(CollectionPath,[offset=Text.From(offset)]),
+	        Ranges=Html.Table(Body,{{"Range","div.browse_range"}})[Range],
+	        Counts=List.Distinct(List.Transform(Ranges,each Number.FromText(Text.Trim(Text.AfterDelimiter(_," of ")),"en-US"))),
+	        Count=if List.Count(Counts)<>1 then error "DORA collection count is unavailable or ambiguous" else Counts{0},
+	        Links=Html.Table(Body,{{"Path","table[summary='This table browses all dspace content'] a[title='Visit this item']",each [Attributes][href]}})[Path],
+	        Checked=if List.AnyTrue(List.Transform(Links,each not Text.StartsWith(_,"/qldresearchjspui/handle/1/"))) then error "Unexpected DORA item URL" else Links
+	        in [Count=Count,Paths=List.Buffer(Checked)],
+	    First=Page(0),
+	    Expected=First[Count],
+	    Offsets=if Expected<=20 then {} else List.Numbers(1,Number.RoundUp(Expected/20)-1),
+	    Pages=List.Buffer(List.Accumulate(Offsets,{First},(state,n)=>let P=Page(n*20), Forced=List.Count(P[Paths]) in if P[Count]<>Expected then error "DORA collection changed during traversal" else if Forced>=0 then state&{P} else error "Invalid page")),
+	    Paths=List.Combine(List.Transform(Pages,each [Paths])),
+	    Keys=if List.Count(Paths)<>Expected or List.Count(List.Distinct(Paths))<>Expected then error "DORA collection keys do not reconcile" else List.Buffer(Paths),
+	    RecordFor=(path as text) as record => let
+	        Fields=Table.Buffer(Html.Table(Fetch(Text.TrimStart(path,"/"),[mode="full"]),{{"Field","td[headers='s1']"},{"Value","td[headers='s2']"}},[RowSelector="table.itemDisplayTable tr"])),
+	        Values=(key as text) as list=>List.Distinct(List.RemoveNulls(Table.SelectRows(Fields,each [Field]=key)[Value])),
+	        One=(key as text) as nullable text=>let V=Values(key) in if List.Count(V)>1 then error "Conflicting DORA single-value metadata" else List.First(V,null),
+	        URL=Origin&path, URI=One("dc.identifier.uri"), Title=One("dc.title"),
+	        Identity=if Title=null or not List.Contains({URL,Text.Replace(URL,"https://","http://")},URI) then error "DORA canonical identity/title mismatch" else URL,
+	        Raw=One("dc.date.issued"), Parsed=fnParsePubDate(Raw),
+	        Evidence=Text.Combine(Values("dc.description"),"#(lf)"),
+	        Markers={"Cairns & Hinterland Hospital and Health Service (CHHHS) affiliated authors:","Cairns & Hinterland Hospital and Health Service (CHHHS) affiliated author:"},
+	        Marker=List.First(List.Select(Markers,each Text.Contains(Evidence,_)),null),
+	        Affiliated=if Marker=null then null else Text.Trim(Text.AfterDelimiter(Evidence,Marker)),
+	        Journal=One("dc.identifier.journaltitle")
+	        in [DORAKey="DORA:"&Identity,DORAURL=Identity,Title=Title,Authors=Text.Combine(Values("dc.contributor.author"),"; "),
+	            Abstract=Text.Combine(Values("dc.description.abstract"),"#(lf)"),CHHHSAffiliatedAuthors=Affiliated,
+	            AttributionEvidence=if Evidence="" then "No explicit DORA affiliation evidence; review required." else Evidence,
+	            PublicationDate=Parsed[Date],PublicationDateRaw=if Raw=null then "" else Raw,PublicationDatePrecision=Parsed[Precision],PublicationYear=Parsed[Year],
+	            NormalizedTitle=Text.Select(Text.Lower(Title),{"a".."z","0".."9"}),PMID=One("dc.identifier.pmid"),DOI=One("dc.identifier.doi"),Journal=if Journal=null then One("dc.relation.ispartof") else Journal,
+	            FullMetadataJSON=Text.FromBinary(Json.FromValue(Table.ToRecords(Fields)),TextEncoding.Utf8),CoverageStatus="Observed public collection snapshot",CollectionExpectedCount=Expected],
+	    Records=List.Accumulate(Keys,{},(state,path)=>let R=RecordFor(path),Force=Text.Length(R[FullMetadataJSON]) in if Force>0 then state&{R} else error "Empty DORA metadata"),
+	    Result=Table.FromRecords(Records,type table [DORAKey=text,DORAURL=text,Title=text,Authors=text,Abstract=text,CHHHSAffiliatedAuthors=nullable text,AttributionEvidence=text,PublicationDate=nullable date,PublicationDateRaw=text,PublicationDatePrecision=text,PublicationYear=nullable number,NormalizedTitle=text,PMID=nullable text,DOI=nullable text,Journal=nullable text,FullMetadataJSON=text,CoverageStatus=text,CollectionExpectedCount=number]),
+	    Verified=if Table.RowCount(Result)<>Expected or List.Count(List.Distinct(Result[DORAKey]))<>Expected then error "DORA metadata keys do not reconcile" else Result
+	in
+	    Verified
+	lineageTag: 00000000-0000-4000-8000-a47269296ebe
+
+expression DoraMetadataChunks =
+	let
+	    Rows=List.Combine(List.Transform(Table.ToRecords(DoraHistoricalMetadata),(r)=>let S=Binary.ToText(Text.ToBinary(r[FullMetadataJSON],TextEncoding.Utf8),BinaryEncoding.Hex),N=Number.RoundUp(Text.Length(S)/20000)
+	        in List.Transform(List.Numbers(0,N),(i)=>[DORAKey=r[DORAKey],ChunkIndex=i,ChunkCount=N,MetadataChunk=Text.Middle(S,i*20000,20000),MetadataCharacters=Text.Length(S),Encoding="UTF8-HEX"]))),
+	    Result=Table.FromRecords(Rows,type table [DORAKey=text,ChunkIndex=number,ChunkCount=number,MetadataChunk=text,MetadataCharacters=number,Encoding=text])
+	in Result
+	lineageTag: 00000000-0000-4000-8000-33274255cba7
+
+expression DoraIngestionAudit =
+	let
+	    Full=Table.Buffer(DoraHistoricalMetadata),Chunks=Table.Buffer(DoraMetadataChunks),N=Table.RowCount(Full),
+	    Joined=Table.NestedJoin(Full,{"DORAKey"},Chunks,{"DORAKey"},"Chunks",JoinKind.LeftOuter),
+	    BadChunks=Table.SelectRows(Joined,(r)=>let C=Table.Sort(r[Chunks],{{"ChunkIndex",Order.Ascending}}) in Text.FromBinary(Binary.FromText(Text.Combine(C[MetadataChunk],""),BinaryEncoding.Hex),TextEncoding.Utf8)<>r[FullMetadataJSON]),
+	    BadDates=Table.SelectRows(Full,each (List.Contains({"year","unknown","range"},[PublicationDatePrecision]) and [PublicationDate]<>null) or (List.Contains({"day","month"},[PublicationDatePrecision]) and [PublicationDate]=null)),
+	    Result=#table(type table [Check=text,Observed=number,Passed=logical],{
+	        {"Historical DORA records",N,List.AllTrue(List.Transform(Full[CollectionExpectedCount],each _=N))},
+	        {"Distinct DORA keys",List.Count(List.Distinct(Full[DORAKey])),List.Count(List.Distinct(Full[DORAKey]))=N},
+	        {"Metadata reconstruction failures",Table.RowCount(BadChunks),Table.IsEmpty(BadChunks)},
+	        {"Date precision failures",Table.RowCount(BadDates),Table.IsEmpty(BadDates)},
+	        {"Records needing explicit attribution review",Table.RowCount(Table.SelectRows(Full,each [CHHHSAffiliatedAuthors]=null or [CHHHSAffiliatedAuthors]="")),true}
+	    })
+	in Result
+	lineageTag: 00000000-0000-4000-8000-77cec09654ea
+
+expression DoraHarvest =
+	let
+	    DoraURL = "https://dora.health.qld.gov.au/qldresearchjspui/feed/rss_2.0/1/849",
+	    // Retain raw observations separately; this reference is not durable storage.
+	    AsText = DoraSourceObservations,
+	    NormalizeTitle = (value as nullable text) as text => if value = null then "" else Text.Select(Text.Lower(value), {"a".."z","0".."9"}),
+	    ExtractBetween = (value as nullable text, start as text, finish as text) as nullable text =>
+	        if value = null or not Text.Contains(value,start) then null else try Text.Trim(Text.BeforeDelimiter(Text.AfterDelimiter(value,start),finish)) otherwise null,
+	    ExtractAffiliatedAuthors = (value as nullable text) as nullable text =>
+	        let
+	            singular = "Cairns & Hinterland Hospital and Health Service (CHHHS) affiliated author: ",
+	            plural = "Cairns & Hinterland Hospital and Health Service (CHHHS) affiliated authors: ",
+	            marker = if value <> null and Text.Contains(value,plural) then plural else if value <> null and Text.Contains(value,singular) then singular else null,
+	            result = if marker = null then null else Text.Trim(Text.AfterDelimiter(value,marker))
+	        in result,
+	    AddAuthors = Table.AddColumn(AsText,"Authors",each ExtractBetween([description],"Authors: ","#(lf)Abstract:"),type nullable text),
+	    AddAbstract = Table.AddColumn(AddAuthors,"Abstract",each ExtractBetween([description],"Abstract: ","#(lf)Description:"),type nullable text),
+	    AddCHHHSAuthors = Table.AddColumn(AddAbstract,"CHHHSAffiliatedAuthors",each ExtractAffiliatedAuthors([description]),type nullable text),
+	    // RSS pubDate is a feed timestamp, not corroborated publication-date evidence.
+	    AddEvidence = Table.AddColumn(AddCHHHSAuthors,"AttributionEvidence",each if [CHHHSAffiliatedAuthors]=null or Text.Trim([CHHHSAffiliatedAuthors])="" then "No CHHHS affiliation statement found in RSS description; review required." else "DORA RSS CHHHS affiliated author statement: " & [CHHHSAffiliatedAuthors],type text),
+	    AddRawDate = Table.AddColumn(AddEvidence,"PublicationDateRaw",each [pubDate],type nullable text),
+	    AddPrecision = Table.AddColumn(AddRawDate,"PublicationDatePrecision",each "unknown",type text),
+	    AddDate = Table.AddColumn(AddPrecision,"PublicationDate",each null,type nullable date),
+	    AddYear = Table.AddColumn(AddDate,"PublicationYear",each if [PublicationDate]=null then null else Date.Year([PublicationDate]),Int64.Type),
+	    AddNorm = Table.AddColumn(AddYear,"NormalizedTitle",each NormalizeTitle([title]),type text),
+	    AddKey = Table.AddColumn(AddNorm,"DORAKey",each "DORA:" & Text.From([link]),type text),
+	    Selected = Table.SelectColumns(AddKey,{"DORAKey","title","Authors","Abstract","CHHHSAffiliatedAuthors","AttributionEvidence","PublicationDate","PublicationDateRaw","PublicationDatePrecision","PublicationYear","NormalizedTitle","link"}),
+	    Renamed = Table.RenameColumns(Selected,{{"title","Title"},{"link","DORAURL"}}),
+	    Checked = if Table.HasColumns(Renamed,{"DORAKey","Title","PublicationYear","DORAURL"}) then Renamed else error "DORA RSS schema changed"
+	in
+	    Checked
+	lineageTag: 00000000-0000-4000-8000-863d15ebbf0f
+
+expression CanonicalPublications =
+	let
+	    // Stable output schema also applies when either source has no records.
+	    PublicationType = type table [
+	        CanonicalKey = nullable text,
+	        PMID = nullable text,
+	        Title = nullable text,
+	        Journal = nullable text,
+	        Authors = nullable text,
+	        DOI = nullable text,
+	        PubMedURL = nullable text,
+	        DORAURL = nullable text,
+	        CHHHSAffiliatedAuthors = nullable text,
+	        Abstract = nullable text,
+	        SourceSet = nullable text,
+	        DedupMethod = nullable text,
+	        PublicationDateRaw = nullable text,
+	        PublicationDatePrecision = nullable text,
+	        PublicationMonth = nullable text,
+	        OnlineDateRaw = nullable text,
+	        MatchedFacilities = nullable text,
+	        AttributionStatus = nullable text,
+	        AttributionEvidence = nullable text,
+	        PublicationNotice = nullable text,
+	        PMCID = nullable text,
+	        AuthorORCIDs = nullable text,
+	        FundingType = nullable text,
+	        IsInternalFunding = nullable text,
+	        FunderNames = nullable text,
+	        GrantIDs = nullable text,
+	        ClinicalTrialID = nullable text,
+	        IndigenousHealthFocus = nullable text,
+	        FieldOfResearch = nullable text,
+	        StudyDesign = nullable text,
+	        EuropePMC_OpenAccess = nullable text,
+	        EuropePMC_FullTextURL = nullable text,
+	        OpenAccessStatus = nullable text,
+	        OAUrl = nullable text,
+	        PDFDownloadStatus = nullable text,
+	        LocalPDFPath = nullable text,
+	        PDFDownloadedUTC = nullable text,
+	        PublicationDate = nullable date,
+	        OnlineDate = nullable date,
+	        RefreshedAtUTC = nullable datetime,
+	        PublicationYear = nullable number,
+	        AuthorCount = nullable number,
+	        FacilityMatchCount = nullable number,
+	        EuropePMC_CitedByCount = nullable number,
+	        CitationCount_Crossref = nullable number,
+	        CitationCount_OpenAlex = nullable number,
+	        PDFFileSize = nullable number
+	    ],
+	    PubMed = PubMedPublications,
+	    Dora = DoraHistoricalMetadata,
+	    NormalizeTitle = (value as nullable text) as text => if value = null then "" else Text.Select(Text.Lower(value), {"a".."z","0".."9"}),
+	    NormalizePMID = (value as nullable text) as nullable text =>
+	        let t = if value = null then "" else Text.Trim(value)
+	        in if t <> "" and Text.Select(t,{"0".."9"}) = t and not Text.StartsWith(t,"0") then t else null,
+	    NormalizeDOI = (value as nullable text) as nullable text =>
+	        let
+	            raw = if value = null then "" else Text.Lower(Text.Trim(value)),
+	            prefixes = {"https://doi.org/","http://doi.org/","https://dx.doi.org/","http://dx.doi.org/","doi:"},
+	            prefix = List.First(List.Select(prefixes,each Text.StartsWith(raw,_)),null),
+	            t = if prefix = null then raw else Text.Trim(Text.Range(raw,Text.Length(prefix))),
+	            registration = try Text.BetweenDelimiters(t,"10.","/") otherwise "",
+	            suffix = try Text.AfterDelimiter(t,"/") otherwise "",
+	            valid = Text.StartsWith(t,"10.") and Text.Length(registration)>=4 and Text.Length(registration)<=9 and Text.Select(registration,{"0".."9"})=registration and suffix<>"" and Text.Remove(t,{" ","#(tab)","#(cr)","#(lf)"})=t
+	        in if valid then t else null,
+	    HasInvalidIdentifier = (r as record) as logical =>
+	        let p = Record.FieldOrDefault(r,"PMID",null), d = Record.FieldOrDefault(r,"DOI",null)
+	        in (p <> null and p <> "" and NormalizePMID(p) = null) or (d <> null and d <> "" and NormalizeDOI(d) = null),
+	    PubMedNorm = Table.AddColumn(PubMed,"NormalizedTitle",each NormalizeTitle([Title]),type text),
+	    MatchDora = Table.AddColumn(Dora,"Match",(d as record) =>
+	        let
+	            doi = NormalizeDOI(Record.FieldOrDefault(d,"DOI",null)),
+	            suppliedPMID = NormalizePMID(Record.FieldOrDefault(d,"PMID",null)),
+	            exact = Table.SelectRows(PubMedNorm,(p as record) => (doi <> null and NormalizeDOI(p[DOI]) = doi) or (suppliedPMID <> null and NormalizePMID(p[PMID]) = suppliedPMID)),
+	            conflict = List.AnyTrue(List.Transform(Table.ToRecords(exact),(p as record) => (doi <> null and NormalizeDOI(p[DOI]) <> null and NormalizeDOI(p[DOI]) <> doi) or (suppliedPMID <> null and NormalizePMID(p[PMID]) <> null and NormalizePMID(p[PMID]) <> suppliedPMID))),
+	            invalid = HasInvalidIdentifier(d) or List.AnyTrue(List.Transform(Table.ToRecords(exact),each HasInvalidIdentifier(_))),
+	            title = NormalizeTitle(d[Title]),
+	            candidates = Table.SelectRows(PubMedNorm,(p as record) => title <> "" and d[PublicationYear] <> null and p[PublicationYear] = d[PublicationYear] and p[NormalizedTitle] = title),
+	            n = Table.RowCount(exact),
+	            titleCount = Table.RowCount(candidates),
+	            matched = n = 1 and not conflict and not invalid,
+	            pmid = if matched then exact{0}[PMID] else null,
+	            method = if invalid then "invalid-identifiers-needs-review" else if conflict then "conflicting-identifiers-needs-review" else if n > 1 then "ambiguous-identifiers-needs-review" else if matched then (if suppliedPMID = NormalizePMID(exact{0}[PMID]) then "PMID" else "DOI") else if titleCount > 1 then "ambiguous-title+year" else if titleCount = 1 then "possible-title+year-needs-review" else "DORA-only"
+	        in [PMID=pmid,Method=method,CandidateCount=if n > 0 then n else titleCount,CandidateKeys=Text.Combine(List.Transform(if n > 0 then exact[PMID] else candidates[PMID],each "PMID:" & _),"; ")],type record),
+	    ExpandMatch = Table.ExpandRecordColumn(MatchDora,"Match",{"PMID","Method","CandidateCount","CandidateKeys"},{"MatchedPMID","DedupMethod","CandidateCount","CandidateKeys"}),
+	    PubMedCanonical = Table.AddColumn(PubMedNorm,"CanonicalKey",each "PMID:" & [PMID],type text),
+	    EnrichPubMed = Table.AddColumn(PubMedCanonical,"DoraEvidence",(p as record) => Table.SelectRows(ExpandMatch,each [MatchedPMID]=p[PMID]),type table),
+	    PubMedRows = Table.AddColumn(EnrichPubMed,"Canonical",(p as record) =>
+	        let
+	            d = p[DoraEvidence], has = Table.RowCount(d)>0,
+	            urls = if has then Text.Combine(List.Distinct(List.RemoveNulls(d[DORAURL])),"; ") else null,
+	            chhhs = if has then Text.Combine(List.Distinct(List.RemoveNulls(d[CHHHSAffiliatedAuthors])),"; ") else null,
+	            evidence = Text.Combine(List.RemoveNulls({p[AttributionEvidence]} & (if has then d[AttributionEvidence] else {})), "; "),
+	            abstracts = List.Select(List.RemoveNulls({Record.FieldOrDefault(p,"Abstract",null)} & (if has then d[Abstract] else {})),each _<>""),
+	            abstract = if List.Count(abstracts)>0 then abstracts{0} else null
+	        in [
+	            CanonicalKey=p[CanonicalKey],PMID=p[PMID],Title=p[Title],Journal=p[Journal],Authors=p[Authors],DOI=p[DOI],PubMedURL=p[PubMedURL],DORAURL=urls,
+	            PublicationDate=p[PublicationDate],PublicationDateRaw=p[PublicationDateRaw],PublicationDatePrecision=p[PublicationDatePrecision],PublicationMonth=p[PublicationMonth],PublicationYear=p[PublicationYear],
+	            OnlineDate=p[OnlineDate],OnlineDateRaw=p[OnlineDateRaw],AuthorCount=p[AuthorCount],
+	            MatchedFacilities=p[MatchedFacilities],CHHHSAffiliatedAuthors=chhhs,Abstract=abstract,SourceSet=if has then "PubMed; DORA" else "PubMed",DedupMethod=if has then Text.Combine(List.Distinct(d[DedupMethod]),"; ") else "PMID",
+	            AttributionEvidence=evidence,
+	            AttributionStatus=if has then p[AttributionStatus] & "; DORA identifier match" else p[AttributionStatus],PublicationNotice=p[PublicationNotice],FacilityMatchCount=p[FacilityMatchCount],RefreshedAtUTC=p[RefreshedAtUTC]
+	        ],type record),
+	    PubMedCanonicalOnly = Table.SelectColumns(PubMedRows,{"Canonical"}),
+	    ExpandedPubMed = Table.FromRecords(Table.Column(PubMedCanonicalOnly,"Canonical"), PublicationType, MissingField.UseNull),
+	    DoraOnly0 = Table.SelectRows(ExpandMatch,each [MatchedPMID]=null),
+	    DoraOnly = Table.AddColumn(DoraOnly0,"Canonical",(d as record) => [
+	        CanonicalKey=d[DORAKey],PMID=Record.FieldOrDefault(d,"PMID",null),Title=d[Title],Journal=Record.FieldOrDefault(d,"Journal",null),Authors=d[Authors],DOI=Record.FieldOrDefault(d,"DOI",null),PubMedURL=null,DORAURL=d[DORAURL],
+	        PublicationDate=d[PublicationDate],PublicationDateRaw=d[PublicationDateRaw],PublicationDatePrecision=d[PublicationDatePrecision],PublicationMonth=if d[PublicationDate]<>null and List.Contains({"day","month"},d[PublicationDatePrecision]) then Date.ToText(d[PublicationDate],"yyyy-MM","en-AU") else null,PublicationYear=d[PublicationYear],
+	        OnlineDate=null,OnlineDateRaw="",AuthorCount=if d[Authors]=null or d[Authors]="" then null else List.Count(Text.Split(d[Authors],";")),
+	        MatchedFacilities=if d[CHHHSAffiliatedAuthors] <> null and Text.Trim(d[CHHHSAffiliatedAuthors]) <> "" then "Cairns and Hinterland HHS" else "",CHHHSAffiliatedAuthors=d[CHHHSAffiliatedAuthors],Abstract=d[Abstract],SourceSet="DORA",DedupMethod=d[DedupMethod],
+	        AttributionEvidence=d[AttributionEvidence],
+	        AttributionStatus=(if d[CHHHSAffiliatedAuthors] <> null and Text.Trim(d[CHHHSAffiliatedAuthors]) <> "" then "DORA author affiliation statement" else "DORA attribution needs review") & (if d[DedupMethod] <> "DORA-only" then "; identity needs review" else ""),PublicationNotice="DORA full metadata; observed public collection snapshot; institutional scope remains reviewable",FacilityMatchCount=if d[CHHHSAffiliatedAuthors] <> null and Text.Trim(d[CHHHSAffiliatedAuthors]) <> "" then 1 else 0,RefreshedAtUTC=DateTimeZone.RemoveZone(DateTimeZone.FixedUtcNow())
+	    ],type record),
+	    DoraCanonicalOnly = Table.SelectColumns(DoraOnly,{"Canonical"}),
+	    ExpandedDora = Table.FromRecords(Table.Column(DoraCanonicalOnly,"Canonical"), PublicationType, MissingField.UseNull),
+	    PubMedSelected = Table.SelectColumns(ExpandedPubMed,Table.ColumnNames(ExpandedDora),MissingField.UseNull),
+	    Combined = Table.Combine({PubMedSelected,ExpandedDora}, PublicationType),
+	    Verified = if Table.RowCount(Combined) <> List.Count(List.Distinct(Combined[CanonicalKey])) then error "Canonical publication key is not unique" else Combined,
+	    PubMedMatches0 = PubMedHarvest[Matches],
+	    PubMedMatches = Table.AddColumn(PubMedMatches0,"CanonicalKey",each "PMID:" & [PMID],type text),
+	    PubMedBridge = Table.SelectColumns(PubMedMatches,{"CanonicalKey","FacilityKey"}),
+	    DoraBridge = Table.FromRecords(List.Transform(Table.ToRecords(Table.SelectRows(DoraOnly,each [CHHHSAffiliatedAuthors] <> null and Text.Trim([CHHHSAffiliatedAuthors]) <> "")), each [CanonicalKey=[DORAKey],FacilityKey="hhs"]),type table [CanonicalKey=text,FacilityKey=text]),
+	    Matches = Table.Distinct(Table.Combine({PubMedBridge,DoraBridge})),
+	    // One row per observed source identity, including unresolved DORA candidates.
+	    SourceMapType = type table [Source=text,SourceKey=text,CanonicalKey=text],
+	    SourceMap = Table.Combine({
+	        Table.FromRecords(List.Transform(Table.ToRecords(PubMed),each [Source="PubMed",SourceKey="PMID:" & [PMID],CanonicalKey="PMID:" & [PMID]]),SourceMapType),
+	        Table.FromRecords(List.Transform(Table.ToRecords(ExpandMatch),each [Source="DORA",SourceKey=[DORAKey],CanonicalKey=if [MatchedPMID]=null then [DORAKey] else "PMID:" & [MatchedPMID]]),SourceMapType)
+	    },SourceMapType),
+	    CanonicalKeys = Verified[CanonicalKey],
+	    Audit = #table(type table [Check=text,Observed=number,Passed=logical],{
+	        {"Source identities mapped exactly once",Table.RowCount(SourceMap),Table.RowCount(SourceMap)=Table.RowCount(PubMed)+Table.RowCount(Dora) and Table.RowCount(SourceMap)=List.Count(List.Distinct(SourceMap[SourceKey]))},
+	        {"Source mappings without canonical record",List.Count(List.Difference(SourceMap[CanonicalKey],CanonicalKeys)),List.IsEmpty(List.Difference(SourceMap[CanonicalKey],CanonicalKeys))},
+	        {"Canonical records without source",List.Count(List.Difference(CanonicalKeys,SourceMap[CanonicalKey])),List.IsEmpty(List.Difference(CanonicalKeys,SourceMap[CanonicalKey]))},
+	        {"Facility mappings without canonical record",List.Count(List.Difference(Matches[CanonicalKey],CanonicalKeys)),List.IsEmpty(List.Difference(Matches[CanonicalKey],CanonicalKeys))},
+	        {"Canonical count balances source matches",Table.RowCount(Verified),Table.RowCount(Verified)=Table.RowCount(PubMed)+Table.RowCount(DoraOnly0)},
+	        {"Source sets balance canonical count",Table.RowCount(Verified),Table.RowCount(Verified)=Table.RowCount(Table.SelectRows(Verified,each List.Contains({"PubMed","DORA","PubMed; DORA"},[SourceSet]))) }
+	    })
+	in
+	    [Publications=Verified,Matches=Matches,SourceMap=SourceMap,Audit=Audit,DoraReconciliation=Table.SelectColumns(ExpandMatch,{"DORAKey","Title","DORAURL","MatchedPMID","DedupMethod","CandidateCount","CandidateKeys","CHHHSAffiliatedAuthors"})]
+	lineageTag: 00000000-0000-4000-8000-3f62886eadc8
+
+expression GrantsRegistry =
+	// Power Query M: read the single canonical Grants Registry SharePoint list.
+	let
+	    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+	    Registry = Source{[Title = "Grants Registry"]}[Items],
+	    Selected = Table.SelectColumns(Registry, {
+	        "OpportunityKey", "Title", "Funder", "Source", "SourceID", "RoundID", "URL",
+	        "Description", "Eligibility", "Geography", "Amount", "Deadline", "DeadlineRaw",
+	        "DeadlinePrecision", "Status", "Contact", "CHHHSRelevance", "ReviewStatus",
+	        "ReviewNotes", "RetrievedUTC", "RetrievedTimestampStatus", "EvidenceHash"
+	    }, MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"OpportunityKey", type text}, {"Title", type text}, {"Funder", type text},
+	        {"Source", type text}, {"SourceID", type text}, {"RoundID", type text}, {"URL", type text},
+	        {"Description", type text}, {"Eligibility", type text}, {"Geography", type text},
+	        {"Amount", type text}, {"Deadline", type text}, {"DeadlineRaw", type text},
+	        {"DeadlinePrecision", type text}, {"Status", type text}, {"Contact", type text},
+	        {"CHHHSRelevance", type text}, {"ReviewStatus", type text}, {"ReviewNotes", type text},
+	        {"RetrievedUTC", type text}, {"RetrievedTimestampStatus", type text}, {"EvidenceHash", type text}
+	    })
+	in
+	    Typed
+	lineageTag: 00000000-0000-4000-8000-99eb6ee5a274
+
+expression FundingCalendar =
+	// Power Query M: read the personal Funding Calendar SharePoint list.
+	let
+	    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+	    Calendar = Source{[Title = "Funding Calendar"]}[Items],
+	    Selected = Table.SelectColumns(Calendar, {
+	        "DeadlineKey", "OpportunityKey", "CalculatedDate", "SourceURL", "Cancelled", "PolicyKey", "ReviewStatus"
+	    }, MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"DeadlineKey", type text}, {"OpportunityKey", type text}, {"CalculatedDate", type datetime},
+	        {"SourceURL", type text}, {"Cancelled", type logical}, {"PolicyKey", type text}, {"ReviewStatus", type text}
+	    })
+	in
+	    Typed
+	lineageTag: 00000000-0000-4000-8000-b6103472c566
+
+expression MyFundingWatchlist =
+	// Power Query M: read the current user's personal funding watchlist.
+	let
+	    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+	    Watchlist = Source{[Title = "My Funding Watchlist"]}[Items],
+	    Selected = Table.SelectColumns(Watchlist, {"OpportunityKey", "Scope", "TargetKey", "Active"}, MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"OpportunityKey", type text}, {"Scope", type text}, {"TargetKey", type text}, {"Active", type logical}
+	    })
+	in
+	    Typed
+	lineageTag: 00000000-0000-4000-8000-78d5ee95abd9
+
+expression FundingDeliveryLedger =
+	// Power Query M: read the current user's personal funding delivery ledger.
+	let
+	    SiteUrl = "https://<tenant>.sharepoint.com/sites/<site>",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+	    Ledger = Source{[Title = "Funding Delivery Ledger"]}[Items],
+	    Selected = Table.SelectColumns(Ledger, {
+	        "DeliveryEventKey", "UserKey", "OpportunityKey", "EventType", "Revision", "OffsetDays",
+	        "Channel", "Status", "ScheduledFor", "SentAt", "ErrorMessage"
+	    }, MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"DeliveryEventKey", type text}, {"UserKey", type text}, {"OpportunityKey", type text},
+	        {"EventType", type text}, {"Revision", type text}, {"OffsetDays", Int64.Type},
+	        {"Channel", type text}, {"Status", type text}, {"ScheduledFor", type datetime},
+	        {"SentAt", type datetime}, {"ErrorMessage", type text}
+	    })
+	in
+	    Typed
+	lineageTag: 00000000-0000-4000-8000-ada9e0e66554
+
+expression FundingCalendarChanges =
+	// Power Query M: read source-preserving current-user calendar changes.
+	let
+	    SiteUrl = try pSharePointSiteUrl otherwise error "pSharePointSiteUrl is required; no tenant default is embedded.",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ApiVersion = 15]),
+	    Changes = Source{[Title = "Funding Calendar Changes"]}[Items],
+	    Selected = Table.SelectColumns(Changes, {
+	        "ChangeKey", "DeadlineKey", "OpportunityKey", "ChangeType", "PreviousRevision",
+	        "Revision", "PreviousDate", "CalculatedDate", "PreviousCancelled", "Cancelled",
+	        "SourceURL", "ObservedUTC", "ReviewStatus"
+	    }, MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"ChangeKey", type text}, {"DeadlineKey", type text}, {"OpportunityKey", type text},
+	        {"ChangeType", type text}, {"PreviousRevision", type text}, {"Revision", type text},
+	        {"PreviousDate", type date}, {"CalculatedDate", type date},
+	        {"PreviousCancelled", type logical}, {"Cancelled", type logical},
+	        {"SourceURL", type text}, {"ObservedUTC", type datetimezone}, {"ReviewStatus", type text}
+	    }),
+	    ValidRows = Table.SelectRows(Typed, each
+	        [ChangeKey] <> null and [ChangeKey] <> "" and
+	        [DeadlineKey] <> null and [DeadlineKey] <> "" and
+	        [OpportunityKey] <> null and [OpportunityKey] <> "" and
+	        [ChangeType] <> null and [ChangeType] <> "" and
+	        [Revision] <> null and [Revision] <> "" and
+	        [ObservedUTC] <> null and [ReviewStatus] <> null and [ReviewStatus] <> ""
+	    )
+	in
+	    ValidRows
+	lineageTag: 00000000-0000-4000-8000-25894c3c5f90
+
+expression DoraActivityRegistry =
+	// Power Query M: read the source-preserving DORA Activity Registry list.
+	// This is an additive query for the existing RIMS report; it is not a
+	// publication table and must not be joined on Project ID without review.
+	let
+	    SiteUrl = try pSharePointSiteUrl otherwise error "pSharePointSiteUrl is required; no tenant default is embedded.",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ApiVersion = 15]),
+	    Registry = Source{[Title = "DORA Activity Registry"]}[Data],
+	    Selected = Table.SelectColumns(Registry, {
+	        "DORAActivityKey", "DORARecordID", "DORAResourceID", "DORAResourceName",
+	        "DORAResourceLastModified", "DORAObservedUTC", "DORASourceURL",
+	        "Project ID", "Review Reference", "HREC (Ethics) Reference Number",
+	        "Full Project Title", "Short Project Title", "Project Description",
+	        "Clinical Trial (Yes/No)", "PI Name", "PI Email", "Contact Person Name",
+	        "Contact Person Email", "Site Name", "Sponsor Name", "Start Date",
+	        "Finish Date", "Disease Category", "Multi/Single site",
+	        "DORA Authority (Yes/No)", "DORA Consent (Yes/No)"
+	    }, MissingField.Error),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"DORAActivityKey", type text}, {"DORARecordID", Int64.Type},
+	        {"DORAResourceID", type text}, {"DORAResourceName", type text},
+	        {"DORAResourceLastModified", type text}, {"DORAObservedUTC", type datetimezone},
+	        {"DORASourceURL", type text}, {"Project ID", type text},
+	        {"Review Reference", type text}, {"HREC (Ethics) Reference Number", type text},
+	        {"Full Project Title", type text}, {"Short Project Title", type text},
+	        {"Project Description", type text}, {"Clinical Trial (Yes/No)", type text},
+	        {"PI Name", type text}, {"PI Email", type text},
+	        {"Contact Person Name", type text}, {"Contact Person Email", type text},
+	        {"Site Name", type text}, {"Sponsor Name", type text},
+	        {"Start Date", type text}, {"Finish Date", type text},
+	        {"Disease Category", type text}, {"Multi/Single site", type text},
+	        {"DORA Authority (Yes/No)", type text}, {"DORA Consent (Yes/No)", type text}
+	    }),
+	    ValidKeys = Table.SelectRows(Typed, each [DORAActivityKey] <> null and [DORAActivityKey] <> ""),
+	    Keys = Table.Column(ValidKeys, "DORAActivityKey"),
+	    Unique = if List.Count(Keys) <> List.Count(List.Distinct(Keys)) then error "DORAActivityKey values are not unique" else ValidKeys
+	in
+	    Unique
+	lineageTag: 00000000-0000-4000-8000-301d62c207b7
+
+expression GrantRelationships =
+	// Power Query M: read the typed grant/publication relationship bridge.
+	let
+	    SiteUrl = try pSharePointSiteUrl otherwise error "pSharePointSiteUrl is required; no tenant default is embedded.",
+	    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ApiVersion = 15]),
+	    RelationshipTable = Source{[Title = "Grant Relationships"]}[Data],
+	    Selected = Table.SelectColumns(RelationshipTable, {
+	        "RelationshipKey", "RelationshipType", "FromKey", "ToKey", "AwardID",
+	        "EvidenceURL", "Confidence", "ReviewStatus"
+	    }, MissingField.UseNull),
+	    Typed = Table.TransformColumnTypes(Selected, {
+	        {"RelationshipKey", type text}, {"RelationshipType", type text},
+	        {"FromKey", type text}, {"ToKey", type text}, {"AwardID", type text},
+	        {"EvidenceURL", type text}, {"Confidence", type text}, {"ReviewStatus", type text}
+	    }),
+	    ValidRows = Table.SelectRows(Typed, each
+	        [RelationshipKey] <> null and [RelationshipKey] <> "" and
+	        [RelationshipType] <> null and [FromKey] <> null and [FromKey] <> "" and
+	        [ToKey] <> null and [ToKey] <> "" and [EvidenceURL] <> null and [EvidenceURL] <> ""
+	    )
+	in
+	    ValidRows
+	lineageTag: 00000000-0000-4000-8000-b1180066526b

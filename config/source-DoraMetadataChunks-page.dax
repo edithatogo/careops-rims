@@ -1,0 +1,18 @@
+// Run only against a verified frozen staging refresh. Include nulls in the response.
+// Replace After variables with the last accepted tuple; double quotes in text cursors.
+// Reject all response errors and duplicate tuples; do not advance on partial results.
+EVALUATE
+VAR After0 = ""
+VAR After1 = -1
+VAR PageSize = 100
+RETURN
+SELECTCOLUMNS(
+    TOPN(PageSize, FILTER(DoraMetadataChunks, (DoraMetadataChunks[DORAKey] > After0) || (DoraMetadataChunks[DORAKey] = After0 && DoraMetadataChunks[ChunkIndex] > After1)), DoraMetadataChunks[DORAKey], ASC, DoraMetadataChunks[ChunkIndex], ASC),
+    "DORAKey", DoraMetadataChunks[DORAKey],
+    "ChunkIndex", DoraMetadataChunks[ChunkIndex],
+    "ChunkCount", DoraMetadataChunks[ChunkCount],
+    "MetadataChunk", DoraMetadataChunks[MetadataChunk],
+    "MetadataCharacters", DoraMetadataChunks[MetadataCharacters],
+    "Encoding", DoraMetadataChunks[Encoding]
+)
+ORDER BY [DORAKey], [ChunkIndex]

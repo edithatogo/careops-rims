@@ -1,0 +1,21 @@
+{
+  "schema_version": "funding-calendar-changes-v1",
+  "list_name": "Funding Calendar Changes",
+  "identity_field": "ChangeKey",
+  "source_observation_archive": "approved_private_archive",
+  "fields": [
+    {"display_name":"ChangeKey","type":"text","required":true,"unique":true},
+    {"display_name":"DeadlineKey","type":"text","required":true},
+    {"display_name":"OpportunityKey","type":"text","required":true},
+    {"display_name":"ChangeType","type":"text","required":true},
+    {"display_name":"PreviousRevision","type":"text"},
+    {"display_name":"Revision","type":"text","required":true},
+    {"display_name":"PreviousDate","type":"date"},
+    {"display_name":"CalculatedDate","type":"date"},
+    {"display_name":"PreviousCancelled","type":"boolean"},
+    {"display_name":"Cancelled","type":"boolean","required":true},
+    {"display_name":"SourceURL","type":"url"},
+    {"display_name":"ObservedUTC","type":"datetime","required":true},
+    {"display_name":"ReviewStatus","type":"text","required":true}
+  ]
+}

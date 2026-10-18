@@ -1,0 +1,134 @@
+{
+  "artifact_type": "implementation_blueprint_not_importable_flow",
+  "deployed": false,
+  "schedule": {
+    "frequency": "Month",
+    "interval": 1,
+    "day": 1,
+    "hour": 8,
+    "timezone": "Australia/Brisbane",
+    "utc_offset": "+10:00",
+    "approval_status": "proposal_only_not_enabled"
+  },
+  "period": "previous complete Brisbane calendar month by citation publication date",
+  "concurrency": 1,
+  "required_configuration": [
+    "workspace_id",
+    "dataset_id",
+    "report_id",
+    "approved_connections",
+    "approved_sharepoint_site_and_library",
+    "approved_recipients_before_delivery",
+    "verified_connector_and_tenant_permissions"
+  ],
+  "states": [
+    "Acquire unique month/query-version run record with concurrency one",
+    "Collect source observations into a versioned batch; upsert stable identifiers without resetting FirstObservedAtUTC",
+    "Freeze validated source batch and canonical review decisions",
+    "Request model refresh and persist a supported correlation marker",
+    "Verify completion of that exact refresh; otherwise require manual verification and stop unattended execution",
+    "Verify model batch, reporting month, source health and coverage",
+    "Extract full canonical register and selected-month register with deterministic pagination",
+    "Reconcile independent model count, distinct CanonicalKey set and required key-set hash",
+    "Create complete CSV and HTML with native data operations",
+    "Archive the continually updated register and a committed immutable printable monthly artifact with provenance in the approved SharePoint library",
+    "Stop for distribution approval while recipients or schedule are unapproved",
+    "Perform approved delivery and persist receipt; do not automatically resend ambiguous outcomes"
+  ],
+  "failure_policy": "Stop on failed or partial sources, refresh uncertainty, truncation or reconciliation failure. Preserve last-good archive without labelling it current. Record failure locally in the flow run; notification requires an approved destination. Ambiguous delivery requires reconciliation before retry.",
+  "query_version": "2026-09-13-native-v4",
+  "schema_version": "2.1",
+  "implementation_route": "standard_connectors_native",
+  "trigger_enabled": false,
+  "recipients": [],
+  "native_actions": {
+    "collection": [
+      "RSS: List all RSS feed items",
+      "Power BI: Run a query against a dataset (Power Query PubMed staging)"
+    ],
+    "rendering": [
+      "Data Operations: Select",
+      "Data Operations: Create CSV table",
+      "Data Operations: Create HTML table"
+    ],
+    "archive": [
+      "SharePoint: Create file"
+    ],
+    "delivery": [
+      "Office 365 Outlook: Send an email (V2), only after separate approval"
+    ]
+  },
+  "proof_gates": [
+    "SharePoint and Exchange service access and DLP",
+    "Power BI dataset query action works in My workspace with Read/Build and tenant ExecuteQueries enabled",
+    "Exact refresh completion correlation; a fixed delay does not qualify",
+    "Full RSS author and metadata parity; finite feed coverage is labelled",
+    "All query pages fit row/value/byte limits and reconcile exact canonical keys",
+    "Supported native key-set hash implementation matching publication-export.contract.json",
+    "Post-trial licence rights verified",
+    "Native M/DAX and dry-run evidence recorded"
+  ],
+  "fallbacks": {
+    "http_collection": "Only with verified Premium/Process entitlement; otherwise Power Query staging or controlled manual import",
+    "refresh_completion": "Manual verified completion if standard actions cannot prove the exact requested run",
+    "packaging": "Solution-aware flow in existing eligible Dataverse environment, else ordinary cloud flow with exported package",
+    "report_pdf": "Optional supported capacity ExportToFile; PPU is insufficient. Full CSV/HTML remain primary",
+    "fabric": "No migration or trial dependency; only consider existing permanent capacity with approval"
+  },
+  "refresh_gate": {
+    "standard_connector_history_action_verified": false,
+    "unattended_ready": false,
+    "required": [
+      "exact request identity and target match",
+      "Completed status with end time after request",
+      "frozen source/review batch identity matches refreshed model",
+      "no intervening refresh during count/key/data extraction"
+    ],
+    "fallback": "Manual correlated history verification; stop if correlation cannot be established"
+  },
+  "export_gate": {
+    "page_size_initial": 100,
+    "data_queries": [
+      "config/full-register-page.dax",
+      "config/monthly-register-page.dax"
+    ],
+    "independent_key_queries": [
+      "config/full-keys-page.dax",
+      "config/monthly-keys-page.dax"
+    ],
+    "counts_query": "config/export-counts.dax",
+    "accept_partial_response": false,
+    "include_nulls": true,
+    "checks": [
+      "all response error levels empty, even HTTP 200",
+      "independent count and exact key sets match",
+      "each page progresses without duplicate keys",
+      "unchanged model batch throughout extraction",
+      "all 18 fields survive CSV and HTML storage readback",
+      "key-set hash matches existing contract; unsupported hash blocks unattended acceptance"
+    ],
+    "native_verified": false
+  },
+  "monthly_printable_artifact": {
+    "contract": "config/monthly-report-artifact.contract.json",
+    "reporting_month": "previous complete Brisbane calendar month",
+    "storage_pattern": "monthly/{ReportingMonth}/{RunID}/",
+    "immutable_after_commit": true,
+    "required_outputs": [
+      "complete-monthly-publications.csv",
+      "complete-monthly-publications.html",
+      "monthly-report-manifest.json"
+    ],
+    "required_identity": [
+      "RunID",
+      "ReportingMonth",
+      "QueryVersion",
+      "AcceptedSourceBatchID",
+      "ModelRefreshCorrelation"
+    ],
+    "print_route": "Power BI page print or supported capacity PDF may use this committed artifact; complete CSV/HTML remain the bibliographic evidence.",
+    "native_verified": false
+  },
+  "daily_update_blueprint": "config/daily-update.blueprint.json",
+  "collection_dependency": "Require an accepted daily-update batch, or execute and verify the same collection cycle; never assume a clock delay proves completion."
+}

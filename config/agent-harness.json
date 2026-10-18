@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "baseline": ["AGENTS.md", "conductor/index.md", "handoff/POWERBI_PLUGIN_START_HERE.md", "handoff/CURRENT_STATE.md", "conductor/workflow.md", "conductor/code_styleguides/general.md"],
+  "tasks": {
+    "grants": {
+      "context": ["docs/RIMS_GRANTS_EXPERIENCE.md", "docs/GRANTS_DELIVERY_REVIEW.md", "conductor/archive/G01_grants_contracts/spec.md", "conductor/archive/G01_grants_contracts/plan.md", "conductor/tracks/G02_grants_sources/plan.md", "conductor/archive/G03_grants_sharepoint/spec.md", "scripts/grants_registry.py", "scripts/grants_planning.py"],
+      "test_patterns": ["test_grants*.py"]
+    },
+    "publications": {
+      "context": ["conductor/PUBLICATION_STABILISATION.md", "conductor/archive/S01_publication_stabilisation/spec.md", "conductor/archive/S01_publication_stabilisation/plan.md", "docs/PUBLICATION_PLATFORM_ACCEPTANCE.md", "conductor/tracks/E07_publication_platform_acceptance/execution.md", "docs/PROTECTED_DEVELOPMENT_BASELINE.md"],
+      "test_patterns": ["test_publication*.py", "test_canonical_identity.py"]
+    },
+    "organisation": {
+      "context": ["docs/SHAREPOINT_LIST_REGISTRY.md", "scripts/organisation_enrichment.py", "config/organisation-hierarchy.json", "scripts/author_registry.py"],
+      "test_patterns": ["test_organisation*.py", "test_author_registry.py"]
+    },
+    "platform": {
+      "context": ["docs/PUBLICATION_PLATFORM_ACCEPTANCE.md", "docs/RIMS_GRANTS_EXPERIENCE.md", "contracts/web-first-execution.contract.json", "handoff/POWERBI_ACCESS_RECOVERY.md"],
+      "test_patterns": ["test_webfirst.py", "test_publication_platform_contract.py"]
+    }
+  }
+}

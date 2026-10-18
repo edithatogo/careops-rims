@@ -1,0 +1,216 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "reconciliation-register",
+  "position": {
+    "x": 32,
+    "y": 552,
+    "z": 9,
+    "width": 1856,
+    "height": 352,
+    "tabOrder": 9
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "Title"
+                }
+              },
+              "queryRef": "Publication.Title",
+              "nativeQueryRef": "Title",
+              "displayName": "Publication"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "AttributionEvidence"
+                }
+              },
+              "queryRef": "Publication.AttributionEvidence",
+              "nativeQueryRef": "AttributionEvidence",
+              "displayName": "Attribution evidence"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "SourceSet"
+                }
+              },
+              "queryRef": "Publication.SourceSet",
+              "nativeQueryRef": "SourceSet",
+              "displayName": "Source"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "DedupMethod"
+                }
+              },
+              "queryRef": "Publication.DedupMethod",
+              "nativeQueryRef": "DedupMethod",
+              "displayName": "Deduplication"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "AttributionStatus"
+                }
+              },
+              "queryRef": "Publication.AttributionStatus",
+              "nativeQueryRef": "AttributionStatus",
+              "displayName": "Attribution status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "CHHHSAffiliatedAuthors"
+                }
+              },
+              "queryRef": "Publication.CHHHSAffiliatedAuthors",
+              "nativeQueryRef": "CHHHSAffiliatedAuthors",
+              "displayName": "DORA CHHHS-affiliated author(s)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "MatchedFacilities"
+                }
+              },
+              "queryRef": "Publication.MatchedFacilities",
+              "nativeQueryRef": "MatchedFacilities",
+              "displayName": "PubMed facility/service matches"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "PMID"
+                }
+              },
+              "queryRef": "Publication.PMID",
+              "nativeQueryRef": "PMID",
+              "displayName": "PMID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Publication"
+                    }
+                  },
+                  "Property": "DORAURL"
+                }
+              },
+              "queryRef": "Publication.DORAURL",
+              "nativeQueryRef": "DORAURL",
+              "displayName": "DORA"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reconciliation and attribution register'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

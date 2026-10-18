@@ -1,0 +1,51 @@
+{
+  "name": "{{FLOW_ID}}",
+  "id": "/providers/Microsoft.Flow/flows/{{FLOW_ID}}",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "CHHHS DoRA Activity Registry - Reviewed Upsert",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {"$authentication": {"defaultValue": {}, "type": "SecureObject"}, "$connections": {"defaultValue": {}, "type": "Object"}},
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {"schema": {"type": "object", "required": ["ActivityRowsJson"], "properties": {"ActivityRowsJson": {"type": "string", "description": "JSON array emitted by the source-preserving DoRA activity exporter."}}}}
+        }
+      },
+      "actions": {
+        "Parse_Activity_Rows": {"runAfter": {}, "type": "Compose", "inputs": "@json(triggerBody()?['ActivityRowsJson'])"},
+        "Apply_to_each_DORA_Activity": {
+          "runAfter": {"Parse_Activity_Rows": ["Succeeded"]},
+          "type": "Foreach",
+          "foreach": "@coalesce(outputs('Parse_Activity_Rows'), createArray())",
+          "runtimeConfiguration": {"concurrency": {"repetitions": 1}},
+          "actions": {
+            "SharePoint_Get_items": {
+              "runAfter": {}, "type": "OpenApiConnection",
+              "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "GetItems"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "$filter": "DORAActivityKey eq '@{replace(string(item()?['DORAActivityKey']),'''','''''')}'", "$top": 2}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}
+            },
+            "Condition_Duplicate_DORAActivityKey": {
+              "runAfter": {"SharePoint_Get_items": ["Succeeded"]}, "type": "If",
+              "expression": {"greater": ["@length(body('SharePoint_Get_items')?['value'])", 1]},
+              "actions": {"Compose_Duplicate_DORAActivityKey_Failure": {"type": "Compose", "inputs": "@concat('DUPLICATE_DORA_ACTIVITY_KEY: ', string(item()?['DORAActivityKey']))"}},
+              "else": {"actions": {}}
+            },
+            "Condition_Is_New_DORA_Activity": {
+              "runAfter": {"Condition_Duplicate_DORAActivityKey": ["Succeeded"]}, "type": "If",
+              "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 0]},
+              "actions": {"SharePoint_Create_item": {"type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PostItem"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "item/Title": "@{item()?['Full Project Title']}", "item/DORAActivityKey": "@{item()?['DORAActivityKey']}", "item/DORARecordID": "@{item()?['DORARecordID']}", "item/DORAResourceID": "@{item()?['DORAResourceID']}", "item/DORAResourceName": "@{item()?['DORAResourceName']}", "item/DORAResourceLastModified": "@{item()?['DORAResourceLastModified']}", "item/DORAObservedUTC": "@{item()?['DORAObservedUTC']}", "item/DORASourceURL": "@{item()?['DORASourceURL']}", "item/Project_x0020_ID": "@{item()?['Project ID']}", "item/Review_x0020_Reference": "@{item()?['Review Reference']}", "item/HREC_x0020__x0028_Ethics_x0029__": "@{item()?['HREC (Ethics) Reference Number']}", "item/Full_x0020_Project_x0020_Title": "@{item()?['Full Project Title']}", "item/Short_x0020_Project_x0020_Title": "@{item()?['Short Project Title']}", "item/Project_x0020_Description": "@{item()?['Project Description']}", "item/Clinical_x0020_Trial_x0020__x002": "@{item()?['Clinical Trial (Yes/No)']}", "item/PI_x0020_Name": "@{item()?['PI Name']}", "item/PI_x0020_Email": "@{item()?['PI Email']}", "item/Contact_x0020_Person_x0020_Name": "@{item()?['Contact Person Name']}", "item/Contact_x0020_Person_x0020_Email": "@{item()?['Contact Person Email']}", "item/Site_x0020_Name": "@{item()?['Site Name']}", "item/Sponsor_x0020_Name": "@{item()?['Sponsor Name']}", "item/Start_x0020_Date": "@{item()?['Start Date']}", "item/Finish_x0020_Date": "@{item()?['Finish Date']}", "item/Disease_x0020_Category": "@{item()?['Disease Category']}", "item/Multi_x002f_Single_x0020_site": "@{item()?['Multi/Single site']}", "item/DORA_x0020_Authority_x0020__x002": "@{item()?['DORA Authority (Yes/No)']}", "item/DORA_x0020_Consent_x0020__x0028_": "@{item()?['DORA Consent (Yes/No)']}"}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}}},
+              "else": {"actions": {"Condition_Exactly_One_DORA_Activity": {"type": "If", "expression": {"equals": ["@length(body('SharePoint_Get_items')?['value'])", 1]}, "actions": {"SharePoint_Update_item": {"type": "OpenApiConnection", "inputs": {"host": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "connectionName": "shared_sharepointonline", "operationId": "PatchItem"}, "parameters": {"dataset": "{{SHAREPOINT_SITE_URL}}", "table": "{{SHAREPOINT_LIST_ID}}", "id": "@first(body('SharePoint_Get_items')?['value'])?['Id']", "item/Title": "@{item()?['Full Project Title']}", "item/DORAActivityKey": "@{item()?['DORAActivityKey']}", "item/DORARecordID": "@{item()?['DORARecordID']}", "item/DORAResourceID": "@{item()?['DORAResourceID']}", "item/DORAResourceName": "@{item()?['DORAResourceName']}", "item/DORAResourceLastModified": "@{item()?['DORAResourceLastModified']}", "item/DORAObservedUTC": "@{item()?['DORAObservedUTC']}", "item/DORASourceURL": "@{item()?['DORASourceURL']}", "item/Project_x0020_ID": "@{item()?['Project ID']}", "item/Review_x0020_Reference": "@{item()?['Review Reference']}", "item/HREC_x0020__x0028_Ethics_x0029__": "@{item()?['HREC (Ethics) Reference Number']}", "item/Full_x0020_Project_x0020_Title": "@{item()?['Full Project Title']}", "item/Short_x0020_Project_x0020_Title": "@{item()?['Short Project Title']}", "item/Project_x0020_Description": "@{item()?['Project Description']}", "item/Clinical_x0020_Trial_x0020__x002": "@{item()?['Clinical Trial (Yes/No)']}", "item/PI_x0020_Name": "@{item()?['PI Name']}", "item/PI_x0020_Email": "@{item()?['PI Email']}", "item/Contact_x0020_Person_x0020_Name": "@{item()?['Contact Person Name']}", "item/Contact_x0020_Person_x0020_Email": "@{item()?['Contact Person Email']}", "item/Site_x0020_Name": "@{item()?['Site Name']}", "item/Sponsor_x0020_Name": "@{item()?['Sponsor Name']}", "item/Start_x0020_Date": "@{item()?['Start Date']}", "item/Finish_x0020_Date": "@{item()?['Finish Date']}", "item/Disease_x0020_Category": "@{item()?['Disease Category']}", "item/Multi_x002f_Single_x0020_site": "@{item()?['Multi/Single site']}", "item/DORA_x0020_Authority_x0020__x002": "@{item()?['DORA Authority (Yes/No)']}", "item/DORA_x0020_Consent_x0020__x0028_": "@{item()?['DORA Consent (Yes/No)']}"}, "authentication": {"type": "Raw", "value": "@parameters('$authentication')"}}}}, "else": {"actions": {}}}}}
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {"shared_sharepointonline": {"connectionName": "shared-sharepointonline", "source": "Invoker", "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline", "tier": "NotSpecified", "apiName": "sharepointonline"}},
+    "flowFailureAlertSubscribed": false,
+    "isManaged": false
+  }
+}

@@ -1,0 +1,9 @@
+// Development smoke check only, not canonical bibliography acceptance.
+EVALUATE
+ROW(
+    "DoraRows", COUNTROWS(DoraSourceObservations),
+    "DistinctDoraURLs", DISTINCTCOUNT(DoraSourceObservations[link]),
+    "BlankDoraURLs", COALESCE(COUNTROWS(FILTER(DoraSourceObservations, ISBLANK(DoraSourceObservations[link]))), 0),
+    "MonthStart", MIN(ReportingWindow[ReportMonthStart]),
+    "MonthEndExclusive", MAX(ReportingWindow[ReportMonthEndExclusive])
+)

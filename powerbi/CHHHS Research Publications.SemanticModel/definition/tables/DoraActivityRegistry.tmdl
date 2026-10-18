@@ -1,0 +1,202 @@
+table DoraActivityRegistry
+	description: "Source-preserving Queensland DoRA activity projection. Project ID is retained as a non-unique source field; DORAActivityKey is the registry identity."
+	lineageTag: 00000000-0000-4000-8000-45cf3b2cddb6
+
+	column DORAActivityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-eb21bfb95d48
+		summarizeBy: none
+		sourceColumn: DORAActivityKey
+
+	column DORARecordID
+		dataType: int64
+		lineageTag: 00000000-0000-4000-8000-81c1256b29be
+		summarizeBy: none
+		sourceColumn: DORARecordID
+
+	column DORAResourceID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-3f104aa4a98e
+		summarizeBy: none
+		sourceColumn: DORAResourceID
+
+	column DORAResourceName
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-cd49517a1b94
+		summarizeBy: none
+		sourceColumn: DORAResourceName
+
+	column DORAResourceLastModified
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-b36b3b3fdee9
+		summarizeBy: none
+		sourceColumn: DORAResourceLastModified
+
+	column DORAObservedUTC
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 00000000-0000-4000-8000-d9224c0b5b33
+		summarizeBy: none
+		sourceColumn: DORAObservedUTC
+
+	column DORASourceURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-bd94b8b2d021
+		summarizeBy: none
+		sourceColumn: DORASourceURL
+
+	column 'Project ID'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-00a5ea25de0f
+		summarizeBy: none
+		sourceColumn: 'Project ID'
+
+	column 'Review Reference'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-5b5eecbd57cc
+		summarizeBy: none
+		sourceColumn: 'Review Reference'
+
+	column 'HREC (Ethics) Reference Number'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-5c7f351c59ff
+		summarizeBy: none
+		sourceColumn: 'HREC (Ethics) Reference Number'
+
+	column 'Full Project Title'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-cae05837b1ac
+		summarizeBy: none
+		sourceColumn: 'Full Project Title'
+
+	column 'Short Project Title'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-489afd2815b9
+		summarizeBy: none
+		sourceColumn: 'Short Project Title'
+
+	column 'Project Description'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-f20628c1b7d3
+		summarizeBy: none
+		sourceColumn: 'Project Description'
+
+	column 'Clinical Trial (Yes/No)'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-865fdf1d247e
+		summarizeBy: none
+		sourceColumn: 'Clinical Trial (Yes/No)'
+
+	column 'PI Name'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-28474e9e2e28
+		summarizeBy: none
+		sourceColumn: 'PI Name'
+
+	column 'PI Email'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-e7e79e8ece71
+		summarizeBy: none
+		sourceColumn: 'PI Email'
+
+	column 'Contact Person Name'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-235151357f1d
+		summarizeBy: none
+		sourceColumn: 'Contact Person Name'
+
+	column 'Contact Person Email'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d999b3ec0bba
+		summarizeBy: none
+		sourceColumn: 'Contact Person Email'
+
+	column 'Site Name'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-59b96172f2b4
+		summarizeBy: none
+		sourceColumn: 'Site Name'
+
+	column 'Sponsor Name'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-e67bb556de8c
+		summarizeBy: none
+		sourceColumn: 'Sponsor Name'
+
+	column 'Start Date'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d8c32422163a
+		summarizeBy: none
+		sourceColumn: 'Start Date'
+
+	column 'Finish Date'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-32818cb3da6e
+		summarizeBy: none
+		sourceColumn: 'Finish Date'
+
+	column 'Disease Category'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-3f794808699a
+		summarizeBy: none
+		sourceColumn: 'Disease Category'
+
+	column 'Multi/Single site'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-a3d52d948986
+		summarizeBy: none
+		sourceColumn: 'Multi/Single site'
+
+	column 'DORA Authority (Yes/No)'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-853268f58473
+		summarizeBy: none
+		sourceColumn: 'DORA Authority (Yes/No)'
+
+	column 'DORA Consent (Yes/No)'
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-356279506e6a
+		summarizeBy: none
+		sourceColumn: 'DORA Consent (Yes/No)'
+
+	partition DoraActivityRegistry = m
+		mode: import
+		source =
+			// Power Query M: read the source-preserving DORA Activity Registry list.
+			// This is an additive query for the existing RIMS report; it is not a
+			// publication table and must not be joined on Project ID without review.
+			let
+			    SiteUrl = try pSharePointSiteUrl otherwise error "pSharePointSiteUrl is required; no tenant default is embedded.",
+			    Source = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ApiVersion = 15]),
+			    Registry = Source{[Title = "DORA Activity Registry"]}[Data],
+			    Selected = Table.SelectColumns(Registry, {
+			        "DORAActivityKey", "DORARecordID", "DORAResourceID", "DORAResourceName",
+			        "DORAResourceLastModified", "DORAObservedUTC", "DORASourceURL",
+			        "Project ID", "Review Reference", "HREC (Ethics) Reference Number",
+			        "Full Project Title", "Short Project Title", "Project Description",
+			        "Clinical Trial (Yes/No)", "PI Name", "PI Email", "Contact Person Name",
+			        "Contact Person Email", "Site Name", "Sponsor Name", "Start Date",
+			        "Finish Date", "Disease Category", "Multi/Single site",
+			        "DORA Authority (Yes/No)", "DORA Consent (Yes/No)"
+			    }, MissingField.Error),
+			    Typed = Table.TransformColumnTypes(Selected, {
+			        {"DORAActivityKey", type text}, {"DORARecordID", Int64.Type},
+			        {"DORAResourceID", type text}, {"DORAResourceName", type text},
+			        {"DORAResourceLastModified", type text}, {"DORAObservedUTC", type datetimezone},
+			        {"DORASourceURL", type text}, {"Project ID", type text},
+			        {"Review Reference", type text}, {"HREC (Ethics) Reference Number", type text},
+			        {"Full Project Title", type text}, {"Short Project Title", type text},
+			        {"Project Description", type text}, {"Clinical Trial (Yes/No)", type text},
+			        {"PI Name", type text}, {"PI Email", type text},
+			        {"Contact Person Name", type text}, {"Contact Person Email", type text},
+			        {"Site Name", type text}, {"Sponsor Name", type text},
+			        {"Start Date", type text}, {"Finish Date", type text},
+			        {"Disease Category", type text}, {"Multi/Single site", type text},
+			        {"DORA Authority (Yes/No)", type text}, {"DORA Consent (Yes/No)", type text}
+			    }),
+			    ValidKeys = Table.SelectRows(Typed, each [DORAActivityKey] <> null and [DORAActivityKey] <> ""),
+			    Keys = Table.Column(ValidKeys, "DORAActivityKey"),
+			    Unique = if List.Count(Keys) <> List.Count(List.Distinct(Keys)) then error "DORAActivityKey values are not unique" else ValidKeys
+			in
+			    Unique

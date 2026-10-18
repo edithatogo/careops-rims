@@ -1,0 +1,10 @@
+{
+  "id": "G03_grants_sharepoint",
+  "title": "grants sharepoint",
+  "status": "complete",
+  "scope": "rims_extension",
+  "depends_on": [],
+  "requires_live_evidence": true,
+  "created_at": "2026-09-20T00:00:00Z",
+  "updated_at": "2026-09-22T16:50:00Z"
+}

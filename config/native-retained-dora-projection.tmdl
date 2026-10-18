@@ -1,0 +1,13 @@
+// Apply to the isolated semantic model after fnParseRetainedDoraMetadata and
+// RetainedSourceObservations have been deployed. This is one TMDL command.
+createOrReplace
+
+  table RetainedDoraPublications
+
+    partition RetainedDoraPublications = m
+      mode: import
+      source =
+          let
+              Result = fnParseRetainedDoraMetadata(RetainedSourceObservations)
+          in
+              Result

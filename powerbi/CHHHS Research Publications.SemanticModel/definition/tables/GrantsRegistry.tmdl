@@ -1,0 +1,160 @@
+table GrantsRegistry
+	description: "Canonical opportunity registry projection. Empty or unaccepted source batches remain empty; deadlines retain raw text and precision."
+	lineageTag: 00000000-0000-4000-8000-6b6c5f1274d3
+
+	column OpportunityKey
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-6bc60cb7f2ea
+		summarizeBy: none
+		sourceColumn: OpportunityKey
+
+	column Title
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-e0fd461d1df1
+		summarizeBy: none
+		sourceColumn: Title
+
+	column Funder
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-b3ee489dcc40
+		summarizeBy: none
+		sourceColumn: Funder
+
+	column Source
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-ca354e7db52b
+		summarizeBy: none
+		sourceColumn: Source
+
+	column SourceID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-adf97a5f1ade
+		summarizeBy: none
+		sourceColumn: SourceID
+
+	column RoundID
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-463bc919d3b5
+		summarizeBy: none
+		sourceColumn: RoundID
+
+	column URL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-11b962975c4e
+		summarizeBy: none
+		sourceColumn: URL
+
+	column SourceRowURL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 00000000-0000-4000-8000-6f605870c59b
+		summarizeBy: none
+		sourceColumn: SourceRowURL
+
+	column Description
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-b0a12c2505dd
+		summarizeBy: none
+		sourceColumn: Description
+
+	column Eligibility
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-9c42a4b34028
+		summarizeBy: none
+		sourceColumn: Eligibility
+
+	column Geography
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-421222f0b0c6
+		summarizeBy: none
+		sourceColumn: Geography
+
+	column Amount
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-ee14f1e8a5fa
+		summarizeBy: none
+		sourceColumn: Amount
+
+	column Deadline
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-01742af460a0
+		summarizeBy: none
+		sourceColumn: Deadline
+
+	column DeadlineRaw
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-7c538c9d48a5
+		summarizeBy: none
+		sourceColumn: DeadlineRaw
+
+	column DeadlinePrecision
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-93b2719ae06d
+		summarizeBy: none
+		sourceColumn: DeadlinePrecision
+
+	column Status
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-2f7251af0f20
+		summarizeBy: none
+		sourceColumn: Status
+
+	column Contact
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-53f870980c34
+		summarizeBy: none
+		sourceColumn: Contact
+
+	column CHHHSRelevance
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-9287f8fb195c
+		summarizeBy: none
+		sourceColumn: CHHHSRelevance
+
+	column ReviewStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-5533dd46b44c
+		summarizeBy: none
+		sourceColumn: ReviewStatus
+
+	column ReviewNotes
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-f46852388ec4
+		summarizeBy: none
+		sourceColumn: ReviewNotes
+
+	column RetrievedUTC
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-d93021527944
+		summarizeBy: none
+		sourceColumn: RetrievedUTC
+
+	column RetrievedTimestampStatus
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-492b6722f99c
+		summarizeBy: none
+		sourceColumn: RetrievedTimestampStatus
+
+	column EvidenceHash
+		dataType: string
+		lineageTag: 00000000-0000-4000-8000-fbf65a0089f2
+		summarizeBy: none
+		sourceColumn: EvidenceHash
+
+	measure 'Grant Opportunities' = COUNTROWS(GrantsRegistry)
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-e12b7d389680
+
+	measure 'Open Grant Opportunities' = CALCULATE([Grant Opportunities], KEEPFILTERS(GrantsRegistry[Status] = "open"))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-7fd241cc609c
+
+	measure 'Grant Opportunities Needing Review' = CALCULATE([Grant Opportunities], KEEPFILTERS(GrantsRegistry[ReviewStatus] <> "accepted"))
+		formatString: #,0
+		lineageTag: 00000000-0000-4000-8000-c441fc543cc8
+
+	partition GrantsRegistry = m
+		mode: import
+		source =
+			GrantsRegistry

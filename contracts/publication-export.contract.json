@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "implementation_status": "local_renderer_tested_native_extraction_pending",
+  "fields": [
+    "CanonicalKey",
+    "Title",
+    "Authors",
+    "Journal",
+    "PublicationDateRaw",
+    "PublicationDatePrecision",
+    "PublicationYear",
+    "PublicationMonth",
+    "CHHHSAffiliatedAuthors",
+    "AttributionStatus",
+    "AttributionEvidence",
+    "DedupMethod",
+    "SourceSet",
+    "PMID",
+    "DOI",
+    "PubMedURL",
+    "DORAURL",
+    "MatchedFacilities"
+  ],
+  "identity": "CanonicalKey",
+  "required_envelope": [
+    "data_kind",
+    "scope",
+    "source_snapshot_id",
+    "coverage_note",
+    "expected_canonical_count",
+    "expected_key_sha256",
+    "records"
+  ],
+  "formats": [
+    "CSV",
+    "print-ready HTML"
+  ],
+  "pdf_rule": "Dashboard-page PDF is an executive view. Complete bibliography must be independently rendered and row/key reconciled; this helper does not create a PDF.",
+  "data_kinds": [
+    "synthetic",
+    "live_export"
+  ],
+  "empty_selection_allowed": true,
+  "date_precision": [
+    "day",
+    "month",
+    "year",
+    "range",
+    "unknown",
+    "rss_unverified"
+  ],
+  "unknown_month_policy": "Retain in full register; do not allocate to an exact month without corroboration.",
+  "required_checks": [
+    "row count equals independent native expected count",
+    "distinct canonical keys",
+    "matching independent key-set hash",
+    "exact fields",
+    "explicit date precision",
+    "source coverage label",
+    "no synthetic data claimed live"
+  ],
+  "no_silent_truncation": true,
+  "full_title_and_authors": true,
+  "notes": "Independent model count/key set and source coverage must be captured upstream. Checking user-supplied expectations is not native authentication or a full institutional census."
+}

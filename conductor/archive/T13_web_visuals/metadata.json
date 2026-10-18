@@ -1,0 +1,17 @@
+{
+  "id": "T13_web_visuals",
+  "title": "Implement the three-page publication report",
+  "status": "complete",
+  "scope": "live_web",
+  "created_at_utc": "2026-09-12T03:38:54.708930+00:00",
+  "depends_on": [
+    "T12_research_model"
+  ],
+  "requires_live_evidence": true,
+  "baseline_commit": "92c1d0e0ddfe5ee3400b054d50ad3abeb11a8665",
+  "completion_evidence": [
+    "private/ops/report-definition-updated.json",
+    "private/ops/report-definition-backup.json",
+    "docs/THREE_PAGE_REPORT.md"
+  ]
+}

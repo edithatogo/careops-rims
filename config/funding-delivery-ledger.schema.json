@@ -1,0 +1,20 @@
+{
+  "schema_version": "funding-delivery-ledger-v1",
+  "list_name": "Funding Delivery Ledger",
+  "identity_field": "DeliveryEventKey",
+  "source_observation_archive": "approved_private_archive",
+  "access_scope": "authenticated_current_user_personal_list",
+  "fields": [
+    {"display_name":"DeliveryEventKey","type":"text","required":true,"unique":true},
+    {"display_name":"UserKey","type":"text","required":true},
+    {"display_name":"OpportunityKey","type":"text","required":true},
+    {"display_name":"EventType","type":"text","required":true},
+    {"display_name":"Revision","type":"text","required":true},
+    {"display_name":"OffsetDays","type":"integer","required":true},
+    {"display_name":"Channel","type":"text","required":true},
+    {"display_name":"Status","type":"text","required":true,"default":"Pending"},
+    {"display_name":"ScheduledFor","type":"datetime"},
+    {"display_name":"SentAt","type":"datetime"},
+    {"display_name":"ErrorMessage","type":"note"}
+  ]
+}

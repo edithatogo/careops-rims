@@ -1,0 +1,14 @@
+{
+  "conductor": {
+    "url": "https://github.com/gemini-cli-extensions/conductor.git",
+    "commit": "f06add33b598f4262a190f234828dda551db70d7",
+    "path": ".agents/plugins/conductor",
+    "checkout_status": "blocked_container_dns",
+    "verified_remote_ref": true
+  },
+  "python": {
+    "minimum": "3.11",
+    "tested": "3.13.5",
+    "third_party_runtime_dependencies": []
+  }
+}
