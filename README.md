@@ -1,24 +1,16 @@
 # RIMS public source edition
 
-> Sanitised development source with fresh history. Read [scope](PUBLIC_SOURCE.md)
-> and [security setup](SECURITY.md). Native acceptance is not claimed.
+Sanitised development source for research-publication registers, exports and flow
+support tools. Start with [setup and offline checks](START_HERE.md), then read
+[scope](PUBLIC_SOURCE.md) and [security setup](SECURITY.md).
 
-# CHHHS research publications: current web-first work package
+The deployed runtime uses Microsoft platforms. Local Python prepares artefacts and
+checks source; it is not a hosted replacement. This edition includes example
+identities, not working tenant configuration or native acceptance evidence.
 
-Start with [START_HERE.md](START_HERE.md) and [the plugin opening prompt](handoff/POWERBI_PLUGIN_START_HERE.md). Ten new Conductor tracks prioritise the existing Power BI report and ordinary web UI. UTM/Desktop is conditional. No live report/model/VM changes are claimed by this release.
+- [Operator commands](docs/RIMS_OPERATOR_TOOLS.md)
+- [Flow diagnostics and guarded recovery](docs/FLOW_MATURATION_TOOLS.md)
+- [Architecture and historical implementation plans](conductor/index.md)
 
-The earlier v0.3 source is preserved as a baseline with known defects; old deployment instructions below are historical, not the current route.
-
----
-
-## Historical v0.3 source README
-
-# CHHHS Research Publications
-
-Browser-first Power BI/Fabric project for a monthly Cairns and Hinterland Hospital and Health Service publication report.
-
-The canonical report combines **PubMed affiliation discovery** with the **Queensland Health DORA CHHHS RSS feed**, deduplicates cross-source records conservatively and retains source/attribution evidence.
-
-Start with [START_HERE.md](START_HERE.md). For browser deployment without Power BI Desktop, use [docs/FABRIC_BROWSER_DEPLOYMENT.md](docs/FABRIC_BROWSER_DEPLOYMENT.md).
-
-Core governance artefacts are in `contracts/`; implementation history and acceptance gates are in `conductor/`.
+Historical plans describe the original private workspace. Private evidence,
+generated outputs, native packages and live configuration are intentionally absent.

@@ -17,7 +17,7 @@ Follow the [shared-data delivery contract](../docs/PLATFORM_COMPLETION_PLAN.md#s
 
 Current priority: [publication stabilisation handoff](PUBLICATION_STABILISATION.md). Execute S01 first, prepare S03 privacy remediation independently, then complete versioning and existing native acceptance tracks before grants implementation. Detailed plans are prepared; their tasks are not yet executed.
 
-Resume with [current state](../handoff/CURRENT_STATE.md) and [solo harness commands](../docs/SOLO_AGENT_WORKFLOW.md). The dated observations below are historical context; use current readback for tenant claims. Track plans remain the work backlog.
+Resume with current state (excluded from public source) and [solo harness commands](../docs/SOLO_AGENT_WORKFLOW.md). The dated observations below are historical context; use current readback for tenant claims. Track plans remain the work backlog.
 
 Current RIMS extension: [funding pages, institutional dates and subscriptions](../docs/RIMS_GRANTS_EXPERIENCE.md), tracked in G01–G08. Source research is in [grants delivery review](../docs/GRANTS_DELIVERY_REVIEW.md). These are additive pages in the existing report; local reference code is not platform deployment evidence.
 

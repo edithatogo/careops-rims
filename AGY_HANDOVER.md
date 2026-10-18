@@ -19,7 +19,7 @@ Antigravity automatically discovers and loads configuration and skills across th
 
 1. **Workspace Rules & Guidance:**
    - [`AGENTS.md`](AGENTS.md): Strict workspace instructions, test gates, privacy boundaries, and approval requirements.
-   - [`.agents/plugins/conductor/rules/conductor_antigravity.md`](.agents/plugins/conductor/rules/conductor_antigravity.md): GUI and sequential interaction rules for Conductor workflows.
+   - `.agents/plugins/conductor/rules/conductor_antigravity.md` (excluded from public source): GUI and sequential interaction rules for Conductor workflows.
 2. **Workspace Skills (`.agents/skills/`):**
    - `conductor-status`: Parses tracks registry and plan files for overall project progress.
    - `conductor-implement`: Orchestrates phase and task execution.
@@ -43,7 +43,7 @@ Antigravity automatically discovers and loads configuration and skills across th
   ```
 - **Live Power BI Operations:**
   - Use qualified CLI/API operations first and BrowserOS neo only for a bounded native fallback with explicit ownership.
-  - Changes are applied **only** to the isolated development model ([`private/ops/isolated-baseline-observation.json`](private/ops/isolated-baseline-observation.json)), never to the production report/model without an approved rollback path.
+  - Changes are applied **only** to the isolated development model (`private/ops/isolated-baseline-observation.json` (excluded from public source)), never to the production report/model without an approved rollback path.
   - Exact target UUIDs, before/after states, and checksum receipts must be stored in ignored `private/ops/` paths.
   - Never commit workforce row data, API tokens, or tenant credentials to Git.
 
