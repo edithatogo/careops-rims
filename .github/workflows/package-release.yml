@@ -1,0 +1,123 @@
+name: Public operator source package candidate
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rims-package-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  build:
+    name: Build and exercise the public operator source package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.15.0'
+      - name: Package clean public source once after privacy validation
+        run: python scripts/build_release_candidate.py --output .local/release-candidate
+      - name: Exercise the unpacked offline operator tools
+        run: |
+          mkdir -p "$RUNNER_TEMP/rims-consumer"
+          unzip -q .local/release-candidate/careops-rims-source.zip -d "$RUNNER_TEMP/rims-consumer"
+          cd "$RUNNER_TEMP/rims-consumer" || exit 1
+          python scripts/run_public_tests.py
+          python scripts/rims_operator.py --help
+      - name: Read immutable qualified inventory tooling
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: edithatogo/careops
+          ref: 1373e971013724dfaa268e215a45505bb89300cd
+          path: .local/ci-release-policy
+          persist-credentials: false
+          submodules: false
+      - name: Inventory exact public archive bytes
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: python .local/ci-release-policy/portfolio-scripts/artifact_sbom.py --artifact .local/release-candidate/careops-rims-source.zip --name careops-rims-source --source-commit "$SOURCE_COMMIT" --created-epoch "$(git show -s --format=%ct "$SOURCE_COMMIT")" --output .local/release-candidate/careops-rims.spdx.json
+      - name: Preserve actual source archive without native deployment
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: careops-rims-source
+          path: .local/release-candidate/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+  attest-package:
+    name: Attest main source package
+    needs: [build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # Federated signing for the exact previously built package.
+      attestations: write # Store package provenance and SPDX signatures only.
+    steps:
+      - name: Download the package built once by this run
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: careops-rims-source
+          path: candidate
+      - name: Select the qualified verification runtime
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Independently compare downloaded package with its inventory
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python - <<'PYCODE'
+          import hashlib, json, os, zipfile
+          from pathlib import Path
+          package = Path('candidate/careops-rims-source.zip')
+          document = json.loads(Path('candidate/careops-rims.spdx.json').read_text())
+          assert document['packages'][0]['sourceInfo'] == 'Source commit: ' + os.environ['SOURCE_COMMIT']
+          assert document['packages'][0]['checksums'][0]['checksumValue'] == hashlib.sha256(package.read_bytes()).hexdigest()
+          with zipfile.ZipFile(package) as archive:
+              entries = [entry for entry in archive.infolist() if not entry.is_dir()]
+              assert len({entry.filename for entry in entries}) == len(entries)
+              actual = {entry.filename: hashlib.sha256(archive.read(entry)).hexdigest() for entry in entries}
+          declared = {entry['fileName'].removeprefix('./'): next(c['checksumValue'] for c in entry['checksums'] if c['algorithm'] == 'SHA256') for entry in document['files']}
+          assert actual and len(declared) == len(document['files']) and actual == declared
+          print('Exact downloaded archive and all file digests match the inventory.')
+          PYCODE
+      - name: Attest build provenance
+        id: provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-path: candidate/careops-rims-source.zip
+          create-storage-record: false
+      - name: Attest exact artifact inventory
+        id: sbom
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-path: candidate/careops-rims-source.zip
+          sbom-path: candidate/careops-rims.spdx.json
+          create-storage-record: false
+      - name: Verify exact source and workflow signatures
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_COMMIT: ${{ github.sha }}
+          PROVENANCE_BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
+          SBOM_BUNDLE: ${{ steps.sbom.outputs.bundle-path }}
+        run: |
+          cp "$PROVENANCE_BUNDLE" candidate/build-attestation.jsonl
+          cp "$SBOM_BUNDLE" candidate/sbom-attestation.jsonl
+          gh attestation verify candidate/careops-rims-source.zip --bundle "$PROVENANCE_BUNDLE" --repo edithatogo/careops-rims --signer-workflow edithatogo/careops-rims/.github/workflows/package-release.yml --source-ref refs/heads/main --source-digest "$SOURCE_COMMIT" --signer-digest "$SOURCE_COMMIT" --deny-self-hosted-runners --format json > candidate/provenance-verification.json
+          gh attestation verify candidate/careops-rims-source.zip --bundle "$SBOM_BUNDLE" --repo edithatogo/careops-rims --signer-workflow edithatogo/careops-rims/.github/workflows/package-release.yml --source-ref refs/heads/main --source-digest "$SOURCE_COMMIT" --signer-digest "$SOURCE_COMMIT" --deny-self-hosted-runners --predicate-type https://spdx.dev/Document/v2.3 --format json > candidate/sbom-verification.json
+      - name: Preserve exact package and signature evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: careops-rims-attested-candidate-${{ github.sha }}
+          path: candidate/
+          if-no-files-found: error
+          retention-days: 30

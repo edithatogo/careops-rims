@@ -32,3 +32,6 @@ audit/
 *.docx
 *.xlsx
 *.zip
+
+# Source CI candidates and isolated qualification tools
+.local/

@@ -2,5 +2,16 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>edithatogo/renovate-config"
-  ]
+  ],
+  "packageRules": [
+    {
+      "description": "Review exact source CI candidates before promotion",
+      "matchPackageNames": [
+        "*"
+      ],
+      "automerge": false,
+      "platformAutomerge": false
+    }
+  ],
+  "ignoreUnstable": false
 }

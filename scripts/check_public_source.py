@@ -5,7 +5,7 @@ import re
 import subprocess
 import sys
 ROOT = Path(__file__).resolve().parents[1]
-BLOCKED = {'private', 'downloads', 'data', 'audit', 'reports', '.agents', '.flowagent', '.playwright-cli', 'node_modules'}
+BLOCKED = {'.local', 'private', 'downloads', 'data', 'audit', 'reports', '.agents', '.flowagent', '.playwright-cli', 'node_modules'}
 SUFFIXES = {'.pbix', '.pbit', '.abf', '.zip', '.bundle', '.msapp', '.msflow', '.docx', '.xlsx', '.pdf', '.pem', '.key', '.pfx', '.p12', '.vsdx'}
 EMAIL = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
 GUID = re.compile(r'\b[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\b', re.I)

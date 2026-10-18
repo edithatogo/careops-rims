@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Create keyless research governance and funding fields on SharePoint list."""
 import json
+import os
 import subprocess
 import sys
 import time
