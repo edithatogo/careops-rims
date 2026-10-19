@@ -176,6 +176,77 @@ def export_errors(envelope: dict[str, Any]) -> list[str]:
     return errors
 
 
+
+def canonical_export_key(value: Any) -> bool:
+    """Require stable export identities to arrive already canonical."""
+    return (isinstance(value, str) and bool(value.strip()) and value == value.strip()
+            and all(character.isprintable() for character in value))
+
+
+def key_set_difference(actual: list[str], expected: list[str]) -> dict[str, list[str]]:
+    """Return deterministic key-set differences for export reconciliation receipts."""
+    return {
+        'missing': sorted(set(expected) - set(actual)),
+        'unexpected': sorted(set(actual) - set(expected)),
+    }
+
+
+def assemble_paginated_export(envelope: dict[str, Any]) -> dict[str, Any]:
+    """Flatten a complete, correlated page chain against a separate key query.
+
+    Page metadata is an assertion from the extraction route, not native proof on
+    its own. A missing terminal page or a missing independent key fails closed.
+    """
+    pages = envelope.get('pages')
+    expected_keys = envelope.get('expected_canonical_keys')
+    generation = envelope.get('generation_id')
+    if not isinstance(generation, str) or not generation.strip():
+        raise ValueError('A nonempty extraction generation_id is required')
+    if envelope.get('expected_keys_generation_id') != generation:
+        raise ValueError('Independent canonical key query must belong to the extraction generation')
+    if not isinstance(pages, list) or not pages:
+        raise ValueError('At least one extraction page is required')
+    if not isinstance(expected_keys, list) or not all(canonical_export_key(key) for key in expected_keys):
+        raise ValueError('Independent expected_canonical_keys must be a list of canonical unpadded keys')
+    if len(expected_keys) != len(set(expected_keys)):
+        raise ValueError('Independent canonical key query contains duplicates')
+    rows: list[dict[str, Any]] = []
+    for index, page in enumerate(pages):
+        if not isinstance(page, dict) or page.get('page_number') != index + 1 or type(page.get('page_number')) is not int:
+            raise ValueError('Extraction pages must be consecutively numbered from 1')
+        if page.get('generation_id') != generation:
+            raise ValueError('Extraction page belongs to a different generation')
+        if type(page.get('has_more')) is not bool or page['has_more'] != (index < len(pages) - 1):
+            raise ValueError('Extraction page chain lacks one unambiguous terminal page')
+        records = page.get('records')
+        if not isinstance(records, list) or not all(isinstance(row, dict) for row in records):
+            raise ValueError('Extraction page records must be objects')
+        rows.extend(records)
+    actual_keys = [row.get('CanonicalKey') for row in rows]
+    if not all(canonical_export_key(key) for key in actual_keys):
+        raise ValueError('Paginated records contain a missing or noncanonical key')
+    if len(actual_keys) != len(set(actual_keys)):
+        raise ValueError('Paginated records contain duplicate canonical keys')
+    differences = key_set_difference(actual_keys, expected_keys)
+    if differences['missing'] or differences['unexpected']:
+        missing = ', '.join(differences['missing'][:5]) or '(none)'
+        unexpected = ', '.join(differences['unexpected'][:5]) or '(none)'
+        raise ValueError(
+            'Paginated records differ from independent canonical key set: '
+            f"missing={len(differences['missing'])} [{missing}]; "
+            f"unexpected={len(differences['unexpected'])} [{unexpected}]"
+        )
+    result = {key: value for key, value in envelope.items()
+              if key not in {'pages', 'expected_canonical_keys', 'generation_id', 'expected_keys_generation_id'}}
+    result['records'] = rows
+    expected_count = result.get('expected_canonical_count')
+    if type(expected_count) is not int or expected_count < 0 or expected_count != len(expected_keys):
+        raise ValueError('Independent expected count differs from canonical key query')
+    if result.get('expected_key_sha256') != key_hash([{'CanonicalKey': key} for key in expected_keys]):
+        raise ValueError('Independent expected key hash differs from canonical key query')
+    return result
+
+
 def render_exports(envelope: dict[str, Any], output: Path) -> dict[str, Any]:
     """Write new atomic CSV/HTML output; existing destinations are never overwritten."""
     errors = export_errors(envelope)
