@@ -11,6 +11,20 @@
       ],
       "automerge": false,
       "platformAutomerge": false
+    },
+    {
+      "description": "Preserve the intentional Python 3.11 compatibility floor; qualify current runtimes separately",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchPackageNames": [
+        "actions/python-versions"
+      ],
+      "matchFileNames": [
+        ".github/workflows/security.yml"
+      ],
+      "matchCurrentVersion": "/^3\\.11(?:\\.|$)/",
+      "enabled": false
     }
   ],
   "ignoreUnstable": false
