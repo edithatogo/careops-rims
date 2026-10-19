@@ -18,7 +18,7 @@
         "github-actions"
       ],
       "matchPackageNames": [
-        "python"
+        "actions/python-versions"
       ],
       "matchFileNames": [
         ".github/workflows/security.yml"
