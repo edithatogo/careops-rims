@@ -76,3 +76,12 @@ preserves its own case during absence, outage, denied access, replay and conflic
 revision attempts. This is an offline compatibility demonstration, not a deployed
 integration or caller-authentication proof. Use the documented commands with
 fictional inputs; real source snapshots and receipts remain private.
+
+## Paper-library metadata
+
+[The operator guide](docs/PAPER_LIBRARY_METADATA.md) describes preparing and applying
+a guarded metadata-only update to an existing linked paper. The preparation CLI
+uses private snapshots; the native CLI requires an already-qualified M365 session
+and exact private targets. It preserves human fields, authoritative provenance,
+file contents and existing versions, and refuses drift. Unchanged replay makes
+no writes. Neither command installs a service or activates a flow or schedule.
