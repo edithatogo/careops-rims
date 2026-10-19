@@ -1,0 +1,8 @@
+{
+  "snapshot": {
+    "publications": [{"CanonicalKey":"fictional:publication:1","Title":"Fictional publication for compatibility only","OrganisationKeys":"fictional:org:1","OrganisationReferenceVersion":"fictional-org-v1","OrganisationMatchMethod":"review-required","OrganisationMatchConfidence":"unknown"}],
+    "organisation_reference": {"version":"fictional-org-v1","units":[{"OrganisationKey":"fictional:org:1","OrganisationName":"Fictional research organisation"}]}
+  },
+  "context": {"provider_version":"1","consumer":"fictional-case-workbench","consumer_version":"1","correlation_id":"fictional-demo-attempt-1","purpose":"evidence-navigation","classification":"public","captured_at":"2030-01-01T00:00:00Z","source_revision":"fictional-publications-v1","evidence_url":"https://example.invalid/fictional-source/v1"},
+  "allowed_keys": [["careops-rims/publications","fictional:publication:1"],["careops-rims/organisations","fictional:org:1"]]
+}
