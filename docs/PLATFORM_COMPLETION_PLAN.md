@@ -452,3 +452,18 @@ This phased roadmap aligns directly with the established Conductor tracks:
 - **Track T13 (Web Visuals):** Governs three-page report visual validation (Phase 4.3).
 - **Track T14 (Complete Exports & Monthly):** Governs executive Word DOCX report generation (Phase 3).
 - **Track T15 (Web Acceptance & Release):** Governs the final live platform sign-off, concurrency check, and handover documentation.
+
+
+## Selective SharePoint library columns — 19 October 2026
+
+User-selected implementation direction: reuse library columns for artifact identity, provenance, filtering and routing where the output already belongs in SharePoint. Reuse existing columns/content types and exact internal names before adding fields. This extends the structured-document preference; it is not proof of automatic Word-body generation.
+
+Priority: next report integration. Existing monthly report/export artifacts should expose period, accepted batch/generation, query/template version, record count, output revision and reconciliation status. Link matching CSV/HTML/PDF/manual Word artifacts to one accepted generation without changing selection or canonical identities.
+Later, selectively apply source/canonical publication identity, capture time, source URL and provenance reference to retained papers/evidence already stored in libraries. Keep raw archives and manifests authoritative; do not retrofit every collector envelope.
+Flow bootstrap/integration retains the report leaf; Archive/native pipeline retains paper/archive objects. Preserve the accepted report inputs and working outputs. The Clinical scalar-property trial does not qualify repeating bibliography generation.
+
+Acceptance: map each property to its existing authoritative source and verify its actual type/internal name; read back the affected saved values and file identity. Update only changed values, guard modification-trigger loops and retries, and retain a recoverable preimage. Preserve human edits, original/issued history and exact reviewed revisions. Add no duplicate register, notifications, approval workflow, permission change, licence or runtime. Avoid putting private/internal-only values into properties that may travel inside a downloaded Office file.
+
+Metadata readback and visible body rendering are separate checks. The Clinical trial stored a changed property while Word for the web still displayed the old body value. Do not claim scalar body refresh, narrative/repeating sections or generated Word/PDF fidelity from metadata success. Qualify those behaviours only for the selected document shape; retain working/manual outputs on a specific gap. Record one result in existing evidence, not another readiness pack.
+
+Reference: https://learn.microsoft.com/sharepoint/dev/business-apps/power-automate/sharepoint-connector-actions-triggers
