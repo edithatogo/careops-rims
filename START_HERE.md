@@ -66,3 +66,13 @@ manual-run requests populate the trigger body. An explicitly configured immutabl
 input path is available. Deployment, native output acceptance, supported solution
 membership and activation remain separate qualified operations. The public tests
 use fictional fixtures and perform no tenant operations.
+
+## Optional module references
+
+[The bounded reference adapter and fictional consumer](docs/OPTIONAL_MODULE_REFERENCES.md)
+prepare source-qualified publication/organisation references from accepted canonical
+fields. The standard-library consumer works without RIMS or a sibling module and
+preserves its own case during absence, outage, denied access, replay and conflicting
+revision attempts. This is an offline compatibility demonstration, not a deployed
+integration or caller-authentication proof. Use the documented commands with
+fictional inputs; real source snapshots and receipts remain private.
