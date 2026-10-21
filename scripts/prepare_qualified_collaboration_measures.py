@@ -23,21 +23,26 @@ QUALIFIED = '''CALCULATETABLE(
     LEFT(SourceRelationshipEvidence[FromKey], 6) = "orcid:",
     LEFT(SourceRelationshipEvidence[ToKey], 6) = "orcid:")'''
 CORROBORATED = '''FILTER(
-    GROUPBY(Qualified,
+    GROUPBY(AllProviders,
         SourceRelationshipEvidence[CanonicalKey],
         SourceRelationshipEvidence[FromKey],
         SourceRelationshipEvidence[ToKey],
         "ProviderCount", SUMX(CURRENTGROUP(), 1)),
     [ProviderCount] >= 2)'''
+# Establish cross-source support independently of the current provider bar.
+ALL_PROVIDERS = QUALIFIED[:-1] + ',\n    REMOVEFILTERS(SourceRelationshipEvidence[SourceProvider]))'
+SELECTED_CORROBORATED = """INTERSECT(
+    SUMMARIZE(Corroborated, SourceRelationshipEvidence[CanonicalKey], SourceRelationshipEvidence[FromKey], SourceRelationshipEvidence[ToKey]),
+    SUMMARIZE(Qualified, SourceRelationshipEvidence[CanonicalKey], SourceRelationshipEvidence[FromKey], SourceRelationshipEvidence[ToKey]))"""
 MEASURES = {
     'ORCID-qualified researcher pairs': 'VAR Qualified = ' + QUALIFIED + '\nRETURN COUNTROWS(SUMMARIZE(Qualified, SourceRelationshipEvidence[FromKey], SourceRelationshipEvidence[ToKey])) + 0',
     'ORCID-qualified coauthored publications': 'VAR Qualified = ' + QUALIFIED + '\nRETURN COUNTROWS(SUMMARIZE(Qualified, SourceRelationshipEvidence[CanonicalKey])) + 0',
-    'Cross-source corroborated researcher pairs': 'VAR Qualified = ' + QUALIFIED + '\nVAR Corroborated = ' + CORROBORATED + '\nRETURN COUNTROWS(SUMMARIZE(Corroborated, SourceRelationshipEvidence[FromKey], SourceRelationshipEvidence[ToKey])) + 0',
-    'Cross-source corroborated publications': 'VAR Qualified = ' + QUALIFIED + '\nVAR Corroborated = ' + CORROBORATED + '\nRETURN COUNTROWS(SUMMARIZE(Corroborated, SourceRelationshipEvidence[CanonicalKey])) + 0',
+    'Cross-source corroborated researcher pairs': 'VAR Qualified = ' + QUALIFIED + '\nVAR AllProviders = ' + ALL_PROVIDERS + '\nVAR Corroborated = ' + CORROBORATED + '\nVAR SelectedCorroborated = ' + SELECTED_CORROBORATED + '\nRETURN COUNTROWS(SUMMARIZE(SelectedCorroborated, SourceRelationshipEvidence[FromKey], SourceRelationshipEvidence[ToKey])) + 0',
+    'Cross-source corroborated publications': 'VAR Qualified = ' + QUALIFIED + '\nVAR AllProviders = ' + ALL_PROVIDERS + '\nVAR Corroborated = ' + CORROBORATED + '\nVAR SelectedCorroborated = ' + SELECTED_CORROBORATED + '\nRETURN COUNTROWS(SUMMARIZE(SelectedCorroborated, SourceRelationshipEvidence[CanonicalKey])) + 0',
 }
 
 
-def reference_summaries(rows):
+def reference_summaries(rows, selected_providers=None):
     """Independent row-grain comparison for native DAX verification."""
     assertions = defaultdict(set)
     for row in rows:
@@ -52,9 +57,11 @@ def reference_summaries(rows):
         if keys[0] >= keys[1]:
             raise ValueError('Ordered distinct pair required')
         assertions[(row['CanonicalKey'], *keys)].add(row['SourceProvider'])
-    corroborated = [key for key, providers in assertions.items() if len(providers) >= 2]
+    selected = {key for key, providers in assertions.items()
+                if selected_providers is None or providers.intersection(selected_providers)}
+    corroborated = [key for key in selected if len(assertions[key]) >= 2]
     return dict(zip(MEASURES, [
-        len({key[1:] for key in assertions}), len({key[0] for key in assertions}),
+        len({key[1:] for key in selected}), len({key[0] for key in selected}),
         len({key[1:] for key in corroborated}), len({key[0] for key in corroborated}),
     ]))
 

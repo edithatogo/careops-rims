@@ -39,3 +39,13 @@ class QualifiedCollaborationTests(unittest.TestCase):
         self.assertEqual(text.count('formatString: #,0'), len(MEASURES))
         with self.assertRaises(ValueError):
             prepare(candidate)
+
+    def test_provider_selection_does_not_erase_other_provider_corroboration(self):
+        rows = [self.row(), self.row('OpenAlex'), self.row('PubMed', 'publication:2')]
+        self.assertEqual(list(reference_summaries(rows, {'PubMed'}).values()), [1, 2, 1, 1])
+        self.assertEqual(list(reference_summaries(rows, {'OpenAlex'}).values()), [1, 1, 1, 1])
+        self.assertEqual(list(reference_summaries(rows, {'Other'}).values()), [0, 0, 0, 0])
+        self.assertEqual(list(reference_summaries(rows, set()).values()), [0, 0, 0, 0])
+        for name in ['Cross-source corroborated researcher pairs', 'Cross-source corroborated publications']:
+            self.assertIn('REMOVEFILTERS(SourceRelationshipEvidence[SourceProvider])', MEASURES[name])
+            self.assertIn('INTERSECT(', MEASURES[name])

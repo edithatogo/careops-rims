@@ -41,3 +41,22 @@ qualified connecting identifiers. Do not substitute title/person similarity,
 adjacent funding statements or another institution's project links. This factual
 source gap is independent of the delivered collaboration extension. Existing
 native object owners retain further integration and documentation publication.
+
+## Public review correction: provider selection
+
+The public candidate now establishes cross-source corroboration before applying
+the selected-provider membership. Otherwise clicking one provider removes the
+second provider before qualification and makes corroboration incorrectly zero.
+The candidate clears only the provider column when establishing support, then
+intersects the corroborated publication/pair keys with the selected-provider keys.
+See Microsoft's [REMOVEFILTERS](https://learn.microsoft.com/en-us/dax/removefilters-function-dax)
+and [INTERSECT lineage semantics](https://learn.microsoft.com/en-us/dax/intersect-function-dax).
+The independent row-grain reference tests cover each provider, absent provider
+and empty selection. Report output must also remain outside its source folder.
+
+These are public source fixes, not a new native acceptance receipt. The native
+owner must take a current preimage, update the two existing corroboration
+expressions without duplicating measures, and recheck unfiltered counts plus
+provider selection/reset in the existing report. Preserve the other measures,
+report parts and bindings; restore the two expressions from the preimage on
+failure. Do not rerun the append-only preparer against an already-extended model.
