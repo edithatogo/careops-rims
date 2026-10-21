@@ -1,4 +1,5 @@
 import copy
+import base64
 import json
 import sys
 import tempfile
@@ -56,6 +57,41 @@ class ProtocolPreparationTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Human-modified'):
                     prepare(source, output)
                 self.assertFalse(output.exists()); self.assertEqual(path.read_bytes(), before)
+
+    def model_fixture(self):
+        from prepare_source_relationship_model import prepare as source_prepare
+        from prepare_award_crosswalk_model import prepare as alias_prepare
+        from prepare_crossref_award_model import prepare as crossref_prepare
+        def part(path, value):
+            return {'path': path, 'payload': base64.b64encode(value.encode()).decode(), 'payloadType': 'InlineBase64'}
+        document = {'definition': {'parts': [
+            part('definition/model.tmdl', 'model Model'),
+            part('definition/relationships.tmdl', ''),
+            part('definition/tables/Study register.tmdl', 'table Study\n\tpartition Study = m\n\t\tsource = SharePoint.Tables("https://example.sharepoint.com/sites/research",[ApiVersion=15])'),
+            part('definition/tables/Publication.tmdl', 'table Publication\n\tcolumn DOI\n\tpartition Publication = m\n\t\tsource = ExistingAcceptedSource'),
+            part('human-review.txt', 'Retain human review and unresolved concern')]}}
+        document = source_prepare(document, Path('config/source-relationship-evidence.m').read_text())
+        document = alias_prepare(document, 'https://example.sharepoint.com/sites/research/Documents/award-crosswalk-fixture', 'fixture', Path('config/award-identifier-crosswalks.m').read_text())
+        return crossref_prepare(document, 'https://example.sharepoint.com/sites/research/Documents/award-crosswalk-fixture', 'fixture', Path('config/crossref-award-crosswalks.m').read_text())
+
+    def test_protocol_model_integrates_with_existing_preparers_and_preserves_other_parts(self):
+        before = self.model_fixture(); original = copy.deepcopy(before)
+        result = prepare_model(before, 'https://example.sharepoint.com/sites/research/Documents/award-crosswalk-fixture', 'fixture', Path('config/protocol-study-award-evidence.m').read_text())
+        self.assertEqual(before, original)
+        a = {p['path']: p['payload'] for p in before['definition']['parts']}
+        b = {p['path']: p['payload'] for p in result['definition']['parts']}
+        self.assertEqual([k for k in a if a[k] != b[k]], ['definition/tables/SourceRelationshipEvidence.tmdl'])
+        with self.assertRaises(ValueError):
+            prepare_model(result, 'https://example.sharepoint.com/sites/research/Documents/award-crosswalk-fixture', 'fixture', 'unused')
+
+    def test_protocol_archive_wrong_tenant_site_or_library_refused_without_mutating_input(self):
+        before = self.model_fixture(); original = copy.deepcopy(before)
+        for uri in ['https://contoso.sharepoint.com/sites/research/Documents/award-crosswalk-fixture',
+                    'https://example.sharepoint.com/sites/other/Documents/award-crosswalk-fixture',
+                    'https://example.sharepoint.com/sites/research/award-crosswalk-fixture']:
+            with self.subTest(uri=uri), self.assertRaisesRegex(ValueError, 'bound study site'):
+                prepare_model(before, uri, 'fixture', 'unused')
+        self.assertEqual(before, original)
 
     def test_model_refuses_any_archive_userinfo_before_reading_preimage(self):
         for userinfo in [':test@', '@']:

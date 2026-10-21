@@ -2,6 +2,7 @@
 import base64
 import copy
 import json
+import re
 from urllib.parse import urlparse
 
 
@@ -15,6 +16,9 @@ def prepare(document, archive_url, batch, function_source):
     part = next(p for p in result['definition']['parts']
                 if p['path'] == 'definition/tables/SourceRelationshipEvidence.tmdl')
     text = base64.b64decode(part['payload']).decode()
+    sites = re.findall(r'StudySite\s*=\s*"((?:[^"\n]|"")*)"\s*,', text)
+    if len(sites) != 1 or not archive_url.startswith(sites[0].replace('""', '"') + '/Documents/'):
+        raise ValueError('Protocol archive must use the bound study site and Documents library')
     if 'ProtocolStudyAwardProjector=' in text:
         raise ValueError('Existing protocol derivation must be reconciled')
     marker = 'Rows=Table.Buffer(Table.FromRecords(Output & StudyEvidence & PubMedEvidence & AwardAliases & CrossrefAwardEvidence,Columns,MissingField.Error))'
