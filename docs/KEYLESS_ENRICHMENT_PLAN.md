@@ -160,3 +160,35 @@ Harvest Pipeline (Zero Keys):
 - [x] **Phase 3: Executive Reporting & Governance Visuals (COMPLETED)**
   - Updated [`scripts/export_monthly_docx.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/export_monthly_docx.py) to incorporate executive funding governance breakdowns, study design distribution, First Nations health focus counts, and direct PMCID / OA links.
   - Updated [`config/SharePointPublicationRegistry.m`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/config/SharePointPublicationRegistry.m) with complete typed schema.
+
+## Qualified NHMRC identifier routes — 21 October 2026
+
+The optional GNT, APP and explicit application-source projectors are now available
+as tenant-free source. They retain original identifiers and add evidence edges;
+they do not merge awards by numeric suffix, title or investigator similarity.
+
+- `scripts/nhmrc_gnt_crosswalks.py` and `config/nhmrc-gnt-crosswalks.m`
+  require independently bound NHMRC identity, the pinned RGMS guide and migration
+  evidence, and registry dates that establish the historical rule's scope.
+- `scripts/nhmrc_app_crosswalks.py` and `config/nhmrc-app-crosswalks.m`
+  require explicit issuer and target-field contracts and an externally pinned
+  source catalogue. APP is not a universal prefix-stripping rule.
+- `scripts/nhmrc_remaining_application_sources.py` and
+  `config/nhmrc-remaining-application-sources.m` qualify explicit institutional,
+  publisher and protocol paths. A historical application reference does not
+  establish a current registry award. The Crossref measure filters Crossref
+  provenance, keeping other providers distinguishable.
+
+The matching `prepare_*_model.py` helpers produce candidates against an exact
+accepted evidence-table contract. Preserve the preimage and bindings, inspect the
+candidate, and use the existing native owner for any deployment. Repeated model
+preparation refuses an already-applied marker; it is not a native replay test.
+The focused `test_nhmrc*.py` fixtures cover source binding, ambiguity, tampering,
+unsupported identifiers and preservation. Public fixtures use example targets;
+private source payloads, deployment profiles and native receipts are excluded.
+
+These ports derive from private implementation commits `b572a120`, `9a3fbcf7`
+and `03e5d88a`. Their retained native receipts qualify only the existing selected
+implementation, not another deployment. Two MRFF alias pairs still lack explicit
+equivalence evidence and remain unmerged. No automatic refresh, source flow,
+report mutation, notification or release-package replacement is introduced here.
