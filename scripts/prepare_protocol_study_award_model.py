@@ -6,6 +6,13 @@ import re
 from urllib.parse import urlparse
 
 
+def validate_study_archive(text, archive_url):
+    """Require the exact site/library consumed by the retained ReadStudy function."""
+    sites = re.findall(r'StudySite\s*=\s*"((?:[^"\n]|"")*)"\s*,', text)
+    if len(sites) != 1 or not archive_url.startswith(sites[0].replace('""', '"') + '/Documents/'):
+        raise ValueError('Archive must use the bound study site and Documents library')
+
+
 def prepare(document, archive_url, batch, function_source):
     u = urlparse(archive_url)
     if (u.scheme != 'https' or not (u.hostname or '').endswith('.sharepoint.com')
@@ -16,9 +23,7 @@ def prepare(document, archive_url, batch, function_source):
     part = next(p for p in result['definition']['parts']
                 if p['path'] == 'definition/tables/SourceRelationshipEvidence.tmdl')
     text = base64.b64decode(part['payload']).decode()
-    sites = re.findall(r'StudySite\s*=\s*"((?:[^"\n]|"")*)"\s*,', text)
-    if len(sites) != 1 or not archive_url.startswith(sites[0].replace('""', '"') + '/Documents/'):
-        raise ValueError('Protocol archive must use the bound study site and Documents library')
+    validate_study_archive(text, archive_url)
     if 'ProtocolStudyAwardProjector=' in text:
         raise ValueError('Existing protocol derivation must be reconciled')
     marker = 'Rows=Table.Buffer(Table.FromRecords(Output & StudyEvidence & PubMedEvidence & AwardAliases & CrossrefAwardEvidence,Columns,MissingField.Error))'

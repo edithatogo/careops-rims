@@ -164,3 +164,21 @@ four visuals to its existing page. The latter clarifies only the known maintaine
 chain-status wording and refuses human-modified wording. Use exclusive output
 paths and retain source preimages, human edits and original identities. These
 portable preparation checks do not establish native deployment or rendering.
+
+## Grant-registry related publications
+
+`registry_publication_crosswalks.py` projects typed RIF-CS `relatedInfo` publication
+references through exact repository Handles and explicitly equivalent DOI fields.
+It checks retained JSON/XML bytes and provenance, grant/funder namespaces and the
+resolved repository item. DSpace requires one explicit DOI identity; a Figshare
+`IsPublishedIn` relation is retained as source metadata and cannot supply identity.
+Unmapped and identity-unknown references stay retained. `grant_related_publication`
+does not establish fundedBy, a DORA project link or reviewed funding.
+
+The registry model adapter reuses the existing bound study-site/library check;
+the report adapter adds four visuals without replacing existing visual bytes and
+refuses target-name collisions. Both require the accepted clinical-study preimage
+and preserve the existing funding/clinical-chain measures. Actual source packets,
+native exports and identities remain private. The M projector relies on prior
+independent retained-byte/hash verification; portable tests and generated artifacts
+do not establish native runtime, deployment or operator acceptance.
