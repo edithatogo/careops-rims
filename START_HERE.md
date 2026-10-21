@@ -85,3 +85,29 @@ uses private snapshots; the native CLI requires an already-qualified M365 sessio
 and exact private targets. It preserves human fields, authoritative provenance,
 file contents and existing versions, and refuses drift. Unchanged replay makes
 no writes. Neither command installs a service or activates a flow or schedule.
+
+## Source-supported relationship preparation
+
+The portable relationship tools project explicit OpenAlex, PubMed and study
+reference evidence without authenticating people or inferring missing project or
+award links. `scripts/source_relationship_evidence.py` retains raw hashes, source
+versions, review state and identifier ambiguity. Valid ORCID syntax is not proof
+of account ownership; identical display names are never an identity crosswalk.
+Grant references with source-scoped agency labels are distinct from reconciled
+award-register identities. Missing publication/project/award links stay unknown.
+
+`scripts/prepare_source_relationship_model.py` prepares an additive evidence table
+from a supplied fresh semantic-model definition and the maintained M functions in
+`config/`. It preserves existing source/review/unknown parts and refuses a repeated
+application. `scripts/prepare_source_relationship_report.py` appends two pages to
+an existing exported report with the required relationship and freshness baseline;
+it preserves prior parts and requires an exclusive new output directory. Supporting
+overview and relationship-page helpers are included, with fictional safety tests.
+Use `--help` for input/output arguments. Keep native definitions, retained evidence,
+bindings and generated outputs in ignored private directories.
+
+These are local source-preparation tools, not an import/deployment command. The
+existing native owner retains model/report binding, exact saved readback, refresh,
+rendering, interaction, replay and same-object recovery. Save source revision and
+artifact hashes in the private ALM manifest. A successful source suite does not
+establish native behaviour, a complete funding chain or permission to share data.
