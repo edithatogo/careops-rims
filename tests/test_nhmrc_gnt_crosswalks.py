@@ -75,12 +75,12 @@ class GNTRuleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d); guide, pin = self.fixture(root)
             with patch.object(gnt, 'GUIDE_SHA256', guide):
-                rows = gnt.project_packet(root, [{'DOI': '10.1234/test', 'CanonicalKey': 'fixture:p'}], pin)
+                rows = gnt.project_packet(root, [{'DOI': '10.1234/test', 'CanonicalKey': 'fixture:p'}], pin, expected_batch='fixture')
                 self.assertEqual(rows[0]['ToLabel'], 'GNT1196396')
                 self.assertTrue(rows[0]['ToKey'].endswith('/1196396'))
                 self.assertEqual(rows[0]['AdmissionState'], 'Source-supported')
                 self.assertEqual(json.loads(rows[0]['ReferenceType'])['ruleAuthoritySHA256'], pin)
-                rows = gnt.project_packet(root, [{'DOI': '10.1234/test', 'CanonicalKey': k} for k in ['a', 'b']], pin)
+                rows = gnt.project_packet(root, [{'DOI': '10.1234/test', 'CanonicalKey': k} for k in ['a', 'b']], pin, expected_batch='fixture')
                 self.assertEqual(rows[0]['AdmissionState'], 'Ambiguous DOI')
                 self.assertEqual(rows[0]['CanonicalKey'], '')
 
@@ -89,10 +89,10 @@ class GNTRuleTests(unittest.TestCase):
             root = Path(d); guide, pin = self.fixture(root)
             with patch.object(gnt, 'GUIDE_SHA256', guide):
                 with self.assertRaisesRegex(ValueError, 'External rule'):
-                    gnt.project_packet(root, [], '0' * 64)
+                    gnt.project_packet(root, [], '0' * 64, expected_batch='fixture')
                 (root / 'guide.pdf').write_bytes(b'changed')
                 with self.assertRaisesRegex(ValueError, 'hash or length'):
-                    gnt.project_packet(root, [], pin)
+                    gnt.project_packet(root, [], pin, expected_batch='fixture')
 
     def test_recomputed_outer_hash_cannot_replace_pinned_primary_guide(self):
         with tempfile.TemporaryDirectory() as d:
@@ -106,7 +106,7 @@ class GNTRuleTests(unittest.TestCase):
             (root / 'manifest.json').write_text(json.dumps(m))
             with patch.object(gnt, 'GUIDE_SHA256', guide):
                 with self.assertRaisesRegex(ValueError, 'pinned source identity'):
-                    gnt.project_packet(root, [], pin)
+                    gnt.project_packet(root, [], pin, expected_batch='fixture')
 
     def test_recomputed_packet_cannot_replace_funding_assertion_or_observation_metadata(self):
         with tempfile.TemporaryDirectory() as d:
@@ -116,7 +116,17 @@ class GNTRuleTests(unittest.TestCase):
             (root / 'manifest.json').write_text(json.dumps(m))
             with patch.object(gnt, 'GUIDE_SHA256', guide):
                 with self.assertRaisesRegex(ValueError, 'source catalogue'):
-                    gnt.project_packet(root, [], pin)
+                    gnt.project_packet(root, [], pin, expected_batch='fixture')
+
+    def test_outer_batch_cannot_relabel_pinned_sources(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            guide, pin = self.fixture(root)
+            manifest = json.loads((root / 'manifest.json').read_bytes())
+            manifest['batch'] = 'relabeled'
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'batch identity'):
+                gnt.project_packet(root, [], pin, expected_batch='fixture')
 
     def test_model_preparer_preserves_all_prior_source_and_rejects_other_site(self):
         batch = '00000000-0000-4000-8000-000000000001'; site = 'https://example.sharepoint.com/sites/a'
@@ -133,3 +143,13 @@ class GNTRuleTests(unittest.TestCase):
             prepare(prepared, url, batch, '(a,b,c,d)=>{}', 'a' * 64)
         with self.assertRaisesRegex(ValueError, 'bound study'):
             prepare(doc, url.replace('/sites/a/', '/sites/b/'), batch, '(a,b,c,d)=>{}', 'a' * 64)
+
+    def test_same_id_nonmatching_record_cannot_supply_dates(self):
+        wrong = self.record()
+        wrong.update(purl='https://purl.org/au-research/grants/nhmrc/9999999')
+        exact = self.record(); exact.update(startDate=2021)
+        for records in [[wrong, exact], [exact, wrong]]:
+            self.assertEqual(self.qualify(records=records)['state'], 'historical_scope_unproved')
+        wrong.update(startDate=2021); exact.update(startDate=2020)
+        for records in [[wrong, exact], [exact, wrong]]:
+            self.assertEqual(self.qualify(records=records)['state'], 'source_supported_alias')

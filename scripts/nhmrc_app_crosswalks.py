@@ -100,13 +100,15 @@ def qualify_app(number, source_funder_ror, authority, records):
             'application_number': bare, 'rule': RULE_ID}
 
 
-def project_packet(folder, publications, trusted_authority_sha256):
+def project_packet(folder, publications, trusted_authority_sha256, *, expected_batch):
     """Derive edges from originals; the authority receipt is pinned outside packet."""
     root = Path(folder)
     manifest = json.loads((root / 'manifest.json').read_bytes())
     if (manifest.get('kind') != 'nhmrc_app_crosswalk_retention_v1'
             or manifest.get('complete') is not True or manifest.get('namespace') != 'nhmrc'):
         raise ValueError('Complete APP source packet required')
+    if not isinstance(expected_batch, str) or not expected_batch or manifest.get('batch') != expected_batch:
+        raise ValueError('Independently selected batch identity required')
     files = {f['name']: f for f in manifest['files']}
     if len(files) != len(manifest['files']):
         raise ValueError('Duplicate source file')

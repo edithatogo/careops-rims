@@ -102,16 +102,16 @@ class ApplicationRepresentationTests(unittest.TestCase):
             root = Path(folder); manifest, pin, authorities = self.fixture(root)
             pubs = [dict(DOI='10.1234/fixture', CanonicalKey='fixture:1')]
             with patch.object(app, 'AUTHORITY_SHA256', authorities):
-                rows = app.project_packet(root, pubs, pin)
+                rows = app.project_packet(root, pubs, pin, expected_batch='fixture')
                 self.assertEqual(rows[0]['ToLabel'], 'APP1092957')
                 self.assertEqual(rows[0]['AdmissionState'], 'Source-supported')
-                ambiguous = app.project_packet(root, pubs + [dict(DOI='10.1234/fixture', CanonicalKey='fixture:2')], pin)
+                ambiguous = app.project_packet(root, pubs + [dict(DOI='10.1234/fixture', CanonicalKey='fixture:2')], pin, expected_batch='fixture')
                 self.assertEqual(ambiguous[0]['AdmissionState'], 'Ambiguous DOI')
                 # A reconstructed outer manifest cannot replace pinned query provenance.
                 manifest['crossref'][0]['observed_utc'] = '2099-01-01T00:00:00Z'
                 (root / 'manifest.json').write_text(json.dumps(manifest))
                 with self.assertRaisesRegex(ValueError, 'catalogue drift'):
-                    app.project_packet(root, pubs, pin)
+                    app.project_packet(root, pubs, pin, expected_batch='fixture')
 
     def test_packet_rejects_rehashed_source_substitution(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -124,7 +124,17 @@ class ApplicationRepresentationTests(unittest.TestCase):
             (root / 'manifest.json').write_text(json.dumps(manifest))
             with patch.object(app, 'AUTHORITY_SHA256', authorities):
                 with self.assertRaises(ValueError):
-                    app.project_packet(root, [], pin)
+                    app.project_packet(root, [], pin, expected_batch='fixture')
+
+    def test_outer_batch_cannot_relabel_pinned_sources(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            manifest, pin, authorities = self.fixture(root)
+            manifest = json.loads((root / 'manifest.json').read_bytes())
+            manifest['batch'] = 'relabeled'
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'batch identity'):
+                app.project_packet(root, [], pin, expected_batch='fixture')
 
     def test_model_preparation_changes_only_current_evidence_expression(self):
         text = ('table SourceRelationshipEvidence\n\tpartition SourceRelationshipEvidence = m\n'

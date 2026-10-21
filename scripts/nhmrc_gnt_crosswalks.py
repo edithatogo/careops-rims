@@ -30,7 +30,9 @@ def qualify_gnt(number, source_funder_ror, authority, records):
     match = qualify_award_alias({'funder_award_id': bare}, source_funder_ror, authority, records)
     if match['state'] != 'source_supported_alias':
         return match
-    selected = [r for r in records if str(r['id']) == match['matches'][0]['record_id']]
+    selected = [r for r in records
+                if qualify_award_alias({'funder_award_id': bare}, source_funder_ror,
+                                       authority, [r])['state'] == 'source_supported_alias']
     record = selected[0]
     start, end = record.get('startDate'), record.get('endDate')
     if (type(start) is not int or type(end) is not int
@@ -39,13 +41,15 @@ def qualify_gnt(number, source_funder_ror, authority, records):
     return {**match, 'grant_number': bare, 'start_year': start, 'end_year': end}
 
 
-def project_packet(folder, publications, trusted_authority_sha256):
+def project_packet(folder, publications, trusted_authority_sha256, *, expected_batch):
     """Derive edges from originals; the authority receipt is pinned outside packet."""
     root = Path(folder)
     manifest = json.loads((root / 'manifest.json').read_bytes())
     if (manifest.get('kind') != 'nhmrc_gnt_crosswalk_retention_v1'
             or manifest.get('complete') is not True or manifest.get('namespace') != 'nhmrc'):
         raise ValueError('Complete GNT source packet required')
+    if not isinstance(expected_batch, str) or not expected_batch or manifest.get('batch') != expected_batch:
+        raise ValueError('Independently selected batch identity required')
     files = {f['name']: f for f in manifest['files']}
     if len(files) != len(manifest['files']):
         raise ValueError('Duplicate source file')
