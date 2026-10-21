@@ -2,12 +2,15 @@
 import base64
 import copy
 import json
+import re
 from urllib.parse import urlparse
 
 from scripts.prepare_protocol_study_award_model import validate_study_archive
 
 
-def prepare(document, archive_url, batch, function_source):
+def prepare(document, archive_url, batch, function_source, trusted_upstream_sha256):
+    if not isinstance(trusted_upstream_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", trusted_upstream_sha256):
+        raise ValueError("External upstream authority digest required")
     u = urlparse(archive_url)
     if (u.scheme != 'https' or not (u.hostname or '').endswith('.sharepoint.com')
             or u.netloc != u.hostname or u.query or u.fragment
@@ -29,7 +32,8 @@ def prepare(document, archive_url, batch, function_source):
     extra = ('BeforeGovernment=List.Buffer(BeforeRegistry & RegistryPublicationEvidence),\n'
              '    GovernmentAwardProjector=' + function_source.rstrip() + ',\n'
              '    GovernmentAwardEvidence=GovernmentAwardProjector(ReadStudy,'
-             + json.dumps(archive_url) + ',' + json.dumps(batch) + '),\n    ')
+             + json.dumps(archive_url) + ',' + json.dumps(batch) + ','
+             + json.dumps(trusted_upstream_sha256) + '),\n    ')
     text = text.replace(marker, extra.replace('\n', '\n\t\t\t\t')
         + 'Rows=Table.Buffer(Table.FromRecords(BeforeGovernment & GovernmentAwardEvidence,Columns,MissingField.Error))')
     measures = '''\t/// Explicit source references to historical government application records; no current-status or reviewed-funding claim.

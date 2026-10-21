@@ -1,5 +1,5 @@
 // Exact original funding identifiers joined to historical government application records.
-(ReadFile as function, ArchiveBase as text, ExpectedBatch as text) as list =>
+(ReadFile as function, ArchiveBase as text, ExpectedBatch as text, TrustedUpstreamSHA256 as text) as list =>
 let
     M=Json.Document(ReadFile(ArchiveBase&"/manifest.json")),
     Manifest=if M[kind]="historical_nhmrc_crossref_retention_v1" and M[batch]=ExpectedBatch and M[namespace]="nhmrc" and M[complete]=true and List.Count(List.Distinct(List.Transform(M[files],each [name])))=List.Count(M[files]) then M else error "Government crosswalk manifest drift",
@@ -14,11 +14,13 @@ let
     Valid=Upstream[format]="rims-funding-native-workbook-commit-v1" and Upstream[source]="nhmrc" and Upstream[complete]=true and Upstream[fidelity]="original_binary_content_exact_saved_readback" and List.Count(UpstreamFiles)=1 and UpstreamFiles{0}[source_url]=Spec[source_url] and URL[Scheme]="https" and URL[Host]="www.nhmrc.gov.au" and Text.StartsWith(Spec[source_url],"https://www.nhmrc.gov.au/sites/default/files/") and not Text.Contains(Spec[source_url],"?") and not Text.Contains(Spec[source_url],"#") and Spec[sheet]="GRANTS DATA" and Spec[id_column]="APP ID",
     UpstreamFile=if Valid then UpstreamFiles{0} else error "Official historical workbook identity drift",
     HasDirect=Record.HasFields(UpstreamFile,{"sha256","bytes"}),
-    Receipt=if HasDirect then null else if Record.HasFields(Manifest,"source_retention") then Json.Document(Raw(Manifest[source_retention])) else error "Upstream workbook byte binding missing",
+    Anchor=if HasDirect then Manifest[source_manifest] else if Record.HasFields(Manifest,"source_retention") then Manifest[source_retention] else error "Upstream workbook byte binding missing",
+    Trusted=Text.Length(TrustedUpstreamSHA256)=64 and Text.Select(TrustedUpstreamSHA256,{"0".."9","a".."f"})=TrustedUpstreamSHA256 and Anchor[sha256]=TrustedUpstreamSHA256,
+    Receipt=if not Trusted then error "External upstream authority digest mismatch" else if HasDirect then null else Json.Document(Raw(Anchor)),
     Original=if HasDirect then {} else List.Select(Receipt[files],each [name]="manifest.json"),
     Retained=if HasDirect then {} else List.Select(Receipt[files],each [name]=Spec[name]),
     ReceiptValid=if HasDirect then true else Receipt[status]="PASS_NATIVE_ORIGINAL_WORKBOOK_ARCHIVE" and Record.HasFields(Upstream,"run") and Upstream[run]<>"" and Receipt[run]=Upstream[run] and List.Count(Original)=1 and List.Count(Retained)=1 and Original{0}[sha256]=Manifest[source_manifest][sha256] and Original{0}[bytes]=Info(Manifest[source_manifest][name])[bytes] and Retained{0}[matches_original_CLI_capture]=true,
-    Binding=if HasDirect then UpstreamFile else if ReceiptValid then Retained{0} else error "Upstream retention identity or binding drift",
+    Binding=if not Trusted then error "External upstream authority digest mismatch" else if HasDirect then UpstreamFile else if ReceiptValid then Retained{0} else error "Upstream retention identity or binding drift",
     Bound=Record.HasFields(Binding,{"sha256","bytes"}) and Binding[sha256]=Spec[sha256] and Binding[bytes]=Info(Spec[name])[bytes] and Value.Is(Binding[bytes],type number),
     Workbook=if Bound then Excel.Workbook(Raw(Spec),null,true) else error "Upstream workbook digest or length missing or different",
     Sheets=Table.SelectRows(Workbook,each [Kind]="Sheet" and [Item]=Spec[sheet]),

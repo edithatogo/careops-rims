@@ -219,3 +219,10 @@ retaining the original manifest and download/readback evidence. Do not invent ha
 from an unverified replacement or rewrite the previously accepted source snapshot.
 The M function requires the same upstream digest/length references; independent
 raw-byte SHA verification remains a prerequisite before native refresh.
+
+Both `project_packet` and the model preparer require `trusted_upstream_sha256`
+from an independently qualified record outside the input packet. Pin the original
+source manifest digest when it contains byte bindings, or the original-download
+receipt digest for the hashless route. The preparer embeds this explicit pin in
+the M invocation. Never populate it automatically from the supplied outer manifest;
+a receipt's self-declared capture flag alone is not an external trust anchor.

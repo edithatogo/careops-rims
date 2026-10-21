@@ -8,7 +8,15 @@ import unittest
 import openpyxl
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from government_award_crosswalks import project_packet
+from government_award_crosswalks import project_packet as anchored_project_packet
+
+
+def project_packet(root):
+    # Fixture authority is frozen by the test before attacker mutations below.
+    return anchored_project_packet(root, _TRUSTED[str(root)])
+
+
+_TRUSTED = {}
 
 
 class GovernmentCrosswalkTests(unittest.TestCase):
@@ -45,6 +53,7 @@ class GovernmentCrosswalkTests(unittest.TestCase):
                         crossref=[dict(by_name['crossref.json'], doi='10.1234/fictional',
                                        url='https://api.crossref.org/works/10.1234/fictional', observed_utc='2026-01-01T00:00:00Z')])
         (root / 'manifest.json').write_text(json.dumps(manifest))
+        _TRUSTED[str(root)] = by_name['source.json']['sha256']
         return root
 
     def replace(self, root, filename, value):
@@ -124,7 +133,7 @@ class GovernmentCrosswalkTests(unittest.TestCase):
                 else:
                     source['files'][0][field] = value
                 self.replace(root, 'source.json', source)
-                with self.assertRaisesRegex(ValueError, 'Upstream workbook'):
+                with self.assertRaisesRegex(ValueError, 'Upstream workbook|External'):
                     project_packet(root)
 
     def test_changed_workbook_with_consistent_outer_hash_still_refused(self):
@@ -137,7 +146,7 @@ class GovernmentCrosswalkTests(unittest.TestCase):
                 if item['name'] == 'historical.xlsx':
                     item.update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
             (root / 'manifest.json').write_text(json.dumps(manifest))
-            with self.assertRaisesRegex(ValueError, 'Upstream workbook'):
+            with self.assertRaisesRegex(ValueError, 'Upstream workbook|External'):
                 project_packet(root)
 
     def retention_fixture(self, root):
@@ -158,6 +167,7 @@ class GovernmentCrosswalkTests(unittest.TestCase):
         manifest['files'].append(reference)
         manifest['source_retention'] = reference
         (root / 'manifest.json').write_text(json.dumps(manifest))
+        _TRUSTED[str(root)] = reference['sha256']
         return receipt
 
     def test_original_hashless_manifest_can_use_independent_matching_retention_receipt(self):
@@ -177,5 +187,32 @@ class GovernmentCrosswalkTests(unittest.TestCase):
                 elif mutation == 'capture': receipt['files'][1]['matches_original_CLI_capture'] = False
                 else: receipt['files'].append(dict(receipt['files'][1]))
                 self.replace(root, 'retention.json', receipt)
-                with self.assertRaisesRegex(ValueError, 'Upstream'):
+                with self.assertRaisesRegex(ValueError, 'Upstream|External'):
                     project_packet(root)
+
+    def test_replacing_receipt_workbook_and_outer_hashes_cannot_replace_external_pin(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            receipt = self.retention_fixture(root)
+            pin = _TRUSTED[str(root)]
+            workbook = openpyxl.load_workbook(root / 'historical.xlsx')
+            workbook['GRANTS DATA']['A2'] = 7654321
+            workbook.save(root / 'historical.xlsx')
+            workbook.close()
+            raw = (root / 'historical.xlsx').read_bytes()
+            receipt['files'][1].update(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+            self.replace(root, 'retention.json', receipt)
+            manifest = json.loads((root / 'manifest.json').read_text())
+            for item in [manifest['workbook']] + manifest['files']:
+                if item['name'] == 'historical.xlsx':
+                    item.update(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'External upstream authority digest mismatch'):
+                anchored_project_packet(root, pin)
+
+    def test_missing_or_malformed_external_pin_is_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            for pin in [None, '', 'x' * 64, True]:
+                with self.subTest(pin=pin), self.assertRaises(ValueError):
+                    anchored_project_packet(root, pin)

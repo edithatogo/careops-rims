@@ -4,6 +4,7 @@ No prefix rewriting, title matching, current-status or ARDC-PURL inference.
 """
 import hashlib
 import json
+import re
 from io import BytesIO
 from pathlib import Path
 from urllib.parse import urlparse
@@ -21,7 +22,9 @@ def exact_identifier(value):
     return value if isinstance(value, str) and value and value == value.strip() else None
 
 
-def project_packet(folder):
+def project_packet(folder, trusted_upstream_sha256):
+    if not isinstance(trusted_upstream_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", trusted_upstream_sha256):
+        raise ValueError("External upstream authority digest required")
     root = Path(folder)
     manifest = json.loads((root / 'manifest.json').read_bytes())
     if (manifest.get('kind') != 'historical_nhmrc_crossref_retention_v1'
@@ -69,6 +72,8 @@ def project_packet(folder):
     if 'sha256' not in binding or 'bytes' not in binding:
         if 'source_retention' not in manifest:
             raise ValueError('Upstream workbook digest or length missing or different')
+        if manifest['source_retention']['sha256'] != trusted_upstream_sha256:
+            raise ValueError('External upstream authority digest mismatch')
         receipt = json.loads(referenced(manifest['source_retention']))
         if (receipt.get('status') != 'PASS_NATIVE_ORIGINAL_WORKBOOK_ARCHIVE'
                 or not upstream.get('run') or receipt.get('run') != upstream['run']):
@@ -82,6 +87,8 @@ def project_packet(folder):
                 or retained[0].get('matches_original_CLI_capture') is not True):
             raise ValueError('Upstream retention manifest or workbook binding drift')
         binding = retained[0]
+    elif manifest['source_manifest']['sha256'] != trusted_upstream_sha256:
+        raise ValueError('External upstream authority digest mismatch')
     data = referenced(spec)
     if (binding.get('sha256') != hashlib.sha256(data).hexdigest()
             or type(binding.get('bytes')) is not int or binding['bytes'] != len(data)):
