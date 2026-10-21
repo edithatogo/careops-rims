@@ -160,3 +160,41 @@ Harvest Pipeline (Zero Keys):
 - [x] **Phase 3: Executive Reporting & Governance Visuals (COMPLETED)**
   - Updated [`scripts/export_monthly_docx.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/export_monthly_docx.py) to incorporate executive funding governance breakdowns, study design distribution, First Nations health focus counts, and direct PMCID / OA links.
   - Updated [`config/SharePointPublicationRegistry.m`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/config/SharePointPublicationRegistry.m) with complete typed schema.
+
+## Qualified NHMRC identifier routes — 21 October 2026
+
+The optional Python GNT, APP and explicit application-source projectors retain
+original identifiers and add evidence edges. They do not merge awards by numeric
+suffix, title or investigator similarity.
+
+- `scripts/nhmrc_gnt_crosswalks.py` requires independently bound NHMRC identity,
+  pinned RGMS guide/migration evidence and the exact matching registry record's
+  historical dates. Nonmatching records sharing an ID cannot supply those dates.
+- `scripts/nhmrc_app_crosswalks.py` requires explicit issuer and target-field
+  contracts and an externally pinned source catalogue. APP is not a universal
+  prefix-stripping rule. Both packet projectors require an independently supplied
+  `expected_batch`; obtain it from the operator's selected batch, never by reading
+  the untrusted manifest. Changed batch labels fail before evidence is emitted.
+- `scripts/nhmrc_remaining_application_sources.py` qualifies explicit institutional,
+  publisher and protocol paths. A historical application reference does not
+  establish a current registry award. Crossref metrics remain provider-scoped.
+
+The matching model-preparation helpers produce candidates against an exact
+accepted evidence-table contract. Preserve the preimage and bindings, inspect the
+candidate, and use the existing native owner for any deployment. Repeated
+preparation refuses an already-applied marker; it is not a native replay test.
+
+The three M projectors are withheld: their original implementation compares
+recorded hashes and byte lengths without hashing the payload read. A same-length
+replacement is therefore not rejected by that check. Native integration needs a
+qualified actual-byte verification or independently verified immutable readback
+contract before promotion. This public port does not repair the existing native
+implementation, establish M parity or supply an automatic deployment.
+
+The focused `test_nhmrc*.py` fixtures cover source binding, ambiguous identifiers,
+tampering, batch relabeling, same-ID date confusion and preservation. Public
+fixtures use example targets; private payloads, deployment profiles and native
+receipts are excluded. The port derives from private implementation commits
+`b572a120`, `9a3fbcf7` and `03e5d88a`, with the Python review fixes above.
+Two MRFF alias pairs still lack explicit equivalence evidence and remain unmerged.
+No source flow, report mutation, notification or release replacement is introduced.

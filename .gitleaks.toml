@@ -6,3 +6,9 @@ description = "Exact synthetic key checksum, not a credential"
 condition = "AND"
 paths = ['''^(examples/webfirst-synthetic-export/manifest\.json|tests/fixtures/webfirst-export-synthetic\.json)$''']
 regexes = ['^8bec64446e711fff4f9ec8da2d2d47622d085865e0ee948602d6689eca80df10$']
+
+[[allowlists]]
+description = "Exact relationship-kind label adjacent to EvidenceKey, not a credential"
+condition = "AND"
+paths = ['''^scripts/nhmrc_(app|gnt)_crosswalks\.py$''']
+regexes = ['^RelationshipKind=$']
