@@ -37,7 +37,7 @@ jobs:
       - id: bootstrap
         uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.13.1'
+          version: '0.13.4'
           enable-cache: false
       - name: Resolve a separate exact hash-locked CI tool candidate
         id: resolve
@@ -54,9 +54,11 @@ jobs:
         run: |
           python scripts/check_public_source.py
           python scripts/check_public_docs.py
+          python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
           python scripts/run_public_tests.py
           "$RUNNER_TEMP/rims-tool-canary/bin/ruff" check --select E9,F63,F7,F82 scripts tests
           "$RUNNER_TEMP/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r .local/tool-canary/requirements.lock
+          "$RUNNER_TEMP/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock
           "$RUNNER_TEMP/rims-tool-canary/bin/zizmor" --offline --persona pedantic --format plain .github/workflows
       - name: Record actual tool qualification outcomes
         if: always()
@@ -167,6 +169,7 @@ jobs:
         if: steps.discover.outputs.available == 'true'
         run: |
           python -VV > .local/runtime-canary/python-version.txt
+          python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
           python scripts/run_public_tests.py
           python scripts/rims_operator.py --help
       - name: Record actual qualification or explicit unavailability
