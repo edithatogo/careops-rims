@@ -65,7 +65,11 @@ def project_packet(folder):
             or not u.path.startswith('/sites/default/files/') or u.query or u.fragment
             or spec['sheet'] != 'GRANTS DATA' or spec['id_column'] != 'APP ID'):
         raise ValueError('Official workbook identity, URL or identifier column drift')
-    workbook = openpyxl.load_workbook(BytesIO(referenced(spec)), read_only=True, data_only=True)
+    data = referenced(spec)
+    if (sources[0].get('sha256') != hashlib.sha256(data).hexdigest()
+            or type(sources[0].get('bytes')) is not int or sources[0]['bytes'] != len(data)):
+        raise ValueError('Upstream workbook digest or length missing or different')
+    workbook = openpyxl.load_workbook(BytesIO(data), read_only=True, data_only=True)
     try:
         sheet = workbook[spec['sheet']]
         rows = sheet.iter_rows(values_only=True)

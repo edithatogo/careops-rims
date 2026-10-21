@@ -26,7 +26,9 @@ class GovernmentCrosswalkTests(unittest.TestCase):
         url = 'https://www.nhmrc.gov.au/sites/default/files/fictional.xlsx'
         source = dict(format='rims-funding-native-workbook-commit-v1', source='nhmrc', complete=True,
                       fidelity='original_binary_content_exact_saved_readback',
-                      files=[dict(name='historical.xlsx', source_url=url)])
+                      files=[dict(name='historical.xlsx', source_url=url,
+                                  bytes=(root / 'historical.xlsx').stat().st_size,
+                                  sha256=hashlib.sha256((root / 'historical.xlsx').read_bytes()).hexdigest())])
         authority = dict(id='https://ror.org/fictional', links=[dict(type='website', value='https://www.nhmrc.gov.au/')],
                          external_ids=[dict(type='fundref', all=['501100000925'])])
         crossref = dict(status='ok', message={'DOI': '10.1234/fictional',
@@ -111,3 +113,29 @@ class GovernmentCrosswalkTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Crossref publication identity'):
                 project_packet(root)
 
+
+    def test_recomputed_outer_manifest_cannot_rebind_different_upstream_workbook(self):
+        for field, value in [('sha256', '0' * 64), ('bytes', 1), ('sha256', None), ('bytes', None)]:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as d:
+                root = self.fixture(d)
+                source = json.loads((root / 'source.json').read_text())
+                if value is None:
+                    source['files'][0].pop(field)
+                else:
+                    source['files'][0][field] = value
+                self.replace(root, 'source.json', source)
+                with self.assertRaisesRegex(ValueError, 'Upstream workbook'):
+                    project_packet(root)
+
+    def test_changed_workbook_with_consistent_outer_hash_still_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            data = (root / 'historical.xlsx').read_bytes() + b'changed bytes'
+            (root / 'historical.xlsx').write_bytes(data)
+            manifest = json.loads((root / 'manifest.json').read_text())
+            for item in [manifest['workbook']] + manifest['files']:
+                if item['name'] == 'historical.xlsx':
+                    item.update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'Upstream workbook'):
+                project_packet(root)
