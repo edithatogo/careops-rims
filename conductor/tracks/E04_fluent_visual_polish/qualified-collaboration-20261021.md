@@ -54,9 +54,30 @@ and [INTERSECT lineage semantics](https://learn.microsoft.com/en-us/dax/intersec
 The independent row-grain reference tests cover each provider, absent provider
 and empty selection. Report output must also remain outside its source folder.
 
-These are public source fixes, not a new native acceptance receipt. The native
-owner must take a current preimage, update the two existing corroboration
-expressions without duplicating measures, and recheck unfiltered counts plus
-provider selection/reset in the existing report. Preserve the other measures,
-report parts and bindings; restore the two expressions from the preimage on
-failure. Do not rerun the append-only preparer against an already-extended model.
+The native owner subsequently saved both repairs and completed the single
+transactional source refresh. Terminal source commit
+`e7712ea8ef750c75cf7ba6b1778eb2933876bfd1` and all eight retained receipt hashes
+were independently verified for this port. All/PubMed/OpenAlex each returned one
+corroborated pair and publication; an absent provider returned zero. All 33
+baseline metrics and four bindings were preserved, with no native operations pending.
+
+## Actual source-byte integrity
+
+`config/byte-verified-source-reader.m` compares complete actual bytes against
+independently qualified compiled payloads before parsing. The compiler
+`scripts/prepare_native_source_integrity.py` requires external batch/rule pins,
+checks packet coverage and actual file hashes, and wires all three projectors.
+This is exact byte equality, not a native SHA256 implementation. Compiled real
+payloads and private archive URLs remain excluded from this public repository.
+
+Native checks accepted the original source and rejected both a same-length valid
+JSON substitution and an unlisted URL. The saved contract covered 49 files and
+41 unique payloads. The final model contained 56 parts, 55 unchanged byte-exact;
+the temporary probe was removed. Refresh retained 23,567 evidence rows, 1,341
+publications, six studies and 2,217 awards, including all earlier link metrics.
+These are retained exact-target observations, not qualification of another deployment.
+
+Future source updates require independently reviewed replacement pins and a new
+compiled definition, with preimage/readback and recovery. Do not silently trust a
+rehashed mutable packet. Public tests use fictional bytes only; neither helper
+authenticates, deploys or refreshes a native object.
