@@ -1,6 +1,6 @@
 # Start with the public source
 
-Use Python 3.11 or newer. The public checks use the standard library; no Microsoft
+Use Python 3.11 or newer. Install the hash-locked workbook reader before running the full public suite. No Microsoft
 sign-in, tenant, downloaded audit snapshots or private configuration is required.
 
 ```sh
@@ -8,6 +8,7 @@ git clone https://github.com/edithatogo/careops-rims.git
 cd careops-rims
 python3 -m venv .venv
 . .venv/bin/activate
+python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
 python3 scripts/check_public_source.py
 python3 scripts/check_public_docs.py
 python3 scripts/run_public_tests.py
@@ -182,3 +183,28 @@ and preserve the existing funding/clinical-chain measures. Actual source packets
 native exports and identities remain private. The M projector relies on prior
 independent retained-byte/hash verification; portable tests and generated artifacts
 do not establish native runtime, deployment or operator acceptance.
+
+## Historical government award references
+
+`government_award_crosswalks.py` reads a complete retained packet, verifies its
+file hashes and workbook source contract, and matches exact Crossref award values
+to the official NHMRC workbook's `APP ID`. Its relation is
+`publication_government_award_reference`, targeting `nhmrc:` source keys. These
+are historical references, not current award status, reviewed funding, ARDC
+identities or DORA project edges. Prefix stripping and unsupported aliases are
+refused. Ambiguous workbook IDs and conflicting duplicate evidence are refused.
+
+`prepare_government_award_model.py` appends this evidence to the accepted registry
+model contract using the bound study site's Documents library. The report adapter
+adds four scoped visuals without overwriting existing visuals; repeat preparation
+requires reconciliation. Keep original sources, human edits and native receipts.
+Local fixtures do not establish native refresh, rendering or operational acceptance.
+
+The workbook reader uses openpyxl with defusedxml XML protection and et-xmlfile.
+Exact versions and distribution hashes are in `requirements-runtime.lock`, including
+the qualified defusedxml preview. To update, regenerate with
+`uv pip compile requirements-runtime.txt --no-config --generate-hashes --python-version 3.11 --output-file requirements-runtime.lock`
+and qualify both Python 3.11 and the current runtime. CI audits this lock and
+retains an external-dependency CycloneDX inventory beside the source package.
+The source SPDX inventory covers the ZIP's actual project files; dependencies
+are installed separately and are not vendored or covered by its file inventory.

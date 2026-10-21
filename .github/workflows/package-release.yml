@@ -28,6 +28,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/rims-consumer"
           unzip -q .local/release-candidate/careops-rims-source.zip -d "$RUNNER_TEMP/rims-consumer"
           cd "$RUNNER_TEMP/rims-consumer" || exit 1
+          python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
           python scripts/run_public_tests.py
           python scripts/rims_operator.py --help
       - name: Read immutable qualified inventory tooling
@@ -38,6 +39,16 @@ jobs:
           path: .local/ci-release-policy
           persist-credentials: false
           submodules: false
+      - name: Select qualified dependency audit runtime
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Audit and inventory external workbook dependencies
+        run: |
+          python -m venv "$RUNNER_TEMP/rims-audit"
+          "$RUNNER_TEMP/rims-audit/bin/python" -m pip install --require-hashes --only-binary=:all: -r .local/ci-release-policy/requirements-ci.lock
+          "$RUNNER_TEMP/rims-audit/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock --format cyclonedx-json --output .local/release-candidate/runtime-dependencies.cdx.json
+          sha256sum requirements-runtime.lock > .local/release-candidate/runtime-lock.sha256
       - name: Inventory exact public archive bytes
         env:
           SOURCE_COMMIT: ${{ github.sha }}
