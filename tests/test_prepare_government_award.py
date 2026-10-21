@@ -22,14 +22,15 @@ class GovernmentPreparationTests(unittest.TestCase):
         doc = self.model_fixture()
         before = copy.deepcopy(doc)
         after = model_prepare(doc, 'https://example.sharepoint.com/Documents/award-crosswalk-fixture',
-                              'fixture', '(A,B,C)=>{}')
+                              'fixture', '(A,B,C)=>{}', 'a' * 64)
         self.assertEqual(doc, before)
+        self.assertIn(('\"' + 'a' * 64 + '\"').encode(), base64.b64decode(after['definition']['parts'][0]['payload']))
         self.assertEqual(after['definition']['parts'][1:], before['definition']['parts'][1:])
         text = base64.b64decode(after['definition']['parts'][0]['payload']).decode()
         self.assertIn("measure 'Accepted' = 123", text)
         self.assertIn("measure 'Registry related publication links'", text)
         with self.assertRaisesRegex(ValueError, 'requires reconciliation'):
-            model_prepare(after, 'https://example.sharepoint.com/Documents/award-crosswalk-fixture', 'fixture', '')
+            model_prepare(after, 'https://example.sharepoint.com/Documents/award-crosswalk-fixture', 'fixture', '', 'a' * 64)
 
     def test_other_site_library_credentials_and_batch_are_refused(self):
         doc = self.model_fixture()
@@ -38,7 +39,7 @@ class GovernmentPreparationTests(unittest.TestCase):
                     'https://example.sharepoint.com/Documents/award-crosswalk-other',
                     'https://' + 'name' + '@' + 'example.sharepoint.com/Documents/award-crosswalk-fixture']:
             with self.subTest(uri=uri), self.assertRaises(ValueError):
-                model_prepare(doc, uri, 'fixture', '')
+                model_prepare(doc, uri, 'fixture', '', 'a' * 64)
 
     def report_fixture(self, root):
         page = root / PAGE

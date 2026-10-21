@@ -4,6 +4,7 @@ No prefix rewriting, title matching, current-status or ARDC-PURL inference.
 """
 import hashlib
 import json
+import re
 from io import BytesIO
 from pathlib import Path
 from urllib.parse import urlparse
@@ -21,7 +22,9 @@ def exact_identifier(value):
     return value if isinstance(value, str) and value and value == value.strip() else None
 
 
-def project_packet(folder):
+def project_packet(folder, trusted_upstream_sha256):
+    if not isinstance(trusted_upstream_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", trusted_upstream_sha256):
+        raise ValueError("External upstream authority digest required")
     root = Path(folder)
     manifest = json.loads((root / 'manifest.json').read_bytes())
     if (manifest.get('kind') != 'historical_nhmrc_crossref_retention_v1'
@@ -65,7 +68,32 @@ def project_packet(folder):
             or not u.path.startswith('/sites/default/files/') or u.query or u.fragment
             or spec['sheet'] != 'GRANTS DATA' or spec['id_column'] != 'APP ID'):
         raise ValueError('Official workbook identity, URL or identifier column drift')
-    workbook = openpyxl.load_workbook(BytesIO(referenced(spec)), read_only=True, data_only=True)
+    binding = sources[0]
+    if 'sha256' not in binding or 'bytes' not in binding:
+        if 'source_retention' not in manifest:
+            raise ValueError('Upstream workbook digest or length missing or different')
+        if manifest['source_retention']['sha256'] != trusted_upstream_sha256:
+            raise ValueError('External upstream authority digest mismatch')
+        receipt = json.loads(referenced(manifest['source_retention']))
+        if (receipt.get('status') != 'PASS_NATIVE_ORIGINAL_WORKBOOK_ARCHIVE'
+                or not upstream.get('run') or receipt.get('run') != upstream['run']):
+            raise ValueError('Upstream retention identity drift')
+        original = [r for r in receipt['files'] if r['name'] == 'manifest.json']
+        retained = [r for r in receipt['files'] if r['name'] == spec['name']]
+        source_data = referenced(manifest['source_manifest'])
+        if (len(original) != 1 or len(retained) != 1
+                or original[0].get('sha256') != hashlib.sha256(source_data).hexdigest()
+                or type(original[0].get('bytes')) is not int or original[0]['bytes'] != len(source_data)
+                or retained[0].get('matches_original_CLI_capture') is not True):
+            raise ValueError('Upstream retention manifest or workbook binding drift')
+        binding = retained[0]
+    elif manifest['source_manifest']['sha256'] != trusted_upstream_sha256:
+        raise ValueError('External upstream authority digest mismatch')
+    data = referenced(spec)
+    if (binding.get('sha256') != hashlib.sha256(data).hexdigest()
+            or type(binding.get('bytes')) is not int or binding['bytes'] != len(data)):
+        raise ValueError('Upstream workbook digest or length missing or different')
+    workbook = openpyxl.load_workbook(BytesIO(data), read_only=True, data_only=True)
     try:
         sheet = workbook[spec['sheet']]
         rows = sheet.iter_rows(values_only=True)

@@ -208,3 +208,21 @@ and qualify both Python 3.11 and the current runtime. CI audits this lock and
 retains an external-dependency CycloneDX inventory beside the source package.
 The source SPDX inventory covers the ZIP's actual project files; dependencies
 are installed separately and are not vendored or covered by its file inventory.
+
+The upstream workbook file entry must independently bind its `sha256` and integer
+`bytes` to the retained workbook. Recomputing the outer packet hash cannot replace
+that binding. Legacy source manifests containing only names and URLs require a separately
+retained original-download receipt through `source_retention`. It must bind the
+original manifest hash/length, same run and unique workbook hash/length with exact
+CLI capture verified. Qualify a new immutable packet including that existing receipt,
+retaining the original manifest and download/readback evidence. Do not invent hashes
+from an unverified replacement or rewrite the previously accepted source snapshot.
+The M function requires the same upstream digest/length references; independent
+raw-byte SHA verification remains a prerequisite before native refresh.
+
+Both `project_packet` and the model preparer require `trusted_upstream_sha256`
+from an independently qualified record outside the input packet. Pin the original
+source manifest digest when it contains byte bindings, or the original-download
+receipt digest for the hashless route. The preparer embeds this explicit pin in
+the M invocation. Never populate it automatically from the supplied outer manifest;
+a receipt's self-declared capture flag alone is not an external trust anchor.

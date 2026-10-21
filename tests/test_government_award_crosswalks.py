@@ -8,7 +8,15 @@ import unittest
 import openpyxl
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from government_award_crosswalks import project_packet
+from government_award_crosswalks import project_packet as anchored_project_packet
+
+
+def project_packet(root):
+    # Fixture authority is frozen by the test before attacker mutations below.
+    return anchored_project_packet(root, _TRUSTED[str(root)])
+
+
+_TRUSTED = {}
 
 
 class GovernmentCrosswalkTests(unittest.TestCase):
@@ -26,7 +34,9 @@ class GovernmentCrosswalkTests(unittest.TestCase):
         url = 'https://www.nhmrc.gov.au/sites/default/files/fictional.xlsx'
         source = dict(format='rims-funding-native-workbook-commit-v1', source='nhmrc', complete=True,
                       fidelity='original_binary_content_exact_saved_readback',
-                      files=[dict(name='historical.xlsx', source_url=url)])
+                      files=[dict(name='historical.xlsx', source_url=url,
+                                  bytes=(root / 'historical.xlsx').stat().st_size,
+                                  sha256=hashlib.sha256((root / 'historical.xlsx').read_bytes()).hexdigest())])
         authority = dict(id='https://ror.org/fictional', links=[dict(type='website', value='https://www.nhmrc.gov.au/')],
                          external_ids=[dict(type='fundref', all=['501100000925'])])
         crossref = dict(status='ok', message={'DOI': '10.1234/fictional',
@@ -43,6 +53,7 @@ class GovernmentCrosswalkTests(unittest.TestCase):
                         crossref=[dict(by_name['crossref.json'], doi='10.1234/fictional',
                                        url='https://api.crossref.org/works/10.1234/fictional', observed_utc='2026-01-01T00:00:00Z')])
         (root / 'manifest.json').write_text(json.dumps(manifest))
+        _TRUSTED[str(root)] = by_name['source.json']['sha256']
         return root
 
     def replace(self, root, filename, value):
@@ -111,3 +122,97 @@ class GovernmentCrosswalkTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Crossref publication identity'):
                 project_packet(root)
 
+
+    def test_recomputed_outer_manifest_cannot_rebind_different_upstream_workbook(self):
+        for field, value in [('sha256', '0' * 64), ('bytes', 1), ('sha256', None), ('bytes', None)]:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as d:
+                root = self.fixture(d)
+                source = json.loads((root / 'source.json').read_text())
+                if value is None:
+                    source['files'][0].pop(field)
+                else:
+                    source['files'][0][field] = value
+                self.replace(root, 'source.json', source)
+                with self.assertRaisesRegex(ValueError, 'Upstream workbook|External'):
+                    project_packet(root)
+
+    def test_changed_workbook_with_consistent_outer_hash_still_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            data = (root / 'historical.xlsx').read_bytes() + b'changed bytes'
+            (root / 'historical.xlsx').write_bytes(data)
+            manifest = json.loads((root / 'manifest.json').read_text())
+            for item in [manifest['workbook']] + manifest['files']:
+                if item['name'] == 'historical.xlsx':
+                    item.update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'Upstream workbook|External'):
+                project_packet(root)
+
+    def retention_fixture(self, root):
+        source = json.loads((root / 'source.json').read_text())
+        entry = source['files'][0]
+        retained = dict(entry, matches_original_CLI_capture=True)
+        entry.pop('sha256')
+        entry.pop('bytes')
+        source['run'] = 'fictional-run'
+        self.replace(root, 'source.json', source)
+        data = (root / 'source.json').read_bytes()
+        receipt = dict(status='PASS_NATIVE_ORIGINAL_WORKBOOK_ARCHIVE', run='fictional-run',
+                       files=[dict(name='manifest.json', bytes=len(data), sha256=hashlib.sha256(data).hexdigest()), retained])
+        raw = json.dumps(receipt).encode()
+        (root / 'retention.json').write_bytes(raw)
+        manifest = json.loads((root / 'manifest.json').read_text())
+        reference = dict(name='retention.json', bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+        manifest['files'].append(reference)
+        manifest['source_retention'] = reference
+        (root / 'manifest.json').write_text(json.dumps(manifest))
+        _TRUSTED[str(root)] = reference['sha256']
+        return receipt
+
+    def test_original_hashless_manifest_can_use_independent_matching_retention_receipt(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            self.retention_fixture(root)
+            self.assertEqual(len(project_packet(root)), 1)
+
+    def test_retention_receipt_must_bind_original_manifest_run_and_workbook(self):
+        for mutation in ['run', 'manifest', 'workbook', 'capture', 'duplicate']:
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as d:
+                root = self.fixture(d)
+                receipt = self.retention_fixture(root)
+                if mutation == 'run': receipt['run'] = 'wrong-run'
+                elif mutation == 'manifest': receipt['files'][0]['sha256'] = '0' * 64
+                elif mutation == 'workbook': receipt['files'][1]['sha256'] = '0' * 64
+                elif mutation == 'capture': receipt['files'][1]['matches_original_CLI_capture'] = False
+                else: receipt['files'].append(dict(receipt['files'][1]))
+                self.replace(root, 'retention.json', receipt)
+                with self.assertRaisesRegex(ValueError, 'Upstream|External'):
+                    project_packet(root)
+
+    def test_replacing_receipt_workbook_and_outer_hashes_cannot_replace_external_pin(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            receipt = self.retention_fixture(root)
+            pin = _TRUSTED[str(root)]
+            workbook = openpyxl.load_workbook(root / 'historical.xlsx')
+            workbook['GRANTS DATA']['A2'] = 7654321
+            workbook.save(root / 'historical.xlsx')
+            workbook.close()
+            raw = (root / 'historical.xlsx').read_bytes()
+            receipt['files'][1].update(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+            self.replace(root, 'retention.json', receipt)
+            manifest = json.loads((root / 'manifest.json').read_text())
+            for item in [manifest['workbook']] + manifest['files']:
+                if item['name'] == 'historical.xlsx':
+                    item.update(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'External upstream authority digest mismatch'):
+                anchored_project_packet(root, pin)
+
+    def test_missing_or_malformed_external_pin_is_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            for pin in [None, '', 'x' * 64, True]:
+                with self.subTest(pin=pin), self.assertRaises(ValueError):
+                    anchored_project_packet(root, pin)
