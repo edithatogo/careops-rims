@@ -31,3 +31,12 @@ class CrosswalkModelTests(unittest.TestCase):
         doc = self.document(); doc['definition']['parts'][0]['payload'] = base64.b64encode(b'unknown partition').decode()
         with self.assertRaises(ValueError):
             prepare(doc, 'https://example.sharepoint.com/award-crosswalk-fixture', 'fixture', 'x')
+
+    def test_password_only_and_empty_userinfo_rejected_before_model_preparation(self):
+        from urllib.parse import urlunsplit
+        for userinfo in [':test@', '@']:
+            with self.subTest(userinfo=userinfo):
+                uri = urlunsplit(('https', userinfo + 'example.sharepoint.com',
+                                  '/Documents/award-crosswalk-fixture', '', ''))
+                with self.assertRaisesRegex(ValueError, 'Exact retained crosswalk batch URL required'):
+                    prepare(self.document(), uri, 'fixture', '(A,B,C,D,E)=>{}')

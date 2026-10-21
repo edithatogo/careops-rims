@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 def prepare(document, archive_url, batch, function_source):
     parsed = urlparse(archive_url)
     if (parsed.scheme != 'https' or not (parsed.hostname or '').endswith('.sharepoint.com')
-            or parsed.query or parsed.fragment or parsed.username
+            or parsed.query or parsed.fragment or parsed.username is not None or parsed.password is not None
             or archive_url.split('/')[-1] != 'award-crosswalk-' + batch):
         raise ValueError('Exact retained crosswalk batch URL required')
     result = copy.deepcopy(document)
