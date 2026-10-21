@@ -6,6 +6,7 @@ they do not authenticate a person or establish current employment.
 """
 import base64
 import copy
+import re
 from collections import defaultdict
 
 from source_relationship_evidence import orcid_status
@@ -83,5 +84,24 @@ def prepare(document):
                          + '\n'.join('\t\t\t' + line for line in expression.splitlines())
                          + '\n\t\tformatString: #,0\n')
     text = text.replace(marker, ''.join(additions) + marker)
+    part['payload'] = base64.b64encode(text.encode()).decode()
+    return result
+
+
+def update_existing_corroboration(document):
+    """Repair only the two existing corroboration expressions on saved native TMDL."""
+    result = copy.deepcopy(document)
+    matches = [part for part in result['definition']['parts'] if part['path'] == PATH]
+    if len(matches) != 1:
+        raise ValueError('Unique native evidence table required')
+    part = matches[0]
+    text = base64.b64decode(part['payload'], validate=True).decode()
+    for name in ('Cross-source corroborated researcher pairs', 'Cross-source corroborated publications'):
+        pattern = r"(?m)^\tmeasure '" + re.escape(name) + r"' =[^\n]*\n.*?(?=^\t\tformatString:)"
+        found = list(re.finditer(pattern, text, re.S | re.M))
+        if len(found) != 1 or 'VAR AllProviders' in found[0].group():
+            raise ValueError('Expected one unrepaired native corroboration expression')
+        replacement = "\tmeasure '" + name + "' =\n" + ''.join('\t\t\t' + line + '\n' for line in MEASURES[name].splitlines())
+        text = text[:found[0].start()] + replacement + text[found[0].end():]
     part['payload'] = base64.b64encode(text.encode()).decode()
     return result
