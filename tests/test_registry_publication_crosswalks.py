@@ -149,3 +149,25 @@ class RegistryPublicationTests(unittest.TestCase):
             self.replace(root, 'rifcs.xml', xml)
             with self.assertRaisesRegex(ValueError, 'successful OAI record'):
                 project_packet(root)
+
+    def test_ambiguous_xml_wrapper_or_missing_datestamp_refused(self):
+        for variant in ['wrapper', 'datestamp']:
+            with self.subTest(variant=variant), tempfile.TemporaryDirectory() as d:
+                root = self.fixture(d); xml = (root / 'rifcs.xml').read_text()
+                if variant == 'wrapper':
+                    xml = xml.replace('<GetRecord>', '<GetRecord/><GetRecord>')
+                else:
+                    xml = xml.replace('<datestamp>2026-01-01</datestamp>', '')
+                self.replace(root, 'rifcs.xml', xml)
+                with self.assertRaises(ValueError):
+                    project_packet(root)
+
+    def test_duplicate_leading_slash_does_not_change_exact_handle_contract(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d); uri = 'http://hdl.handle.net//1234/56'
+            self.replace(root, 'rifcs.xml', (root / 'rifcs.xml').read_text().replace('http://hdl.handle.net/1234/56', uri))
+            manifest = json.loads((root / 'manifest.json').read_text())
+            manifest['publications'][0]['publication_uri'] = uri
+            (root / 'manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'Exact typed publication handle'):
+                project_packet(root)

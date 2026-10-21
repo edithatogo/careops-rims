@@ -38,6 +38,12 @@ def project_packet(folder):
             raise ValueError('Registry source byte/hash drift')
         return value
 
+    def one(parent, tag):
+        matches = parent.findall(tag)
+        if len(matches) != 1:
+            raise ValueError('Registry XML node missing or ambiguous')
+        return matches[0]
+
     authority_ref = manifest['authority']
     authority = json.loads(raw(authority_ref['name']))
     if authority_ref['sha256'] != files[authority_ref['name']]['sha256']:
@@ -62,34 +68,36 @@ def project_packet(folder):
         if len(matches) != 1:
             raise ValueError('Exact canonical grant identifier required')
         xml = ET.fromstring(raw(spec['rifcs_name']))
-        records = xml.findall(OAI + 'GetRecord/' + OAI + 'record')
-        if xml.tag != OAI + 'OAI-PMH' or len(records) != 1 or xml.findall(OAI + 'error'):
+        if xml.tag != OAI + 'OAI-PMH' or xml.findall(OAI + 'error'):
             raise ValueError('Exact successful OAI record required')
-        record = records[0]
-        header = record.find(OAI + 'header')
-        if header is None or header.get('status') == 'deleted' or header.findtext(OAI + 'identifier') != 'oai:ands.org.au::' + record_id:
+        record = one(one(xml, OAI + 'GetRecord'), OAI + 'record')
+        header = one(record, OAI + 'header')
+        if header.get('status') == 'deleted' or one(header, OAI + 'identifier').text != 'oai:ands.org.au::' + record_id:
             raise ValueError('OAI record identity drift')
-        activities = record.findall(OAI + 'metadata/' + RIF + 'registryObjects/' + RIF + 'registryObject/' + RIF + 'activity')
-        if len(activities) != 1 or activities[0].get('type') != 'grant':
+        version = one(header, OAI + 'datestamp').text
+        if not version or not version.strip():
+            raise ValueError('Registry source datestamp required')
+        obj = one(one(one(record, OAI + 'metadata'), RIF + 'registryObjects'), RIF + 'registryObject')
+        activity = one(obj, RIF + 'activity')
+        if activity.get('type') != 'grant':
             raise ValueError('Typed registry grant required')
-        activity = activities[0]
         numbers = [e.text for e in activity.findall(RIF + 'identifier') if e.get('type') == 'nhmrc']
         if numbers != [number]:
             raise ValueError('Namespace-qualified grant identifier drift')
-        funding = [normalized_doi(e.findtext(RIF + 'key', '')) for e in activity.findall(RIF + 'relatedObject')
+        funding = [normalized_doi(one(e, RIF + 'key').text or '') for e in activity.findall(RIF + 'relatedObject')
                    if any(r.get('type') == 'isFundedBy' for r in e.findall(RIF + 'relation'))]
         if not any(f in funders for f in funding):
             raise ValueError('Explicit grant funder namespace required')
         references = {e.text for info in activity.findall(RIF + 'relatedInfo') if info.get('type') == 'publication'
                       for e in info.findall(RIF + 'identifier') if e.get('type') == 'URI'}
-        grants[record_id] = (spec, references, header.findtext(OAI + 'datestamp', ''))
+        grants[record_id] = (spec, references, version)
     rows = {}
     for spec in manifest['publications']:
         grant, references, version = grants[spec['record_id']]
         uri = spec['publication_uri']
         parsed = urlparse(uri)
         if (parsed.scheme not in ('http', 'https') or parsed.netloc not in ('handle.unsw.edu.au', 'hdl.handle.net')
-                or parsed.query or parsed.fragment or parsed.path.lstrip('/') != spec['handle'] or uri not in references):
+                or parsed.query or parsed.fragment or parsed.path != '/' + spec['handle'] or uri not in references):
             raise ValueError('Exact typed publication handle required')
         item = json.loads(raw(spec['name']))
         kind = spec.get('metadata_kind', 'dspace')
