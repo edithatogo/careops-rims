@@ -114,3 +114,29 @@ existing native owner retains model/report binding, exact saved readback, refres
 rendering, interaction, replay and same-object recovery. Save source revision and
 artifact hashes in the private ALM manifest. A successful source suite does not
 establish native behaviour, a complete funding chain or permission to share data.
+
+## Exact award identifier crosswalks
+
+The crosswalk tools extend the existing source-relationship evidence rather than
+merging award-register records. `scripts/award_identifier_crosswalks.py` requires
+an independently evidenced funder namespace and the exact original award string.
+`scripts/crossref_award_crosswalks.py` projects explicit publication/award edges
+from a complete retained Crossref/ARDC packet, checks file hashes and lengths,
+deduplicates assertions and keeps ambiguous canonical publication matches
+unadmitted. Same-number grants from other funders and unproved prefix variants
+remain unresolved. These assertions do not establish reviewed funding, identity
+authentication or a DORA publication/project/award chain.
+
+The two `prepare_*award*_model.py` adapters append those derivations to a supplied
+fresh model preimage, preserving unrelated parts and refusing repeated application.
+`prepare_award_crosswalk_report.py` extends the existing source-link page with
+three visuals while retaining existing visual bytes. Supply qualified private
+archive URLs, retained source packets and native preimages locally; this public
+repository includes only reusable source and fictional tests. Use a new output
+path and preserve human edits, source versions and previous outputs.
+
+The M functions retain provenance supplied by the manifest; they do not themselves
+recompute raw SHA256s. Independently verify retained packet bytes before native
+use. Public Python preparation tests do not prove native M/DAX execution, report
+rendering, solution membership or deployment parity. Existing native owners retain
+model/report updates and their private ALM manifests.
