@@ -1,5 +1,6 @@
 // Explicit identifiers in retained PubMed Author/GrantList/DataBankList nodes.
 // Agency text scopes source grant assertions; it is not a global funder crosswalk.
+// RawSHA256 is unavailable: retained metadata has batch lineage, not raw provider bytes.
 (History as table, Files as table) as list =>
 let
     Rows=Table.Buffer(History),

@@ -90,8 +90,11 @@ no writes. Neither command installs a service or activates a flow or schedule.
 
 The portable relationship tools project explicit OpenAlex, PubMed and study
 reference evidence without authenticating people or inferring missing project or
-award links. `scripts/source_relationship_evidence.py` retains raw hashes, source
-versions, review state and identifier ambiguity. Valid ORCID syntax is not proof
+award links. `scripts/source_relationship_evidence.py` retains available raw hashes, source
+versions, review state and identifier ambiguity. PubMed rows reconstructed from
+accepted metadata retain their batch/version identity but have no per-payload
+raw hash; an empty RawSHA256 is explicitly unavailable provenance, not a verified
+payload fingerprint. The generated report explains this limitation. Valid ORCID syntax is not proof
 of account ownership; identical display names are never an identity crosswalk.
 Grant references with source-scoped agency labels are distinct from reconciled
 award-register identities. Missing publication/project/award links stay unknown.

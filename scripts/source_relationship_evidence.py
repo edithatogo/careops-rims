@@ -125,6 +125,9 @@ def pubmed_projection(records,publications):
     def text(node):
         v=node.get('Value','') if isinstance(node,dict) else node
         return ''.join(text(x) for x in v) if isinstance(v,list) else str(v or '')
+    # Accepted PubMed metadata supplies batch lineage, not original raw bytes.
+    # Empty RawSHA256 is unavailable provenance; never hash reserialized metadata
+    # and misrepresent it as a fingerprint of the original provider payload.
     result={}
     for record in records:
         pmid=record['pmid'];citation=child(record['metadata'],'MedlineCitation')
