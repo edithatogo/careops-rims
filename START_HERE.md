@@ -140,3 +140,27 @@ recompute raw SHA256s. Independently verify retained packet bytes before native
 use. Public Python preparation tests do not prove native M/DAX execution, report
 rendering, solution membership or deployment parity. Existing native owners retain
 model/report updates and their private ALM manifests.
+
+## Explicit clinical-study award chains
+
+`qualify_protocol_award_metadata.py` extracts explicit trial, protocol/version and
+NHMRC application identifiers from a qualified protocol cover. It rejects missing
+or conflicting identity fields and excludes adjacent MRFF numbers and later-page
+co-mentions. `protocol_study_award_evidence.py` checks the retained packet hashes,
+cover extraction, study identity, namespace authority and exact grant URI, then
+combines explicit publication/study references into typed chain evidence.
+Retain the original PDF, extracted cover, source envelopes and qualification
+manifest privately. The caller must verify that the extracted page belongs to
+the retained PDF; the projector does not perform PDF extraction itself.
+
+Routine study-record updates preserve the historical qualification snapshot and
+record the current study-register hash separately. References lacking a unique
+canonical publication mapping stay unadmitted. A clinical-study chain is distinct
+from a DORA project chain and conveys no reviewed funding or protocol approval.
+
+`prepare_protocol_study_award_model.py` prepares the additive model change from
+the accepted crosswalk preimage; `prepare_protocol_study_award_report.py` appends
+four visuals to its existing page. The latter clarifies only the known maintained
+chain-status wording and refuses human-modified wording. Use exclusive output
+paths and retain source preimages, human edits and original identities. These
+portable preparation checks do not establish native deployment or rendering.

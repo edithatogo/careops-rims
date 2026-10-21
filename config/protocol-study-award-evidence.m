@@ -1,0 +1,31 @@
+// Explicit protocol funding and independently retained publication/study edges.
+(ReadFile as function, ArchiveBase as text, ExpectedBatch as text, Studies as table, SourceRows as list) as list =>
+let
+    M=Json.Document(ReadFile(ArchiveBase&"/manifest.json")),
+    Manifest=if M[kind]="protocol_study_award_retention_v1" and M[batch]=ExpectedBatch and M[complete]=true then M else error "Protocol source packet identity drift",
+    FileInfo=(Name as text) as record => let Fs=List.Select(Manifest[files],each [name]=Name) in if List.Count(Fs)=1 then Fs{0} else error "Protocol source manifest file missing or duplicated",
+    Raw=(Name as text) as binary => let F=FileInfo(Name),B=Binary.Buffer(ReadFile(ArchiveBase&"/"&Name)) in if Binary.Length(B)=F[bytes] then B else error "Protocol source file length drift",
+    PDF=Raw("protocol.pdf"),
+    Page=Text.FromBinary(Raw("protocol-page1.txt"),TextEncoding.Utf8),
+    Cover=Text.Combine(List.Select(Text.SplitAny(Page," #(cr)#(lf)#(tab)"),each _<>"")," "),
+    F=Json.Document(Raw("protocol-facts.json")),
+    NCT=Text.AfterDelimiter(F[study_identifier],"clinicaltrials.gov:"),
+    CoverValid=Text.FromBinary(Binary.Range(PDF,0,5),TextEncoding.Utf8)="%PDF-" and F[relationship]="study_award_funding_source" and F[source_page]=1 and F[funder_namespace]="nhmrc" and F[protocol_identifier_namespace]=F[study_identifier]&":org-study-id" and Text.Contains(Cover,"Clinical trials registration "&NCT) and Text.Contains(Cover,"Protocol number "&F[protocol_identifier]) and Text.Contains(Cover,"Protocol version/date "&F[protocol_version]) and Text.Contains(Text.AfterDelimiter(Cover,"Funding source"),"NHMRC 2021 Clinical Trials and Cohort Studies (Application ID "&F[original_application_id]&")"),
+    SE=Json.Document(Raw("study-source-envelope.json")),
+    S=SE[response][body][protocolSection][identificationModule],
+    SR=Table.SelectRows(Studies,each [SourceKey]=F[study_identifier]),
+    StudyValid=CoverValid and SE[response][statusCode]=200 and SE[requested_id]=NCT and S[nctId]=NCT and S[orgStudyIdInfo][id]=F[protocol_identifier] and Table.RowCount(SR)=1 and SR{0}[NCTId]=NCT,
+    Authority=Json.Document(Raw("authority-ror.json")),
+    ROR=if List.AnyTrue(List.Transform(Authority[links],each [type]="website" and [value]="https://www.nhmrc.gov.au/")) then Authority[id] else error "Protocol funder namespace authority drift",
+    AD=Json.Document(Raw("ardc-grant.json")),
+    URI="https://purl.org/au-research/grants/nhmrc/"&F[original_application_id],
+    GrantMatches=if AD[status]="OK" and AD[code]="200" and AD[data][offset]=0 and AD[data][numFound]=List.Count(AD[data][records]) then List.Select(AD[data][records],each Record.FieldOrDefault(_,"type","")="grant" and Record.FieldOrDefault(_,"purl","")=URI and List.Contains(Record.FieldOrDefault(_,"identifiers",{}),F[original_application_id])) else error "Protocol grant source incomplete",
+    Valid=if StudyValid and List.Count(GrantMatches)=1 then true else error "Protocol study/award identifier unresolved or ambiguous",
+    Source="protocol:"&F[study_identifier]&":"&F[protocol_identifier],
+    Provenance=[relationship="explicit_protocol_funding_source",protocolPage=1,protocolIdentifier=F[protocol_identifier],protocolIdentifierNamespace=F[protocol_identifier_namespace],protocolVersion=F[protocol_version],protocolRawSHA256=FileInfo("protocol.pdf")[sha256],studySourceRawSHA256=FileInfo("study-source-envelope.json")[sha256],studyRegisterSourceSHA256=SR{0}[SourcePayloadSHA256],ardcRawSHA256=FileInfo("ardc-grant.json")[sha256],authorityRawSHA256=FileInfo("authority-ror.json")[sha256],retentionBatch=ExpectedBatch],
+    JSON=(R as record) as text => Text.FromBinary(Json.FromValue(R),TextEncoding.Utf8),
+    Base=if Valid then [EvidenceKey=Text.Combine({Source,"study_award_reference",F[study_identifier],URI},"|"),RelationshipKind="study_award_reference",SourceWorkID=Source,PublicationDOI="",PublicationPMID="",ReferenceType=JSON(Provenance),FromKey=F[study_identifier],ToKey=URI,FromLabel=F[protocol_identifier],ToLabel=F[original_application_id],ORCID="",ORCIDStatus="Absent",ROR=ROR,IdentityStatus="Source-supported",SourceURL=Manifest[protocol_source_url],ObservedUTC=Manifest[observed_utc],RawSHA256=FileInfo("protocol.pdf")[sha256],SourceVersion=F[protocol_version],ReviewState="Not reviewed",AuthenticationState="Not authenticated"] else error "Protocol qualification failed",
+    Refs=List.Buffer(List.Select(SourceRows,each [RelationshipKind]="publication_study_reference" and [ToKey]=F[study_identifier] and [PublicationPMID]<>"")),
+    PMIDs=List.Sort(List.Distinct(List.Transform(Refs,each [PublicationPMID]))),
+    Chains=List.Transform(PMIDs,(P)=>let Es=List.Transform(List.Select(Refs,each [PublicationPMID]=P),each Record.SelectFields(_,{"SourceWorkID","RawSHA256","SourceVersion","ReferenceType"})),Sorted=Table.ToRecords(Table.Sort(Table.FromRecords(Es),{{"SourceWorkID",Order.Ascending},{"ReferenceType",Order.Ascending}})),CP=Record.AddField(Provenance,"publicationReferenceEvidence",Sorted) in Record.TransformFields(Base,{{"RelationshipKind",each "publication_study_award_chain"},{"PublicationPMID",each P},{"EvidenceKey",each Text.Combine({Source,"publication_study_award_chain","pmid:"&P,F[study_identifier],URI},"|")},{"ReferenceType",each JSON(CP)}}))
+in List.Buffer({Base}&Chains)
