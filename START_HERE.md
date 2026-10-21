@@ -116,6 +116,20 @@ rendering, interaction, replay and same-object recovery. Save source revision an
 artifact hashes in the private ALM manifest. A successful source suite does not
 establish native behaviour, a complete funding chain or permission to share data.
 
+Provider modification time, acquisition/observation time and model processing time
+answer different questions. The latest timestamp among imported rows does not prove
+complete coverage or a successful scheduled run. A missing qualified timestamp stays
+unknown; refreshing retained bytes does not make their source current.
+
+Source-stated author and institution identifiers describe publication co-occurrence.
+Institution pairs do not establish partnerships or current employment, and distinct
+identifier-pair totals do not count publications, employees or collaboration quality.
+Preserve conflicting identifiers and unresolved mentions. Relationship evidence can
+have different grains; do not sum them into one register total. Clear report
+selections before comparing unfiltered counts. Enrichment snapshots remain immutable,
+operator-qualified inputs; a new source generation requires its own reconciliation
+and does not change collector schedules or human review states.
+
 ## Exact award identifier crosswalks
 
 The crosswalk tools extend the existing source-relationship evidence rather than
