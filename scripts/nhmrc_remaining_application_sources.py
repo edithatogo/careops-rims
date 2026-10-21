@@ -208,8 +208,9 @@ def project_packet(folder, previous_rows, publications, trusted_policy_sha256):
         if hashlib.sha256(raw(filename)).hexdigest() != digest:
             raise ValueError('Issuer application-representation authority drift')
     authority = json.loads(raw('authority-ror.json'))
-    if not any(x.get('type') == 'website' and x.get('value') == 'https://www.nhmrc.gov.au/'
-               for x in authority['links']):
+    if (not isinstance(authority.get('id'), str) or not authority['id'].strip()
+            or not any(x.get('type') == 'website' and x.get('value') == 'https://www.nhmrc.gov.au/'
+                       for x in authority['links'])):
         raise ValueError('Qualified NHMRC namespace authority required')
     upstream_bytes = raw('nhmrc-source-manifest.json')
     upstream = json.loads(upstream_bytes)

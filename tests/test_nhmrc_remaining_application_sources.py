@@ -1,4 +1,8 @@
 import io
+import hashlib
+import json
+import tempfile
+from unittest.mock import patch
 import sys
 import unittest
 from pathlib import Path
@@ -6,6 +10,7 @@ from pathlib import Path
 import openpyxl
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+import nhmrc_remaining_application_sources as remaining
 from nhmrc_remaining_application_sources import (
     government_application, publication_identity, publisher_investigator_application,
     protocol_application, repository_direct_grant, repository_project_grant,
@@ -91,3 +96,20 @@ NHMRC 2021 MRFF International Clinical Trial Collaborations (Application ID 2017
         self.assertEqual(result['study_identifier'], 'clinicaltrials.gov:NCT12345678')
         with self.assertRaises(ValueError):
             protocol_application(page, 'APP2017301')
+
+    def test_pinned_authority_with_missing_identity_refuses_before_projection(self):
+        for missing in [None, '', '   ', 123, []]:
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                authority = {'id': missing, 'links': [{'type': 'website', 'value': 'https://www.nhmrc.gov.au/'}]}
+                def write(name, value):
+                    data = json.dumps(value).encode(); (root / name).write_bytes(data)
+                    return dict(name=name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+                source = write('authority-ror.json', authority)
+                policy = write('rule-authority.json', dict(rule=remaining.RULE_ID, namespace='nhmrc',
+                                                          batch='fixture', source_files=[source]))
+                write('manifest.json', dict(kind='nhmrc_explicit_application_sources_v1', complete=True,
+                                            batch='fixture', files=[source, policy]))
+                with patch.object(remaining, 'AUTHORITY_SHA256', {}):
+                    with self.assertRaisesRegex(ValueError, 'namespace authority'):
+                        remaining.project_packet(root, [], [], policy['sha256'])

@@ -86,7 +86,7 @@ def qualify_app(number, source_funder_ror, authority, records):
     primary funding assertion must therefore be separated before this call.
     Nonmatching discovery hits are ignored; duplicate exact identities fail.
     """
-    if (authority.get('namespace') != 'nhmrc' or not authority.get('ror')
+    if (authority.get('namespace') != 'nhmrc' or not isinstance(authority.get('ror'), str) or not authority['ror'].strip()
             or source_funder_ror != authority['ror']):
         return {'state': 'unqualified_funder_namespace', 'matches': []}
     if not isinstance(number, str) or not re.fullmatch(r'APP[1-9][0-9]{6}', number):

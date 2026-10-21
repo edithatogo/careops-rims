@@ -154,3 +154,9 @@ class ApplicationRepresentationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             prepare(candidate, 'https://example.sharepoint.com/sites/dev/Documents/award-crosswalk-' + batch,
                     batch, '(R,A,B,H)=>{}', 'a' * 64)
+    def test_nonblank_string_funder_identity_required(self):
+        for missing in [None, '', '   ', 123, []]:
+            with self.subTest(missing=missing):
+                result = qualify_app('APP1092957', missing,
+                                     {'namespace': 'nhmrc', 'ror': missing}, [self.record()])
+                self.assertEqual(result['state'], 'unqualified_funder_namespace')
