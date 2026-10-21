@@ -21,6 +21,8 @@ def prepare(source, output):
     source, output = Path(source), Path(output)
     if output.exists():
         raise ValueError('New candidate folder required')
+    if output.resolve().is_relative_to(source.resolve()):
+        raise ValueError('Candidate must be outside source folder')
     before = {f.relative_to(source): f.read_bytes() for f in source.rglob('*') if f.is_file()}
     page = json.loads(before[PAGE / 'page.json'])
     if page['height'] != 1824 or page['width'] != 1920:

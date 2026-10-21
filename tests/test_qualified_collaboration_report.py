@@ -59,3 +59,10 @@ class CollaborationReportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'existing source chart filters'):
                 prepare(source, root / 'candidate')
             self.assertEqual(json.loads(path.read_bytes())['filterConfig']['filters'], ['retained'])
+
+    def test_candidate_cannot_be_created_inside_source(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / 'source'; before = self.fixture(source)
+            with self.assertRaisesRegex(ValueError, 'outside source'):
+                prepare(source, source / 'candidate')
+            self.assertEqual({p.relative_to(source): p.read_bytes() for p in source.rglob('*') if p.is_file()}, before)
