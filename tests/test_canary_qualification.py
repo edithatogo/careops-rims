@@ -21,9 +21,10 @@ class CanaryQualificationTests(unittest.TestCase):
         script = textwrap.dedent(step.split('        run: |\n', 1)[1]).replace('python3', shlex.quote(sys.executable), 1)
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary); evidence = root / '.local/tool-canary'; evidence.mkdir(parents=True)
-            def execute(outcomes):
+            def execute(outcomes, expect_failure=False):
                 env = dict(os.environ, GITHUB_SHA='a' * 40, **{name.upper() + '_OUTCOME': outcomes.get(name, 'success') for name in STAGES})
-                subprocess.run(['/bin/bash', '-euc', script], cwd=root, env=env, check=True, capture_output=True)
+                result = subprocess.run(['/bin/bash', '-euc', script], cwd=root, env=env, check=False, capture_output=True)
+                self.assertEqual(result.returncode != 0, expect_failure, result.stderr.decode())
                 receipt = json.loads((evidence / 'qualification.json').read_text())
                 self.assertFalse(receipt['promoted']); self.assertFalse(receipt['nativeWrites'])
                 return receipt
@@ -35,7 +36,7 @@ class CanaryQualificationTests(unittest.TestCase):
                 self.assertEqual(receipt['state'], 'setup-blocked' if position < 4 else 'executed-failure')
             self.assertEqual(execute({'qualification': 'cancelled'})['state'], 'cancelled')
             self.assertEqual(execute({'qualification': 'skipped'})['state'], 'not-executed')
-            self.assertEqual(execute({})['state'], 'evidence-mismatch')
+            self.assertEqual(execute({}, expect_failure=True)['state'], 'evidence-mismatch')
             lock = b'fictional==1.0 --hash=sha256:fixture\n'
             (evidence / 'requirements.lock').write_bytes(lock)
             (evidence / 'candidate.json').write_text(json.dumps({'lockSha256': hashlib.sha256(lock).hexdigest()}))
@@ -43,6 +44,6 @@ class CanaryQualificationTests(unittest.TestCase):
                 (evidence / (name + '.txt')).write_text(value)
             self.assertEqual(execute({})['state'], 'qualified-tool-candidate')
             (evidence / 'tool-python-version.txt').write_text('Python 3.13.0 (fixture)')
-            self.assertEqual(execute({})['state'], 'runtime-mismatch')
+            self.assertEqual(execute({}, expect_failure=True)['state'], 'runtime-mismatch')
             (evidence / 'candidate.json').write_text('{broken')
-            self.assertEqual(execute({})['state'], 'evidence-invalid')
+            self.assertEqual(execute({}, expect_failure=True)['state'], 'evidence-invalid')

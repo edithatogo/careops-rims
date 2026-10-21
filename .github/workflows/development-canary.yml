@@ -103,6 +103,8 @@ jobs:
               state = 'evidence-invalid'
           receipt = {'sourceCommit': os.environ['GITHUB_SHA'], 'stages': stages, 'failedStage': failed, 'runtimes': runtimes, 'lockSha256': digest, 'state': state, 'promoted': False, 'nativeWrites': False}
           (root / 'qualification.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          if state in {'evidence-mismatch', 'runtime-mismatch', 'evidence-invalid'}:
+              raise SystemExit('Canary evidence refused: ' + state)
           PYCODE
       - name: Retain candidate versions and lock without promotion
         if: always()
