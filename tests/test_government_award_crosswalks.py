@@ -139,3 +139,43 @@ class GovernmentCrosswalkTests(unittest.TestCase):
             (root / 'manifest.json').write_text(json.dumps(manifest))
             with self.assertRaisesRegex(ValueError, 'Upstream workbook'):
                 project_packet(root)
+
+    def retention_fixture(self, root):
+        source = json.loads((root / 'source.json').read_text())
+        entry = source['files'][0]
+        retained = dict(entry, matches_original_CLI_capture=True)
+        entry.pop('sha256')
+        entry.pop('bytes')
+        source['run'] = 'fictional-run'
+        self.replace(root, 'source.json', source)
+        data = (root / 'source.json').read_bytes()
+        receipt = dict(status='PASS_NATIVE_ORIGINAL_WORKBOOK_ARCHIVE', run='fictional-run',
+                       files=[dict(name='manifest.json', bytes=len(data), sha256=hashlib.sha256(data).hexdigest()), retained])
+        raw = json.dumps(receipt).encode()
+        (root / 'retention.json').write_bytes(raw)
+        manifest = json.loads((root / 'manifest.json').read_text())
+        reference = dict(name='retention.json', bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+        manifest['files'].append(reference)
+        manifest['source_retention'] = reference
+        (root / 'manifest.json').write_text(json.dumps(manifest))
+        return receipt
+
+    def test_original_hashless_manifest_can_use_independent_matching_retention_receipt(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.fixture(d)
+            self.retention_fixture(root)
+            self.assertEqual(len(project_packet(root)), 1)
+
+    def test_retention_receipt_must_bind_original_manifest_run_and_workbook(self):
+        for mutation in ['run', 'manifest', 'workbook', 'capture', 'duplicate']:
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as d:
+                root = self.fixture(d)
+                receipt = self.retention_fixture(root)
+                if mutation == 'run': receipt['run'] = 'wrong-run'
+                elif mutation == 'manifest': receipt['files'][0]['sha256'] = '0' * 64
+                elif mutation == 'workbook': receipt['files'][1]['sha256'] = '0' * 64
+                elif mutation == 'capture': receipt['files'][1]['matches_original_CLI_capture'] = False
+                else: receipt['files'].append(dict(receipt['files'][1]))
+                self.replace(root, 'retention.json', receipt)
+                with self.assertRaisesRegex(ValueError, 'Upstream'):
+                    project_packet(root)

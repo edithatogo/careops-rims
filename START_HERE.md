@@ -211,8 +211,10 @@ are installed separately and are not vendored or covered by its file inventory.
 
 The upstream workbook file entry must independently bind its `sha256` and integer
 `bytes` to the retained workbook. Recomputing the outer packet hash cannot replace
-that binding. Legacy source manifests containing only names and URLs are refused;
-qualify a new immutable packet with an independently verified upstream byte binding,
+that binding. Legacy source manifests containing only names and URLs require a separately
+retained original-download receipt through `source_retention`. It must bind the
+original manifest hash/length, same run and unique workbook hash/length with exact
+CLI capture verified. Qualify a new immutable packet including that existing receipt,
 retaining the original manifest and download/readback evidence. Do not invent hashes
 from an unverified replacement or rewrite the previously accepted source snapshot.
 The M function requires the same upstream digest/length references; independent
