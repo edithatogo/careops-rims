@@ -153,3 +153,10 @@ class GNTRuleTests(unittest.TestCase):
         wrong.update(startDate=2021); exact.update(startDate=2020)
         for records in [[wrong, exact], [exact, wrong]]:
             self.assertEqual(self.qualify(records=records)['state'], 'source_supported_alias')
+
+    def test_absent_funder_identity_cannot_qualify_by_equal_empty_values(self):
+        for missing in [None, '', '   ']:
+            with self.subTest(missing=missing):
+                result = gnt.qualify_gnt('GNT1196396', missing,
+                                        {'namespace': 'nhmrc', 'ror': missing}, [self.record()])
+                self.assertEqual(result['state'], 'unqualified_funder_namespace')

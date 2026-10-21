@@ -21,7 +21,9 @@ MIGRATION_URL = 'https://www.nhmrc.gov.au/sapphire/sapphire-recent-updates'
 
 def qualify_gnt(number, source_funder_ror, authority, records):
     """Use the explicit encoding only for an independently bound NHMRC funder."""
-    if authority.get('namespace') != 'nhmrc' or source_funder_ror != authority.get('ror'):
+    if (authority.get('namespace') != 'nhmrc'
+            or not isinstance(authority.get('ror'), str) or not authority['ror'].strip()
+            or source_funder_ror != authority['ror']):
         return {'state': 'unqualified_funder_namespace', 'matches': []}
     if not isinstance(number, str) or not re.fullmatch(r'GNT(?:[1-9][0-9]{6}|0[1-9][0-9]{5})', number):
         return {'state': 'unsupported_grant_code', 'matches': []}
