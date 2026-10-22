@@ -1,0 +1,36 @@
+EVALUATE
+VAR RawRows =
+    FILTER(
+        PubMedSourceSnapshot,
+        PubMedSourceSnapshot[SourceKind] = "PubMedRawResponseChunks"
+            && (
+                PubMedSourceSnapshot[RawResponseIndex] > {{AFTER_RESPONSE_INDEX}}
+                    || (
+                        PubMedSourceSnapshot[RawResponseIndex] = {{AFTER_RESPONSE_INDEX}}
+                            && PubMedSourceSnapshot[RawChunkIndex] > {{AFTER_CHUNK_INDEX}}
+                    )
+            )
+    )
+VAR Page =
+    TOPN(
+        {{PAGE_SIZE}}, RawRows,
+        PubMedSourceSnapshot[RawResponseIndex], ASC,
+        PubMedSourceSnapshot[RawChunkIndex], ASC
+    )
+RETURN
+    SELECTCOLUMNS(
+        Page,
+        "SourceKind", PubMedSourceSnapshot[SourceKind],
+        "RawResponseIndex", PubMedSourceSnapshot[RawResponseIndex],
+        "RawEndpoint", PubMedSourceSnapshot[RawEndpoint],
+        "RawRequestJSON", PubMedSourceSnapshot[RawRequestJSON],
+        "RawAcquiredUTC", PubMedSourceSnapshot[RawAcquiredUTC],
+        "RawHTTPStatus", PubMedSourceSnapshot[RawHTTPStatus],
+        "RawByteCount", PubMedSourceSnapshot[RawByteCount],
+        "RawSchemaByteCount", PubMedSourceSnapshot[RawSchemaByteCount],
+        "RawChunkCount", PubMedSourceSnapshot[RawChunkCount],
+        "RawChunkIndex", PubMedSourceSnapshot[RawChunkIndex],
+        "RawPayloadBase64", PubMedSourceSnapshot[RawPayloadBase64],
+        "RawSchemaBase64", PubMedSourceSnapshot[RawSchemaBase64]
+    )
+ORDER BY [RawResponseIndex], [RawChunkIndex]

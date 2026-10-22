@@ -240,3 +240,29 @@ source manifest digest when it contains byte bindings, or the original-download
 receipt digest for the hashless route. The preparer embeds this explicit pin in
 the M invocation. Never populate it automatically from the supplied outer manifest;
 a receipt's self-declared capture flag alone is not an external trust anchor.
+
+
+## Raw-backed archive compiler
+
+`prepare_query_projection_archive.py --help` prepares a raw archive extension or
+complete typed-page persistence fragment from independently qualified private
+inputs. `prepare_pubmed_raw_source_capture.py --help` prepares retained raw-response
+capture from an accepted private model preimage. Neither command applies its
+candidate to a tenant. Keep every input, definition, payload and receipt under
+ignored private paths; use the existing native-object owner for integration.
+
+The archive extension preserves the existing trigger, connections and original
+actions, adds exact raw-header/chunk/readback checks, and distinguishes retained
+raw observations from accepted typed generations. Unknown nested fields and
+original bytes remain retained. A text prefix protects timestamp transport from
+connector date coercion; it is required and removed before exact comparison.
+Existing-file conflicts, missing pages and generation drift are refused; rejected
+typed projections never gain a commit marker. Verify the full selected native
+run, stored bytes, marker and replay before reader adoption. Local tests and
+prepared action graphs do not prove those operations or qualify a current reader.
+
+The older fixed-baseline first-commit bootstrap remains historical. Its guards
+now fail actions instead of returning diagnostic text, require explicit absence
+before writing, bind readback to that same commit file, and preserve existing
+local packages. This is a single-writer preflight, not an atomic concurrent-create
+guarantee. It does not replace the qualified current raw-aware native publisher.

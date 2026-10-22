@@ -1,0 +1,11 @@
+EVALUATE
+ROW(
+    "RawResponses", COALESCE(CALCULATE(DISTINCTCOUNT(PubMedSourceSnapshot[RawResponseIndex]), PubMedSourceSnapshot[SourceKind] = "PubMedRawResponseChunks"), 0),
+    "RawChunkRows", COALESCE(CALCULATE(COUNTROWS(PubMedSourceSnapshot), PubMedSourceSnapshot[SourceKind] = "PubMedRawResponseChunks"), 0),
+    "TypedProjectionFailures", COALESCE(CALCULATE(COUNTROWS(PubMedSourceSnapshot), PubMedSourceSnapshot[SourceKind] = "PubMedSourceProjectionFailure"), 0),
+    "HTTPFailureChunkRows", COALESCE(COUNTROWS(FILTER(PubMedSourceSnapshot, PubMedSourceSnapshot[SourceKind] = "PubMedRawResponseChunks" && PubMedSourceSnapshot[RawHTTPStatus] <> 200)), 0),
+    "CurrentAuditRows", COALESCE(CALCULATE(COUNTROWS(PubMedSourceSnapshot), PubMedSourceSnapshot[SourceKind] = "PubMedIngestionAudit"), 0),
+    "CurrentAuditDistinctChecks", COALESCE(CALCULATE(DISTINCTCOUNT(PubMedSourceSnapshot[Check]), PubMedSourceSnapshot[SourceKind] = "PubMedIngestionAudit"), 0),
+    "CurrentAuditExpectedChecks", COALESCE(COUNTROWS(FILTER(PubMedSourceSnapshot, PubMedSourceSnapshot[SourceKind] = "PubMedIngestionAudit" && PubMedSourceSnapshot[Check] IN {"Full metadata publications", "Distinct full-metadata PMIDs", "Missing metadata PMIDs", "Unexpected metadata PMIDs", "Metadata reconstruction failures", "Metadata chunk rows", "Author evidence count failures", "Date precision failures", "Blank full titles"})), 0),
+    "CurrentAuditFailedRows", COALESCE(COUNTROWS(FILTER(PubMedSourceSnapshot, PubMedSourceSnapshot[SourceKind] = "PubMedIngestionAudit" && PubMedSourceSnapshot[Passed] <> TRUE())), 0)
+)
