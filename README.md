@@ -38,3 +38,19 @@ the same bytes, verify all file/archive hashes and attest exact source/workflow
 identity. Existing output revisions are preserved. The workflow grants no licence,
 no release is published, and no native package or tenant acceptance is claimed.
 Private configuration, source evidence and active native owners remain separate.
+
+## Power BI PPU capability boundary — 22 October 2026
+
+The deployment operator's current Premium Per User entitlement is verified.
+Apply the [shared PPU qualification policy](https://github.com/edithatogo/careops/blob/main/docs/development-and-delivery.md#power-bi-premium-per-user-current-qualification-boundary)
+to selected reporting/model work: evaluate XMLA and Power BI deployment pipelines
+against exact workspace mode, role/Build rights and settings. Retain accepted
+refresh/model evidence, report bindings, source revisions and recovery; the
+existing private report/model and flow owners retain their objects.
+
+PPU does not itself grant workspace roles, Fabric Git/Copilot capacity, access for
+other readers, or Power Automate/Word/SharePoint generation entitlement. Report
+Export-to-file REST is not supported on PPU alone; keep qualified alternative
+outputs. No workspace conversion, sharing, schedule change or new reporting
+dependency follows. Public source checks remain tenant-free and native operation
+requires private deployment evidence.
