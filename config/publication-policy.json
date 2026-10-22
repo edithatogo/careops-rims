@@ -1,0 +1,12 @@
+{
+  "version": "2026-10-04-permissive-v1",
+  "inclusion": "all-valid-configured-source-records",
+  "retention": "every-observation-and-version",
+  "default_projection": "latest-valid-version",
+  "uncertain_affiliation": "include-with-label",
+  "ambiguous_identity": "preserve-separate-source-records",
+  "source_disappearance": "retain-last-good",
+  "corrections_and_retractions": "retain-and-label",
+  "fuzzy_names": "candidate-signal-only",
+  "manual_record_approval": false
+}

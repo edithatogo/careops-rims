@@ -88,3 +88,31 @@ Earlier checked tasks describe historical implementation. They do not close curr
 - [x] Reject surrounding whitespace in private SharePoint site/list/model identifiers and internal field mappings before publication package generation (`8638767`).
 - [x] Verification: focused publication contract tests (23, 8 private-package cases skipped), full local suite, project checks (460), web-first contracts, Conductor validation and diff validation pass locally.
 - [~] Native import, replay/update, duplicate/failure-safe reconciliation and schedule/release evidence remain open.
+
+
+## Portable raw-backed archive source — 22 October 2026
+
+- [x] Port the hash-qualified archive compiler, complete raw-response envelope,
+  bounded DAX page/count templates and local source-validation dependencies.
+  Preserve existing public builder entry points; add projection/cursor checks.
+- [x] Protect timestamp text in transit, require/remove the prefix before exact
+  comparison, retain unknown response fields and reject incomplete/drifted pages.
+- [x] Correct the historical bootstrap's diagnostic-only guards, require explicit
+  marker absence, bind readback to the selected file and preserve prior packages.
+- [x] Qualify fictional raw/projection/corruption/replay cases and the complete
+  outbound-network-denied public suite: 675 tests pass, eight existing skips.
+- [ ] Keep actual native integration, byte readback, reader adoption, output and
+  operational acceptance in private exact-target receipts. This portable source
+  qualification does not mark those operations complete or enable automation.
+
+Use the raw-backed archive section in START_HERE.md. Existing source/object owners
+retain their assignments; a first-commit absence preflight is not an atomic
+multi-writer guarantee. No tenant binding, payload, account or native receipt is
+included in this port.
+
+The portable native-capture helpers require an explicitly injected, independently
+qualified VS Code token provider. Their inherited automatic Azure CLI token lookup
+has been removed; denial propagates once with no fallback. Direct CLI execution
+refuses before file reads or authentication. The callback boundary supplies no
+identity, target-access or consent proof by itself; existing native capture routes
+remain authoritative until a wrapper is separately qualified.
