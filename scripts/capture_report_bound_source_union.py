@@ -523,11 +523,13 @@ def read_metadata_batches(prefix: Path, url: str, token: str, source: str,
     return (200, {"results": [{"tables": [{"rows": all_rows}]}]}), receipts
 
 
-def main() -> int:
+def main(token_provider=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("workspace_id", "model_id", "report_id", "request_id", "definition", "archive", "prior_consumer", "official_efetch", "split_keys", "preflight_receipt", "archive_dir", "validated_dir", "prefix"):
         parser.add_argument("--" + name.replace("_", "-"), required=True)
     a = parser.parse_args()
+    if not callable(token_provider):
+        parser.error("Run main(token_provider=...) through the already-qualified VS Code wrapper; this entry point performs no automatic authentication")
     prefix = private(a.prefix)
     receipt_path = Path(str(prefix) + "-receipt.json")
     output_paths = [Path(str(prefix) + suffix) for suffix in (
@@ -568,8 +570,8 @@ def main() -> int:
         "PubMed": expected_metadata(archive_dir, validated_dir, "PubMed"),
         "DORA": expected_metadata(archive_dir, validated_dir, "DORA"),
     }
-    powerbi = _token_for("https://analysis.windows.net/powerbi/api")
-    fabric = _token_for("https://api.fabric.microsoft.com")
+    powerbi = _token_for("https://analysis.windows.net/powerbi/api", token_provider)
+    fabric = _token_for("https://api.fabric.microsoft.com", token_provider)
     binding_http, binding = _call(f"{POWERBI}/reports/{a.report_id}", powerbi)
     if binding_http != 200 or binding.get("datasetId") != a.model_id:
         raise ValueError("report binding drifted")

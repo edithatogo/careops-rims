@@ -266,3 +266,12 @@ now fail actions instead of returning diagnostic text, require explicit absence
 before writing, bind readback to that same commit file, and preserve existing
 local packages. This is a single-writer preflight, not an atomic concurrent-create
 guarantee. It does not replace the qualified current raw-aware native publisher.
+
+
+The two retained-native capture helpers require `main(token_provider=...)` through
+an existing qualified VS Code wrapper. There is no built-in Azure CLI sign-in,
+token acquisition, cached-client fallback or token-file transfer. The supplied
+provider must independently validate the exact account, tenant and resource;
+the callback itself is not authentication or target-access proof. Reuse existing
+native capture routes until that wrapper is qualified; the offline compiler and
+receipt validators remain usable without authentication.

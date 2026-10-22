@@ -100,7 +100,7 @@ Earlier checked tasks describe historical implementation. They do not close curr
 - [x] Correct the historical bootstrap's diagnostic-only guards, require explicit
   marker absence, bind readback to the selected file and preserve prior packages.
 - [x] Qualify fictional raw/projection/corruption/replay cases and the complete
-  outbound-network-denied public suite: 670 tests pass, eight existing skips.
+  outbound-network-denied public suite: 675 tests pass, eight existing skips.
 - [ ] Keep actual native integration, byte readback, reader adoption, output and
   operational acceptance in private exact-target receipts. This portable source
   qualification does not mark those operations complete or enable automation.
@@ -109,3 +109,10 @@ Use the raw-backed archive section in START_HERE.md. Existing source/object owne
 retain their assignments; a first-commit absence preflight is not an atomic
 multi-writer guarantee. No tenant binding, payload, account or native receipt is
 included in this port.
+
+The portable native-capture helpers require an explicitly injected, independently
+qualified VS Code token provider. Their inherited automatic Azure CLI token lookup
+has been removed; denial propagates once with no fallback. Direct CLI execution
+refuses before file reads or authentication. The callback boundary supplies no
+identity, target-access or consent proof by itself; existing native capture routes
+remain authoritative until a wrapper is separately qualified.

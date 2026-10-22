@@ -13,7 +13,6 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
-import subprocess
 import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
@@ -227,14 +226,20 @@ def evaluate(refresh_http: int, refresh: object, history_before: object,
     return receipt
 
 
-def _token_for(resource: str) -> str:
-    data = json.loads(subprocess.check_output(
-        ["az", "account", "get-access-token", "--resource", resource, "--output", "json"],
-        timeout=20,
-    ))
-    token = data.get("accessToken")
-    if not isinstance(token, str) or not token:
-        raise ValueError("Azure CLI did not provide a Power BI access token")
+def _token_for(resource: str, provider=None) -> str:
+    """Use the caller's already-qualified VS Code provider; never select a client.
+
+    The provider must independently validate account, tenant and resource through
+    its existing SDK route. This callback boundary is not authentication proof.
+    Tokens remain in memory; no cache/file transfer or fallback is implemented.
+    """
+    if resource not in {'https://analysis.windows.net/powerbi/api', 'https://api.fabric.microsoft.com'}:
+        raise ValueError('Unsupported capture resource')
+    if not callable(provider):
+        raise ValueError('An already-qualified VS Code token provider is required; no automatic sign-in or CLI fallback')
+    token = provider(resource)
+    if not isinstance(token, str) or not token.strip():
+        raise ValueError('The qualified provider did not return a token')
     return token
 
 
@@ -342,7 +347,7 @@ def _private(path: Path) -> Path:
     return resolved
 
 
-def main() -> int:
+def main(token_provider=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset-id", required=True)
     parser.add_argument("--workspace-id", required=True)
@@ -361,6 +366,8 @@ def main() -> int:
     parser.add_argument("--raw-prefix", required=True, type=Path)
     parser.add_argument("--receipt", required=True, type=Path)
     args = parser.parse_args()
+    if not callable(token_provider):
+        parser.error("Run main(token_provider=...) through the already-qualified VS Code wrapper; this entry point performs no automatic authentication")
     if args.expected_part_count == 36 and args.target_scope is None:
         parser.error("--target-scope is required for 36-part models")
     prefix, receipt_path, archive_path = _private(args.raw_prefix), _private(args.receipt), _private(args.archive)
@@ -383,7 +390,7 @@ def main() -> int:
     expected_definition_bytes = definition_path.read_bytes()
     expected_definition = json.loads(expected_definition_bytes)
     definition_parts(expected_definition, args.expected_part_count)
-    token = _token_for("https://analysis.windows.net/powerbi/api")
+    token = _token_for("https://analysis.windows.net/powerbi/api", token_provider)
     dataset_root = _dataset_api_root(args.dataset_id, args.workspace_id)
     detail_url = f"{dataset_root}/refreshes/{args.request_id}"
     refresh_http, refresh = _call(detail_url, token)
@@ -416,7 +423,7 @@ def main() -> int:
         print(json.dumps({key: value for key, value in receipt.items()
                           if key in {"status", "refresh_http", "refresh_status", "refresh_extended_status", "attempt_count", "object_count", "history_status"}}, indent=2))
         return 2 if disposition == "WAIT" else 1
-    fabric_token = _token_for("https://api.fabric.microsoft.com")
+    fabric_token = _token_for("https://api.fabric.microsoft.com", token_provider)
     definition_before = _fabric_definition(args.workspace_id, args.dataset_id, fabric_token)
     definition_before_path = Path(str(prefix) + "-definition-before.json")
     definition_before_path.write_text(json.dumps(definition_before, indent=2) + "\n")
