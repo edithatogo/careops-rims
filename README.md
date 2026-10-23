@@ -20,16 +20,17 @@ generated outputs, native packages and live configuration are intentionally abse
 CI preserves the strict RIMS full-history/current-source secret scans, privacy
 guard and tenant-free public test runner, including its named private-workspace
 exclusions and outbound-network denial. Shared immutable CareOps policy
-`1373e971013724dfaa268e215a45505bb89300cd` adds workflow checks; it does not
-replace RIMS' stricter scanner flags. Canonical source tests use Python3.15.0
-with an additional minimum Python3.11 compatibility lane. Renovate remains the
+`30df4953ea87c8915b4a525fc671a4c9857c3f7f` adds workflow checks; it does not
+replace RIMS' stricter scanner flags. Canonical source tests use Python3.15.1
+for every active application and tooling lane. Renovate remains the
 sole updater and never automatically promotes a candidate.
 
 Weekly/manual development candidates use separate integrity locks and verified
-wheels in an isolated Python3.14.8 tool environment. Actual RIMS tests still use
-Python3.15.0; a frozen official manifest selects a newer published preview only
-when available. Terminal outcomes and digests remain separate from promotion.
-There are no third-party application Python dependencies to lock.
+distributions in an isolated Python3.15.1 tool environment. PyYAML has a
+hash-verified source-build exception for its missing Linux3.15 wheel; other tool
+packages remain binary-only. A frozen official manifest selects newer previews
+only within the3.15 line when available. Terminal outcomes and digests remain separate from promotion.
+The workbook reader has three exact, hash-locked external dependencies.
 
 The package workflow archives the clean, privacy-checked public source once,
 then exercises its approved offline tests and operator help after unpacking.

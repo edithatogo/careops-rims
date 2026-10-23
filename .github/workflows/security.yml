@@ -10,14 +10,17 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   security:
-    uses: edithatogo/careops/.github/workflows/reusable-source-security.yml@d829db7aa46e3789eb1b339f1ab1ad7e5d780d49
+    uses: edithatogo/careops/.github/workflows/reusable-source-security.yml@30df4953ea87c8915b4a525fc671a4c9857c3f7f
     with:
-      policy-revision: d829db7aa46e3789eb1b339f1ab1ad7e5d780d49
+      policy-revision: 30df4953ea87c8915b4a525fc671a4c9857c3f7f
   secrets-and-privacy:
     name: Secrets and privacy
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.15.1'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -44,9 +47,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: '3.15.0'
+          python-version: '3.15.1'
       - name: Install hash-locked workbook runtime
         run: |
           python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
@@ -61,9 +64,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: '3.11'
+          python-version: '3.15.1'
       - name: Install hash-locked workbook runtime
         run: |
           python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
