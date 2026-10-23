@@ -24,3 +24,9 @@ python scripts/webfirst_contracts.py validate
 ```
 
 Conductor plugin checkout: populated at the revision pinned by the `.agents/plugins/conductor` Git submodule. Repository skills in `.agents/skills/` link to its upstream skills. After cloning, run `git submodule update --init .agents/plugins/conductor` to populate them. Antigravity (`agy`) loads workspace skills from `.agents/skills/` and global skills from `~/.gemini/config/skills/`; legacy Codex skills were installed in `~/.codex/skills/`. See [AGY_HANDOVER.md](../AGY_HANDOVER.md). Installation does not assert that any project workflow or native Power BI gate has been executed.
+
+## Targeted test cadence
+
+Follow AGENTS.md targeted-test guidance during edits. Preserve full integration,
+coverage and release gates at coherent milestones. Cached or zero-test results
+are not complete acceptance evidence.
