@@ -46,7 +46,7 @@ jobs:
       - name: Audit and inventory external workbook dependencies
         run: |
           python -m venv "$RUNNER_TEMP/rims-audit"
-          "$RUNNER_TEMP/rims-audit/bin/python" -m pip install --require-hashes --only-binary=:all: -r .local/ci-release-policy/requirements-ci.lock
+          "$RUNNER_TEMP/rims-audit/bin/python" -m pip install --require-hashes --only-binary=:all: --no-binary=pyyaml -r .local/ci-release-policy/requirements-ci.lock
           "$RUNNER_TEMP/rims-audit/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock --format cyclonedx-json --output .local/release-candidate/runtime-dependencies.cdx.json
           sha256sum requirements-runtime.lock > .local/release-candidate/runtime-lock.sha256
       - name: Inventory exact public archive bytes
