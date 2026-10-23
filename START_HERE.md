@@ -1,6 +1,6 @@
 # Start with the public source
 
-Use Python 3.11 or newer. Install the hash-locked workbook reader before running the full public suite. No Microsoft
+Use Python 3.15.1 in an explicitly selected repository-local environment. Install the hash-locked workbook reader before running the full public suite. No Microsoft
 sign-in, tenant, downloaded audit snapshots or private configuration is required.
 
 ```sh
@@ -217,8 +217,8 @@ Local fixtures do not establish native refresh, rendering or operational accepta
 The workbook reader uses openpyxl with defusedxml XML protection and et-xmlfile.
 Exact versions and distribution hashes are in `requirements-runtime.lock`, including
 the qualified defusedxml preview. To update, regenerate with
-`uv pip compile requirements-runtime.txt --no-config --generate-hashes --python-version 3.11 --output-file requirements-runtime.lock`
-and qualify both Python 3.11 and the current runtime. CI audits this lock and
+`uv pip compile requirements-runtime.txt --no-config --generate-hashes --python-version 3.15.1 --output-file requirements-runtime.lock`
+and qualify Python 3.15.1. CI audits this lock and
 retains an external-dependency CycloneDX inventory beside the source package.
 The source SPDX inventory covers the ZIP's actual project files; dependencies
 are installed separately and are not vendored or covered by its file inventory.

@@ -13,7 +13,7 @@
       "platformAutomerge": false
     },
     {
-      "description": "Preserve the intentional Python 3.11 compatibility floor; qualify current runtimes separately",
+      "description": "Qualify Python3.15 patch candidates within the selected runtime line",
       "matchManagers": [
         "github-actions"
       ],
@@ -21,10 +21,10 @@
         "actions/python-versions"
       ],
       "matchFileNames": [
-        ".github/workflows/security.yml"
+        ".github/workflows/**"
       ],
-      "matchCurrentVersion": "/^3\\.11(?:\\.|$)/",
-      "enabled": false
+      "enabled": true,
+      "allowedVersions": "/^3\\.15(?:\\.|$)/"
     }
   ],
   "ignoreUnstable": false
