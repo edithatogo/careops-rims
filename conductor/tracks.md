@@ -47,3 +47,6 @@ Execution order and boundaries: [detailed handoff](PUBLICATION_STABILISATION.md)
 - [~] [E01_flow_automation: Power Automate Ingestion Canonicalization and Recurrence Scheduling](tracks/E01_flow_automation/plan.md) — implementation exists; native/operational acceptance remains open (2026-09-20 audit).
 - [~] [E04_fluent_visual_polish: Microsoft Fluent 2 Visual Polishing and IBCS Standards](tracks/E04_fluent_visual_polish/plan.md) — local geometry/contrast tests pass; six-page native inventory is evidenced, but nine Clinical Analytics field-binding errors and visual acceptance remain open
 - [~] [E07_publication_platform_acceptance: Publication platform hardening and live evidence](tracks/E07_publication_platform_acceptance/plan.md) — local acceptance contract added; tenant readback and end-to-end replay remain gated
+
+- [~] **Track: Python 3.15 migration and qualification**
+  *Link: [./tracks/python315_qualification_20261023/index.md](./tracks/python315_qualification_20261023/index.md)*
