@@ -40,7 +40,7 @@ class CanaryQualificationTests(unittest.TestCase):
             lock = b'fictional==1.0 --hash=sha256:fixture\n'
             (evidence / 'requirements.lock').write_bytes(lock)
             (evidence / 'candidate.json').write_text(json.dumps({'lockSha256': hashlib.sha256(lock).hexdigest()}))
-            for name, value in [('python-version', 'Python 3.15.0 (fixture)'), ('tool-python-version', 'Python 3.14.8 (fixture)')]:
+            for name, value in [('python-version', 'Python 3.15.1 (fixture)'), ('tool-python-version', 'Python 3.15.1 (fixture)')]:
                 (evidence / (name + '.txt')).write_text(value)
             self.assertEqual(execute({})['state'], 'qualified-tool-candidate')
             (evidence / 'tool-python-version.txt').write_text('Python 3.13.0 (fixture)')

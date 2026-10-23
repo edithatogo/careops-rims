@@ -25,3 +25,11 @@ No shared/original model writes without an approved isolation/rollback path. No 
 Validation cadence: use changed-behavior tests and affected structural checks. Documentation-only changes need structural/link checks, not new mirror tests. Run `python3 scripts/agent_harness.py check --task all` at integration/release milestones or broad shared-contract changes. Native M/DAX, report rendering, live refresh and scheduled delivery remain separate gates.
 
 Keep actual tenant IDs, screenshots, auth tokens, raw API snapshots and caches in ignored private paths. Do not copy old workforce row data to this repository or an unapproved third-party plugin. Do not change sharing, publish, enable schedules, purchase capacity or change an existing VM without the specific approval gate.
+
+## Required Python execution
+
+All active Python development, build, test, automation and CI execution uses
+Python3.15, currently exact patch3.15.1. Use an explicit repo-local interpreter,
+verify its version, and align constraints, locks and current setup instructions.
+Older runners are not compatibility defaults; preserve only historical evidence
+and intentional synthetic version tests. Do not replace a running environment.
