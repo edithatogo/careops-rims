@@ -35,3 +35,8 @@ actual strict full-history/current-source scanner gates, frozen runtime hashes,
 offline runner with its five exclusions/network denial, and downloaded artifact
 inventory/signature checks on hosted head/main. Native owners and development
 canary environments remain separate; no activation or native acceptance follows.
+
+The source-check trigger now retains all PR/manual runs and main pushes, avoiding
+a duplicate full source-check workflow on each topic-branch push. All job names,
+scanner flags and test bodies remain unchanged. Verify the single PR run and
+main-push operation on the adopted head.
