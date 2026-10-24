@@ -34,6 +34,26 @@ jobs:
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        id: helper
+        env:
+          SELECTED_PYTHON: ${{ steps.python.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-canary-helper" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-canary-helper" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-canary-helper"
+          "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-canary-helper'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin" >> "$GITHUB_PATH"
       - id: bootstrap
         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
@@ -45,9 +65,19 @@ jobs:
           mkdir -p .local/tool-canary
           python .careops-ci-tools/portfolio-scripts/ci_delivery.py lock --root .careops-ci-tools --preview --output .careops-ci-tools/.local/canary/requirements.lock --receipt .local/tool-canary/candidate.json
           cp .careops-ci-tools/.local/canary/requirements.lock .local/tool-canary/requirements.lock
-          uv venv --python 3.15.1 "$RUNNER_TEMP/rims-tool-canary"
-          uv pip install --python "$RUNNER_TEMP/rims-tool-canary/bin/python" --require-hashes --only-binary=:all: --no-binary=pyyaml -r .local/tool-canary/requirements.lock
-          "$RUNNER_TEMP/rims-tool-canary/bin/python" -VV > .local/tool-canary/tool-python-version.txt
+          if [ -e .local/rims-tool-canary ] || [ -L .local/rims-tool-canary ]; then
+            echo 'Refusing an existing candidate environment.' >&2
+            exit 1
+          fi
+          uv venv --python 3.15.1 .local/rims-tool-canary
+          .local/rims-tool-canary/bin/python -I - <<'PYCODE'
+          import pathlib, platform, sys
+          expected = pathlib.Path.cwd() / '.local/rims-tool-canary'
+          if platform.python_version() != '3.15.1' or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the isolated repository-local tool candidate.')
+          PYCODE
+          uv pip install --python "$GITHUB_WORKSPACE/.local/rims-tool-canary/bin/python" --require-hashes --only-binary=:all: --no-binary=pyyaml -r .local/tool-canary/requirements.lock
+          "$GITHUB_WORKSPACE/.local/rims-tool-canary/bin/python" -VV > .local/tool-canary/tool-python-version.txt
           python -VV > .local/tool-canary/python-version.txt
       - name: Exercise RIMS behaviour and candidate tooling
         id: qualification
@@ -56,30 +86,36 @@ jobs:
           python scripts/check_public_docs.py
           python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
           python scripts/run_public_tests.py
-          "$RUNNER_TEMP/rims-tool-canary/bin/ruff" check --select E9,F63,F7,F82 scripts tests
-          "$RUNNER_TEMP/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r .local/tool-canary/requirements.lock
-          "$RUNNER_TEMP/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock
-          "$RUNNER_TEMP/rims-tool-canary/bin/zizmor" --offline --persona pedantic --format plain .github/workflows
+          "$GITHUB_WORKSPACE/.local/rims-tool-canary/bin/ruff" check --select E9,F63,F7,F82 scripts tests
+          "$GITHUB_WORKSPACE/.local/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r .local/tool-canary/requirements.lock
+          "$GITHUB_WORKSPACE/.local/rims-tool-canary/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock
+          "$GITHUB_WORKSPACE/.local/rims-tool-canary/bin/zizmor" --offline --persona pedantic --format plain .github/workflows
       - name: Record actual tool qualification outcomes
         if: always()
         env:
           SOURCE_OUTCOME: ${{ steps.source.outcome }}
           POLICY_OUTCOME: ${{ steps.policy.outcome }}
           PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          HELPER_OUTCOME: ${{ steps.helper.outcome }}
           BOOTSTRAP_OUTCOME: ${{ steps.bootstrap.outcome }}
           RESOLVE_OUTCOME: ${{ steps.resolve.outcome }}
           QUALIFICATION_OUTCOME: ${{ steps.qualification.outcome }}
         run: |
-          python3 - <<'PYCODE'
+          if [ "$HELPER_OUTCOME" != success ] || [ ! -x "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin/python" ]; then
+            mkdir -p .local/tool-canary
+            printf '%s\n' '{"state":"setup-blocked","failedStage":"helper","promoted":false,"nativeWrites":false,"reason":"verified-helper-unavailable; use run metadata for source identity"}' > .local/tool-canary/qualification.json
+            exit 1
+          fi
+          "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin/python" -I - <<'PYCODE'
           import hashlib, json, os
           from pathlib import Path
           root = Path('.local/tool-canary')
           root.mkdir(parents=True, exist_ok=True)
           lock = root / 'requirements.lock'
           digest = hashlib.sha256(lock.read_bytes()).hexdigest() if lock.exists() else None
-          stages = {name: os.environ[name.upper() + '_OUTCOME'] for name in ['source', 'policy', 'python', 'bootstrap', 'resolve', 'qualification']}
+          stages = {name: os.environ[name.upper() + '_OUTCOME'] for name in ['source', 'policy', 'python', 'helper', 'bootstrap', 'resolve', 'qualification']}
           failed = next((name for name, outcome in stages.items() if outcome == 'failure'), None)
-          if failed in ['source', 'policy', 'python', 'bootstrap']:
+          if failed in ['source', 'policy', 'python', 'helper', 'bootstrap']:
               state = 'setup-blocked'
           elif failed:
               state = 'executed-failure'
@@ -131,9 +167,30 @@ jobs:
           path: .careops-ci-tools
           persist-credentials: false
           submodules: false
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        id: helper
+        env:
+          SELECTED_PYTHON: ${{ steps.python.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-canary-helper" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-canary-helper" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-canary-helper"
+          "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-canary-helper'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin" >> "$GITHUB_PATH"
       - name: Verify failed discovery retains a terminal receipt
         run: |
           probe_receipt=".local/runtime-contract-probe/discovery.json"
@@ -161,25 +218,52 @@ jobs:
           runtime_platform="$(python -c 'import platform; print(platform.freedesktop_os_release()["VERSION_ID"])')"
           python .careops-ci-tools/portfolio-scripts/ci_delivery.py runtime --platform-version "$runtime_platform" --manifest .local/runtime-canary/manifest.json --manifest-revision "$runtime_manifest_revision" --output .local/runtime-canary/discovery.json --github-output "$GITHUB_OUTPUT"
       - name: Set up only the exact available preview
+        id: preview
         if: steps.discover.outputs.available == 'true'
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ steps.discover.outputs.version }}
           allow-prereleases: true
+      - name: Create and verify the isolated preview environment
+        id: preview_environment
+        if: steps.discover.outputs.available == 'true'
+        env:
+          SELECTED_PREVIEW: ${{ steps.preview.outputs.python-path }}
+          EXPECTED_PREVIEW: ${{ steps.discover.outputs.version }}
+        run: |
+          if [ -e .local/rims-preview ] || [ -L .local/rims-preview ]; then
+            echo 'Refusing an existing preview environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PREVIEW" -I -m venv .local/rims-preview
+          .local/rims-preview/bin/python -I - <<'PYCODE'
+          import os, pathlib, platform, re, sys
+          expected = pathlib.Path.cwd() / '.local/rims-preview'
+          selected = re.sub(r'[-.]?(a|b|rc)[-.]?(\d+)$', r'\1\2', os.environ['EXPECTED_PREVIEW'])
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != selected or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the exact selected isolated preview.')
+          PYCODE
       - name: Exercise RIMS on the resolved Python preview
         id: runtime_tests
         if: steps.discover.outputs.available == 'true'
         run: |
-          python -VV > .local/runtime-canary/python-version.txt
-          python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
-          python scripts/run_public_tests.py
-          python scripts/rims_operator.py --help
+          "$GITHUB_WORKSPACE/.local/rims-preview/bin/python" -VV > .local/runtime-canary/python-version.txt
+          "$GITHUB_WORKSPACE/.local/rims-preview/bin/python" -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
+          "$GITHUB_WORKSPACE/.local/rims-preview/bin/python" scripts/run_public_tests.py
+          "$GITHUB_WORKSPACE/.local/rims-preview/bin/python" scripts/rims_operator.py --help
       - name: Record actual qualification or explicit unavailability
         if: always()
         env:
+          HELPER_OUTCOME: ${{ steps.helper.outcome }}
           DISCOVERY_OUTCOME: ${{ steps.discover.outcome }}
           RUNTIME_TEST_OUTCOME: ${{ steps.runtime_tests.outcome }}
-        run: python .careops-ci-tools/portfolio-scripts/ci_delivery.py runtime-finalize --receipt .local/runtime-canary/discovery.json --outcome "$RUNTIME_TEST_OUTCOME" --discovery-outcome "$DISCOVERY_OUTCOME"
+        run: |
+          if [ "$HELPER_OUTCOME" != success ] || [ ! -x "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin/python" ]; then
+            mkdir -p .local/runtime-canary
+            printf '%s\n' '{"state":"setup-blocked","promoted":false,"nativeWrites":false,"runtimeTestsExecuted":false,"reason":"verified-helper-unavailable"}' > .local/runtime-canary/helper-failure.json
+            exit 1
+          fi
+          "$GITHUB_WORKSPACE/.local/rims-canary-helper/bin/python" -I .careops-ci-tools/portfolio-scripts/ci_delivery.py runtime-finalize --receipt .local/runtime-canary/discovery.json --outcome "$RUNTIME_TEST_OUTCOME" --discovery-outcome "$DISCOVERY_OUTCOME"
       - name: Retain frozen manifest and actual outcome
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

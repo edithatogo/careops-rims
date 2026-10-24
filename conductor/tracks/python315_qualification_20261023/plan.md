@@ -40,3 +40,15 @@ The source-check trigger now retains all PR/manual runs and main pushes, avoidin
 a duplicate full source-check workflow on each topic-branch push. All job names,
 scanner flags and test bodies remain unchanged. Verify the single PR run and
 main-push operation on the adopted head.
+
+## Canary helper and recovery increment
+
+Bind both canary helpers/finalizers to verified repo-local Python 3.15.1, with
+separate guarded tool and exact-preview environments. Preserve selected runtime
+line, lock hashes, source tests and no-promotion/no-native-write boundaries.
+After a missing or failed helper, use shell-only failure receipts and never run
+an existing unverified interpreter. Keep the discovery receipt when recording a
+helper failure. Exercise actual terminal scripts against failed/missing helpers,
+missing/mismatched evidence and all prior outcome classes; require hosted canary
+and source/package gates. A newer-preview absence remains unavailability, not a
+successful runtime trial. Schedules and native objects remain unchanged.
