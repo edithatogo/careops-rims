@@ -1,5 +1,6 @@
 """Reject private artefacts, account addresses and deployment identities."""
 from pathlib import Path
+from contextlib import contextmanager, nullcontext
 import argparse
 import re
 import subprocess
@@ -41,24 +42,64 @@ def inspect(name, raw, mode='100644'):
         if account not in {'example_operator', 'dev'}:
             errors.append('personal SharePoint account path')
     return sorted(set(errors))
+def read_index_blob(reader, identity):
+    """Read one exact raw indexed blob from a persistent Git batch process."""
+    reader.stdin.write(identity.encode('ascii') + b'\n')
+    reader.stdin.flush()
+    header = reader.stdout.readline(256)
+    fields = header.split()
+    if not header.endswith(b'\n') or len(fields) != 3 or fields[0] != identity.encode('ascii') or fields[1] != b'blob':
+        raise ValueError('Invalid indexed blob response')
+    size = int(fields[2])
+    if size < 0 or size > sys.maxsize:
+        raise ValueError('Invalid indexed blob size')
+    raw = bytearray()
+    remaining = size
+    while remaining:
+        chunk = reader.stdout.read(min(remaining, 1024 * 1024))
+        if not chunk:
+            raise ValueError('Incomplete indexed blob response')
+        raw.extend(chunk)
+        remaining -= len(chunk)
+    if reader.stdout.read(1) != b'\n':
+        raise ValueError('Incomplete indexed blob response')
+    return bytes(raw)
+
+@contextmanager
+def index_reader():
+    """Stream requested objects without accumulating the repository in memory."""
+    command = ['git', 'cat-file', '--batch']
+    with subprocess.Popen(command, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL) as reader:
+        try:
+            yield reader
+        finally:
+            reader.stdin.close()  # EOF terminates the reader; context closes stdout before wait.
+    if reader.returncode != 0:
+        raise subprocess.CalledProcessError(reader.returncode, command)
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--staged', action='store_true', help='Inspect exact staged bytes')
     args = parser.parse_args(argv)
     errors = []
-    for entry in subprocess.check_output(['git', 'ls-files', '--stage', '-z'], cwd=ROOT).split(b'\0'):
-        if not entry: continue
-        metadata, raw_name = entry.split(b'\t', 1)
-        mode, object_id, stage = metadata.decode().split()
-        name = raw_name.decode('utf-8')
-        if stage != '0':
-            errors.append(name + ': unresolved index conflict')
-            continue
-        try:
-            raw = subprocess.check_output(['git', 'cat-file', 'blob', object_id], cwd=ROOT) if args.staged else (ROOT/name).read_bytes()
-            errors.extend(name + ': ' + reason for reason in inspect(name, raw, mode))
-        except (OSError, subprocess.CalledProcessError):
-            errors.append(name + ': unreadable file')
+    try:
+        entries = subprocess.check_output(['git', 'ls-files', '--stage', '-z'], cwd=ROOT).split(b'\0')
+        with (index_reader() if args.staged else nullcontext(None)) as reader:
+            for entry in entries:
+                if not entry: continue
+                metadata, raw_name = entry.split(b'\t', 1)
+                mode, object_id, stage = metadata.decode().split()
+                name = raw_name.decode('utf-8')
+                if stage != '0':
+                    errors.append(name + ': unresolved index conflict')
+                    continue
+                try:
+                    raw = read_index_blob(reader, object_id) if args.staged else (ROOT/name).read_bytes()
+                    errors.extend(name + ': ' + reason for reason in inspect(name, raw, mode))
+                except (OSError, subprocess.CalledProcessError):
+                    errors.append(name + ': unreadable file')
+    except (OSError, subprocess.CalledProcessError, ValueError):
+        errors.append('Git index or object reader failed; staged content is not verified')
     if errors:
         print('\n'.join(errors), file=sys.stderr)
         return 1
