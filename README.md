@@ -66,7 +66,11 @@ not alter the unpacked operator runtime. Hash-locked workbook dependencies,
 strict scanner flags, the public runner's five named exclusions and outbound
 network denial, archive checks and main-only signatures remain mandatory.
 
-The development canary retains its separate candidate and receipt paths; this
-stable-job increment does not qualify or replace those preview environments.
+The development canary uses a verified `.local/rims-canary-helper` interpreter,
+separate `.local/rims-tool-canary` and `.local/rims-preview` candidates, and
+explicit helper finalization after preview setup. If the helper is unavailable or
+unverified, a shell-only failure receipt records setup blockage without running
+ambient Python. Missing newer previews remain explicitly unavailable; a helper
+pass does not establish preview qualification.
 No helper setup grants native access, enables flows, sends email or establishes
 production acceptance.
