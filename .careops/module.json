@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "module": "careops-rims",
+  "sourceKind": "reusable-source",
+  "standards": "https://github.com/edithatogo/careops/blob/main/docs/development-and-delivery.md",
+  "integrationContract": "https://github.com/edithatogo/careops/blob/main/docs/standalone-module-contract.md",
+  "releasePolicy": "development-first-verified-promotion",
+  "localGuide": "README.md",
+  "nativeQualification": "not-established-by-public-source",
+  "nextTasks": [
+    {
+      "id": "source-qualification",
+      "status": "queued",
+      "lane": "portable source maintainer; existing native owners retain their objects",
+      "operation": "Qualify changes through the tenant-free public runner, frozen workbook dependencies, source/package inventories and current-head checks. Preserve source identities, human edits, revision history and recovery; native tests remain separate.",
+      "tools": [
+        "existing public operator CLI",
+        "offline fictional fixtures",
+        "existing source/package CI"
+      ],
+      "success": "Affected source checks and actual downloaded package inventory pass on the selected revision; no native acceptance is inferred."
+    },
+    {
+      "id": "native-alm-inventory",
+      "status": "queued",
+      "lane": "existing private publications implementation and native object owner",
+      "operation": "Reuse retained native evidence and current run handles. Reconcile existing canonical solution membership, versions, connection references and external report/model/document manifests through the qualified VS Code route. Evaluate SharePoint structured document generation first for selected structured-output improvements, preserving working outputs until parity and recovery qualify.",
+      "tools": [
+        "existing qualified VS Code route",
+        "supported native readback",
+        "existing private configuration and evidence"
+      ],
+      "success": "Eligible native membership and external artifact coverage have exact-target readback and recovery; permissions, entitlement and operational acceptance remain explicit, with no new activation or email delivery."
+    }
+  ]
+}

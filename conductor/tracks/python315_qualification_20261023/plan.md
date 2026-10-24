@@ -52,3 +52,13 @@ helper failure. Exercise actual terminal scripts against failed/missing helpers,
 missing/mismatched evidence and all prior outcome classes; require hosted canary
 and source/package gates. A newer-preview absence remains unavailability, not a
 successful runtime trial. Schedules and native objects remain unchanged.
+
+## Portable profile closure
+
+Add the module delivery profile already referenced by the portfolio catalog.
+Validate its source boundary and executable source/native queue with the existing
+immutable standard-library validator before archive creation; include the profile
+in the actual ZIP and SPDX inventory. Keep native targets, records and receipts
+private, retain current object/file owners and source identities, and qualify
+current-head/main package checks. This supplies a reusable source contract, not
+native membership or acceptance evidence.
