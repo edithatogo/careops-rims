@@ -62,3 +62,14 @@ in the actual ZIP and SPDX inventory. Keep native targets, records and receipts
 private, retain current object/file owners and source identities, and qualify
 current-head/main package checks. This supplies a reusable source contract, not
 native membership or acceptance evidence.
+
+## Staged source-check performance
+
+Batch raw index-object reads through a single Git process while preserving all
+privacy rules and per-path inspections. Bound each read to its declared blob
+size; refuse malformed frames, wrong object identities/types, incomplete payloads
+and nonzero process exits. Retain staged-secret masking and unresolved-conflict
+refusal. Qualify actual multi-file/filename and negative protocol cases plus
+source/package guards on repo-local Python 3.15.1, then require hosted head/main
+checks and attestation. Local paired timing is retained privately; no skipped
+files, weaker scan flags or native acceptance is implied by a faster check.

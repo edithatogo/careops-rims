@@ -86,3 +86,12 @@ The public queue carries no private targets, operational records or native run
 receipts. Existing native owners retain their objects, definitions and current
 operations; source qualification does not establish their membership, access or
 operational acceptance. Explicit email approval remains required for any send.
+
+## Exact staged-source privacy checks
+
+The staged privacy guard streams raw indexed blobs through one Git object reader
+instead of starting Git for every file. It still inspects every indexed path and
+exact staged payload, independently of working-file edits. Missing, mismatched,
+non-blob, truncated or malformed object responses and failed reader exits refuse
+publication. Existing private-path, binary, identity, symlink/submodule and
+unresolved-conflict checks remain mandatory; batching skips no source entries.
