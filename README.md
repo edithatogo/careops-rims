@@ -20,7 +20,7 @@ generated outputs, native packages and live configuration are intentionally abse
 CI preserves the strict RIMS full-history/current-source secret scans, privacy
 guard and tenant-free public test runner, including its named private-workspace
 exclusions and outbound-network denial. Shared immutable CareOps policy
-`30df4953ea87c8915b4a525fc671a4c9857c3f7f` adds workflow checks; it does not
+`5cf006bce6c37c0c15db5d35055e302701a500ad` adds workflow checks; it does not
 replace RIMS' stricter scanner flags. Canonical source tests use Python3.15.1
 for every active application and tooling lane. Renovate remains the
 sole updater and never automatically promotes a candidate.
@@ -55,3 +55,18 @@ Export-to-file REST is not supported on PPU alone; keep qualified alternative
 outputs. No workspace conversion, sharing, schedule change or new reporting
 dependency follows. Public source checks remain tenant-free and native operation
 requires private deployment evidence.
+
+## Stable CI helper environments
+
+Stable source/security and package jobs verify Python 3.15.1 in
+`.local/rims-ci` after checkout before invoking repository helpers. Existing
+files, directories and symlinks are refused rather than replaced. The package
+audit has a separate verified `.local/rims-audit` environment so audit tools do
+not alter the unpacked operator runtime. Hash-locked workbook dependencies,
+strict scanner flags, the public runner's five named exclusions and outbound
+network denial, archive checks and main-only signatures remain mandatory.
+
+The development canary retains its separate candidate and receipt paths; this
+stable-job increment does not qualify or replace those preview environments.
+No helper setup grants native access, enables flows, sends email or establishes
+production acceptance.

@@ -19,8 +19,28 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python_runtime
         with:
           python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        env:
+          SELECTED_PYTHON: ${{ steps.python_runtime.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-ci" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-ci" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-ci"
+          "$GITHUB_WORKSPACE/.local/rims-ci/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-ci'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-ci/bin" >> "$GITHUB_PATH"
       - name: Package clean public source once after privacy validation
         run: python scripts/build_release_candidate.py --output .local/release-candidate
       - name: Exercise the unpacked offline operator tools
@@ -39,15 +59,22 @@ jobs:
           path: .local/ci-release-policy
           persist-credentials: false
           submodules: false
-      - name: Select qualified dependency audit runtime
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
-        with:
-          python-version: '3.15.1'
       - name: Audit and inventory external workbook dependencies
         run: |
-          python -m venv "$RUNNER_TEMP/rims-audit"
-          "$RUNNER_TEMP/rims-audit/bin/python" -m pip install --require-hashes --only-binary=:all: --no-binary=pyyaml -r .local/ci-release-policy/requirements-ci.lock
-          "$RUNNER_TEMP/rims-audit/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock --format cyclonedx-json --output .local/release-candidate/runtime-dependencies.cdx.json
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-audit" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-audit" ]; then
+            echo 'Refusing a pre-existing audit environment.' >&2
+            exit 1
+          fi
+          python -I -m venv "$GITHUB_WORKSPACE/.local/rims-audit"
+          "$GITHUB_WORKSPACE/.local/rims-audit/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-audit'
+          if platform.python_version() != '3.15.1' or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the isolated repository-local audit runtime.')
+          print('Verified repository-local audit Python', platform.python_version())
+          PYCODE
+          "$GITHUB_WORKSPACE/.local/rims-audit/bin/python" -m pip install --require-hashes --only-binary=:all: --no-binary=pyyaml -r .local/ci-release-policy/requirements-ci.lock
+          "$GITHUB_WORKSPACE/.local/rims-audit/bin/python" -m pip_audit --disable-pip --no-deps -r requirements-runtime.lock --format cyclonedx-json --output .local/release-candidate/runtime-dependencies.cdx.json
           sha256sum requirements-runtime.lock > .local/release-candidate/runtime-lock.sha256
       - name: Inventory exact public archive bytes
         env:
@@ -77,10 +104,29 @@ jobs:
         with:
           name: careops-rims-source
           path: candidate
-      - name: Select the qualified verification runtime
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python_runtime
         with:
           python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        env:
+          SELECTED_PYTHON: ${{ steps.python_runtime.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-ci" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-ci" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-ci"
+          "$GITHUB_WORKSPACE/.local/rims-ci/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-ci'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-ci/bin" >> "$GITHUB_PATH"
       - name: Independently compare downloaded package with its inventory
         env:
           SOURCE_COMMIT: ${{ github.sha }}
