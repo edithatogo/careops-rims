@@ -21,3 +21,22 @@
 ## Current boundary
 
 A track or prompt is not an armed goal or completed runtime migration. Shared chat goal creation was rejected due to its unfinished goal.
+
+## Stable helper-environment increment
+
+Stable security/source jobs and source-package build/attestation now create and
+verify repository-local Python 3.15.1 after checkout. Refuse pre-existing files,
+directories and symlinks; retain the isolated bootstrap that excludes caller
+modules before validation. Keep audit tools in their separately verified local
+environment, preserving the unpacked operator dependency/runtime boundary.
+
+Reuse unchanged public package, workbook and source/privacy tests; require the
+actual strict full-history/current-source scanner gates, frozen runtime hashes,
+offline runner with its five exclusions/network denial, and downloaded artifact
+inventory/signature checks on hosted head/main. Native owners and development
+canary environments remain separate; no activation or native acceptance follows.
+
+The source-check trigger now retains all PR/manual runs and main pushes, avoiding
+a duplicate full source-check workflow on each topic-branch push. All job names,
+scanner flags and test bodies remain unchanged. Verify the single PR run and
+main-push operation on the adopted head.

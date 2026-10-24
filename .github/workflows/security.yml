@@ -1,6 +1,7 @@
 name: Public source checks
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -18,13 +19,33 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: '3.15.1'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python_runtime
+        with:
+          python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        env:
+          SELECTED_PYTHON: ${{ steps.python_runtime.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-ci" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-ci" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-ci"
+          "$GITHUB_WORKSPACE/.local/rims-ci/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-ci'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-ci/bin" >> "$GITHUB_PATH"
       - name: Install checksum-verified Gitleaks
         env:
           VERSION: 8.30.1
@@ -48,8 +69,28 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python_runtime
         with:
           python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        env:
+          SELECTED_PYTHON: ${{ steps.python_runtime.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-ci" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-ci" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-ci"
+          "$GITHUB_WORKSPACE/.local/rims-ci/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-ci'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-ci/bin" >> "$GITHUB_PATH"
       - name: Install hash-locked workbook runtime
         run: |
           python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
@@ -65,8 +106,28 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python_runtime
         with:
           python-version: '3.15.1'
+      - name: Select verified repository-local Python
+        env:
+          SELECTED_PYTHON: ${{ steps.python_runtime.outputs.python-path }}
+          EXPECTED_PYTHON: '3.15.1'
+        run: |
+          if [ -e "$GITHUB_WORKSPACE/.local/rims-ci" ] || [ -L "$GITHUB_WORKSPACE/.local/rims-ci" ]; then
+            echo 'Refusing a pre-existing helper environment.' >&2
+            exit 1
+          fi
+          "$SELECTED_PYTHON" -I -m venv "$GITHUB_WORKSPACE/.local/rims-ci"
+          "$GITHUB_WORKSPACE/.local/rims-ci/bin/python" -I - <<'PYCODE'
+          import os, pathlib, platform, sys
+          expected = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.local/rims-ci'
+          if sys.version_info[:2] != (3, 15) or platform.python_version() != os.environ['EXPECTED_PYTHON'] or pathlib.Path(sys.prefix).resolve() != expected.resolve() or sys.prefix == sys.base_prefix:
+              raise SystemExit('Expected the selected repository-local Python 3.15 environment.')
+          print(sys.version)
+          print('Verified repository-local helper environment.')
+          PYCODE
+          echo "$GITHUB_WORKSPACE/.local/rims-ci/bin" >> "$GITHUB_PATH"
       - name: Install hash-locked workbook runtime
         run: |
           python -m pip install --require-hashes --only-binary=:all: -r requirements-runtime.lock
