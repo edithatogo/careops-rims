@@ -74,3 +74,15 @@ ambient Python. Missing newer previews remain explicitly unavailable; a helper
 pass does not establish preview qualification.
 No helper setup grants native access, enables flows, sends email or establishes
 production acceptance.
+
+## Portable CareOps delivery contract
+
+The [module profile](.careops/module.json) exposes this public edition's source
+scope, shared interoperability standard and executable source/native task queue.
+Package CI validates it through the existing immutable CareOps validator before
+building an archive. The same profile travels inside the qualified source ZIP.
+
+The public queue carries no private targets, operational records or native run
+receipts. Existing native owners retain their objects, definitions and current
+operations; source qualification does not establish their membership, access or
+operational acceptance. Explicit email approval remains required for any send.
