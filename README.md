@@ -95,3 +95,9 @@ exact staged payload, independently of working-file edits. Missing, mismatched,
 non-blob, truncated or malformed object responses and failed reader exits refuse
 publication. Existing private-path, binary, identity, symlink/submodule and
 unresolved-conflict checks remain mandatory; batching skips no source entries.
+
+## Licence
+
+Project-owned code is licensed under [Apache-2.0](LICENSE). Preserve [NOTICE](NOTICE)
+and third-party licences/attribution. This does not grant redistribution rights
+over external source documents, private evidence, datasets or native records.

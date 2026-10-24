@@ -16,3 +16,7 @@ Fallback only: existing UTM on the user's Mac, correctly matched Windows 11 arch
 Conductor protocol: upstream `main` is pinned by the `.agents/plugins/conductor` submodule at `6e8f9a860bcdd6a2c423473c12e745200688c633` (`conductor-v0.4.1-18`, verified 2026-09-20). After cloning, run `git submodule update --init .agents/plugins/conductor`. GitHub synchronization is now requested; see `handoff/GITHUB_SYNC.md` for its privacy boundary.
 
 Native implementation decision (2026-09-13): [Power Platform architecture, observed licences and fallbacks](../docs/POWER_PLATFORM_NATIVE_PLAN.md). Prefer the existing Power BI workspace, standard cloud connectors and native M/DAX; Python remains local verification tooling. Native and unattended acceptance gates remain open.
+
+Project-owned code uses Apache-2.0 under the user-selected portfolio standard.
+Preserve third-party terms, attribution, historical evidence and private-source
+rights; qualify source/package changes without changing native authority.
