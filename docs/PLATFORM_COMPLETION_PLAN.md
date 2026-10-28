@@ -297,7 +297,7 @@ A strict, one-time audit of available CLI tools was conducted to determine wheth
 | :--- | :--- | :--- | :--- |
 | **PnP.PowerShell** (`Connect-PnPOnline`) | Global PowerShell Module | **Failed:** tenant application-consent error (identifier retained only in private evidence). | **Infeasible for this route:** blocked by tenant admin application consent policy. |
 | **CLI for Microsoft 365** (`m365`) | `/opt/homebrew/bin/m365` | **Failed:** Error `AADSTS70043: Refresh token expired or invalid due to sign-in frequency checks by conditional access`. | **Historical expiry:** recover the proven client through the current supported sign-in workflow, then verify the exact target. |
-| **Power Platform CLI** (`pac`) | `/Users/example/.dotnet/tools/pac` | **Active, but Wrong Tenant:** Connected to `RIMS maintainer (Illawarra Shoalhaven LHD)'s Environment` (NSW Health, `health.nsw.gov.au`). | **Infeasible**: Connected to external NSW Health tenant, not Queensland Health. Switching profiles would require interactive device code login. |
+| **Power Platform CLI** (`pac`) | `$HOME/.dotnet/tools/pac` | **Active, but Wrong Tenant:** Connected to `RIMS maintainer (Illawarra Shoalhaven LHD)'s Environment` (NSW Health, `health.nsw.gov.au`). | **Infeasible**: Connected to external NSW Health tenant, not Queensland Health. Switching profiles would require interactive device code login. |
 | **Azure CLI** (`az`) | `/opt/homebrew/bin/az` | **Active, but Wrong Tenant:** connected to a personal/other Azure subscription (tenant identifier retained only in private evidence). | **Infeasible**: not connected to Queensland Health enterprise tenant. |
 
 ### Architectural Decision:
@@ -349,7 +349,7 @@ Value Hierarchy & Deployment Status:
 - **Action 1.1: Import Enriched Seed Dataset**
   - Open Chrome Tab 1: `{{SHAREPOINT_PUBLICATION_REGISTRY_URL}}`
   - Click **+ New** / **From CSV** and select:
-    `/Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/private/ops/sharepoint-seed/publication-registry-seed.csv`
+    `<private-workspace>/private/ops/sharepoint-seed/publication-registry-seed.csv`
   - Verify column mappings:
     - `Title` -> Single line of text
     - `SourceKey`, `CanonicalKey`, `PMID`, `DOI` -> Single line of text
@@ -386,7 +386,7 @@ Value Hierarchy & Deployment Status:
   - Open Chrome Tab 2: `https://make.powerautomate.com/environments/Default-{{TENANT_ID}}/flows`
   - Click **Import** > **Import Package (Legacy)**.
   - Upload file:
-    `/Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/private/ops/flow-packages/sharepoint-upsert.zip`
+    `<private-workspace>/private/ops/flow-packages/sharepoint-upsert.zip`
   - In the import review screen:
     - For the flow resource, select **Update** (select existing flow `CHHHS Publications - DEV manual ingestion validation`, GUID `{{FLOW_ID}}`).
     - For connection references, select RIMS maintainer's existing SharePoint connection and standard HTTP connector.
@@ -423,12 +423,12 @@ Value Hierarchy & Deployment Status:
   - Open Chrome Tab 5: `https://app.powerbi.com/groups/me/modeling/{{ISOLATED_MODEL_ID}}/modelView?experience=power-bi`
   - In the modeling view, open the TMDL Scripting panel.
   - Paste the contents of:
-    `/Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/private/ops/2026-09-15-t12-model.tmdl`
+    `<private-workspace>/private/ops/2026-09-15-t12-model.tmdl`
   - Click **Apply Script** to deploy the 6-table research schema (`Publication`, `Facility`, `PublicationFacility`, `Date`, `SearchAudit`, `ReportingWindow`), cleanly replacing the legacy workforce model.
 
 - **Action 4.2: Execute DAX Reconciliation Verification**
   - In Power BI Service DAX Query View, paste and run:
-    `/Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/config/native-canonical-check.dax`
+    `<private-workspace>/config/native-canonical-check.dax`
   - Verify that:
     - `DuplicateCanonicalKeys` = 0
     - `HeadlineMatchesKeys` = TRUE

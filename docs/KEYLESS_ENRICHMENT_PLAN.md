@@ -148,18 +148,18 @@ Harvest Pipeline (Zero Keys):
 ## 4. Implementation Status
 
 - [x] **Phase 1: Local Rule Engine & Keyless Adapters (COMPLETED)**
-  - Created [`scripts/enrich_europe_pmc.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/enrich_europe_pmc.py) with batch query support.
-  - Created [`scripts/keyless_classifiers.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/keyless_classifiers.py) for FundingType, InternalFunding, IndigenousHealthFocus, StudyDesign, ClinicalTrialID.
-  - Extended [`scripts/enrich_openalex.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/enrich_openalex.py) with batch query and FieldOfResearch extraction.
-  - Extended [`scripts/batch_enrich_sources.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/batch_enrich_sources.py). All 1,265 records enriched and cached in under 40 seconds.
+  - Created [`scripts/enrich_europe_pmc.py`](../scripts/enrich_europe_pmc.py) with batch query support.
+  - Created [`scripts/keyless_classifiers.py`](../scripts/keyless_classifiers.py) for FundingType, InternalFunding, IndigenousHealthFocus, StudyDesign, ClinicalTrialID.
+  - Extended [`scripts/enrich_openalex.py`](../scripts/enrich_openalex.py) with batch query and FieldOfResearch extraction.
+  - Extended [`scripts/batch_enrich_sources.py`](../scripts/batch_enrich_sources.py). All 1,265 records enriched and cached in under 40 seconds.
   - All 184 unit tests passing.
 - [x] **Phase 2: SharePoint List Schema Update & Live In-Place Sync (COMPLETED)**
   - Created 11 new columns directly on `Publication Registry` (`{{SHAREPOINT_LIST_ID}}`) via REST API.
   - Mapped exact `EntityPropertyName` values.
-  - Synchronized all 1,265 items in-place using [`scripts/sync_sharepoint_seed.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/sync_sharepoint_seed.py).
+  - Synchronized all 1,265 items in-place using [`scripts/sync_sharepoint_seed.py`](../scripts/sync_sharepoint_seed.py).
 - [x] **Phase 3: Executive Reporting & Governance Visuals (COMPLETED)**
-  - Updated [`scripts/export_monthly_docx.py`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/scripts/export_monthly_docx.py) to incorporate executive funding governance breakdowns, study design distribution, First Nations health focus counts, and direct PMCID / OA links.
-  - Updated [`config/SharePointPublicationRegistry.m`](file:///Volumes/PortableSSD/GitHub/RIMS/chhhs-research-publications/config/SharePointPublicationRegistry.m) with complete typed schema.
+  - Updated [`scripts/export_monthly_docx.py`](../scripts/export_monthly_docx.py) to incorporate executive funding governance breakdowns, study design distribution, First Nations health focus counts, and direct PMCID / OA links.
+  - Updated [`config/SharePointPublicationRegistry.m`](../config/SharePointPublicationRegistry.m) with complete typed schema.
 
 ## Qualified NHMRC identifier routes — 21 October 2026
 
