@@ -2,4 +2,6 @@
 set -eu
 command -v gitleaks >/dev/null 2>&1 || { echo 'Install Gitleaks first (see SECURITY.md).' >&2; exit 1; }
 gitleaks git . --staged --config .gitleaks.toml --gitleaks-ignore-path /dev/null --ignore-gitleaks-allow --redact --no-banner
-python3 scripts/check_public_source.py --staged
+"${REPO_PYTHON:-.venv-careops-privacy/bin/python}" scripts/check_public_source.py --staged
+
+sh .careops-security/hooks/pre-commit
