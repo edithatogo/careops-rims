@@ -2,5 +2,11 @@
   "SoftwareVersion": "0.3.0-rc1",
   "SchemaVersion": "publication-platform-v1",
   "AcceptedBatchID": "local-source",
-  "NativeAcceptance": false
+  "NativeAcceptance": false,
+  "AuthoringAssurance": {
+    "profile": "power-automate-offline-structure-v1",
+    "scope": "Portable module source; private E09 storage contracts are excluded from this edition",
+    "externalDependencies": [],
+    "nativePilot": "Private E09 qualification remains with native owner; not bundled or executed"
+  }
 }

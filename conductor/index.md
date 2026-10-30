@@ -1,3 +1,13 @@
+## Assurance source port — 30 October 2026
+
+The assurance integration lane owns branch
+`codex/rims-assurance-port` in the isolated CareOps assurance module checkout.
+Exact worktree path and receipts remain private under .local/assurance-port.
+Scope: reusable offline validator, existing CLI and comparison integration,
+profile, fixtures and selected source dependency provenance. Native scope: none.
+Next operation: public source/package qualification and independent integration.
+Existing native owners, runtime gates and earlier assignments remain intact.
+
 # CHHHS research publications: current Conductor context
 
 ## Separate-chat scope — 13 October 2026
