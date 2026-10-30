@@ -236,12 +236,38 @@ def check(*, locator=shutil.which, executor=command_output, root: Path = ROOT) -
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["check", "validate-report", "summarize-flowagent"])
+    parser.add_argument("action", choices=["check", "validate-report", "summarize-flowagent", "validate-flow", "validate-solution", "validate-release-dependencies"])
     parser.add_argument("--report", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--timeout", type=int, default=60)
     parser.add_argument("--receipt", type=Path)
+    parser.add_argument("--input", type=Path)
+    parser.add_argument("--component-map", action="store_true")
+    parser.add_argument("--deployment-settings", type=Path)
     args = parser.parse_args()
+    if args.action == 'validate-release-dependencies':
+        from powerplatform_validation import loads, dependency_checks, report
+        metadata = loads((ROOT / 'config/release-metadata.json').read_bytes())
+        result = report(dependency_checks(metadata.get('AuthoringAssurance', {}).get('externalDependencies', []), ROOT))
+        print(json.dumps(result, indent=2))
+        return int(result['status'] == 'FAIL')
+    if args.action in {'validate-flow', 'validate-solution'}:
+        if args.input is None:
+            parser.error('validation requires --input; native inputs/maps remain private')
+        try:
+            from powerplatform_validation import loads, validate_flow, inspect_zip, component_map
+            if args.action == 'validate-flow':
+                document = loads(args.input.read_bytes())
+                result = validate_flow(document)
+                if args.component_map and result['status'] == 'PASS':
+                    result['componentMap'] = component_map(document)
+            else:
+                result = inspect_zip(args.input, args.deployment_settings)
+            print(json.dumps(result, indent=2))
+            return int(result['status'] == 'FAIL')
+        except (OSError, ValueError, TypeError):
+            print(json.dumps({'status': 'FAIL', 'deploymentReady': False, 'checks': [{'check': 'invalid_input', 'component': 'input', 'severity': 'error', 'evidence_scope': 'offline-structure', 'outcome': 'fail'}]}))
+            return 1
     if args.action == 'summarize-flowagent':
         if args.receipt is None or args.output is not None:
             parser.error('summarize-flowagent requires --receipt and writes no output file')
