@@ -5,23 +5,8 @@
   "NativeAcceptance": false,
   "AuthoringAssurance": {
     "profile": "power-automate-offline-structure-v1",
-    "scope": "E09 selected source dependencies; not whole-service dependency closure",
-    "externalDependencies": [
-      {
-        "path": "contracts/e09-feed-storage.schema.json",
-        "role": "sharepoint-storage-contract",
-        "sha256": "4ced08bc01a43a3726e106f970154fedaeb88ec67af9be20af312fe19f0f9591",
-        "qualification": "source-bytes-only; native version remains separately qualified",
-        "sourceRevision": "050411255996efb579e0c883c3dac397b445266a"
-      },
-      {
-        "path": "contracts/e09-feed-preparation.schema.json",
-        "role": "flow-input-contract",
-        "sha256": "84844d19113887364648204c7ad36e2d3b062e532374241e06b3ffbb818e1799",
-        "qualification": "source-bytes-only; native version remains separately qualified",
-        "sourceRevision": "050411255996efb579e0c883c3dac397b445266a"
-      }
-    ],
-    "nativePilot": "retained-e09-no-send-evidence; current native operation not performed"
+    "scope": "Portable module source; private E09 storage contracts are excluded from this edition",
+    "externalDependencies": [],
+    "nativePilot": "Private E09 qualification remains with native owner; not bundled or executed"
   }
 }

@@ -1,6 +1,6 @@
 ## Assurance source port — 30 October 2026
 
-Chat `01a188d4-a0fc-79e2-83d3-39eb38459056` owns branch
+The assurance integration lane owns branch
 `codex/rims-assurance-port` in the isolated CareOps assurance module checkout.
 Exact worktree path and receipts remain private under .local/assurance-port.
 Scope: reusable offline validator, existing CLI and comparison integration,

@@ -545,6 +545,7 @@
     "scripts/clinical_attribution.py",
     "scripts/collect_dora_history.py",
     "scripts/collect_pubmed.py",
+    "scripts/compare_solution_release.py",
     "scripts/create_sharepoint_columns.py",
     "scripts/crossref_award_crosswalks.py",
     "scripts/deploy_canonical_report.py",
